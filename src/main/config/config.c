@@ -366,9 +366,9 @@ static void validateAndFixConfig(void)
 #endif
 #endif
 
-    bool configuredMotorProtocolDshot = false;
-    checkMotorProtocolEnabled(&motorConfig()->dev, &configuredMotorProtocolDshot);
 #if defined(USE_DSHOT)
+    bool configuredMotorProtocolDshot = checkMotorProtocolDshot(&motorConfig()->dev);
+
     // If using DSHOT protocol disable unsynched PWM as it's meaningless
     if (configuredMotorProtocolDshot) {
         motorConfigMutable()->dev.useUnsyncedPwm = false;
@@ -535,8 +535,7 @@ void validateAndFixGyroConfig(void)
         }
 
         if (motorConfig()->dev.useUnsyncedPwm) {
-            bool configuredMotorProtocolDshot = false;
-            checkMotorProtocolEnabled(&motorConfig()->dev, &configuredMotorProtocolDshot);
+            bool configuredMotorProtocolDshot = checkMotorProtocolDshot(&motorConfig()->dev);
             // Prevent overriding the max rate of motors
             if (!configuredMotorProtocolDshot && motorConfig()->dev.motorPwmProtocol != PWM_TYPE_STANDARD) {
                 const uint32_t maxEscRate = lrintf(1.0f / motorUpdateRestriction);

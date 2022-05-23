@@ -51,27 +51,13 @@ PG_REGISTER_WITH_RESET_FN(motorConfig_t, motorConfig, PG_MOTOR_CONFIG, 3);
 
 void pgResetFn_motorConfig(motorConfig_t *motorConfig)
 {
-#ifdef BRUSHED_MOTORS
-    motorConfig->dev.motorPwmRate = BRUSHED_MOTORS_PWM_RATE;
-    motorConfig->dev.motorPwmProtocol = PWM_TYPE_BRUSHED;
-    motorConfig->dev.useUnsyncedPwm = true;
-#else
-    motorConfig->dev.motorPwmRate = BRUSHLESS_MOTORS_PWM_RATE;
-#ifndef USE_DSHOT
-    if (motorConfig->dev.motorPwmProtocol == PWM_TYPE_STANDARD) {
-        motorConfig->dev.useUnsyncedPwm = true;
-    }
     motorConfig->dev.motorPwmProtocol = PWM_TYPE_DISABLED;
-#elif defined(DEFAULT_MOTOR_DSHOT_SPEED)
-    motorConfig->dev.motorPwmProtocol = DEFAULT_MOTOR_DSHOT_SPEED;
-#else
-    motorConfig->dev.motorPwmProtocol = PWM_TYPE_DSHOT600;
-#endif // USE_DSHOT
-#endif // BRUSHED_MOTORS
-
-    motorConfig->maxthrottle = 2000;
+    motorConfig->dev.motorPwmRate = 250;
+    motorConfig->dev.useUnsyncedPwm = true;
     motorConfig->mincommand = 1000;
-    motorConfig->kv = 1960;
+    motorConfig->minthrottle = 1070;
+    motorConfig->maxthrottle = 2000;
+    motorConfig->kv = 1600;
 
 #ifdef USE_TIMER
 #ifdef MOTOR1_PIN

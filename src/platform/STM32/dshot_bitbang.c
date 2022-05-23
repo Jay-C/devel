@@ -737,8 +737,6 @@ static motorVTable_t bbVTable = {
     .write = bbWrite,
     .writeInt = bbWriteInt,
     .updateComplete = bbUpdateComplete,
-    .convertExternalToMotor = dshotConvertFromExternal,
-    .convertMotorToExternal = dshotConvertToExternal,
     .shutdown = bbShutdown,
 };
 
