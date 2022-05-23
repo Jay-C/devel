@@ -28,12 +28,7 @@
 #define MAX_SERVO_SPEED UINT8_MAX
 #define MAX_SERVO_BOXES 3
 
-typedef struct servoProfile_s {
-    servoParam_t servoConf[MAX_SUPPORTED_SERVOS];
-} servoProfile_t;
-
 extern int16_t servo[MAX_SUPPORTED_SERVOS];
 
 void writeServos(void);
 void servosInit(void);
-void servosFilterInit(void);

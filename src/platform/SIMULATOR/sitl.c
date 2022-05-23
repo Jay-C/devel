@@ -512,11 +512,10 @@ static int16_t motorsPwm[MAX_SUPPORTED_MOTORS];
 static int16_t servosPwm[MAX_SUPPORTED_SERVOS];
 static int16_t idlePulse;
 
-void servoDevInit(const servoDevConfig_t *servoConfig)
+void servoDevInit(const servoDevConfig_t *servoConfig, uint8_t servoCount)
 {
-    printf("[SITL] Init servos num %d rate %d center %d\n", MAX_SUPPORTED_SERVOS,
-           servoConfig->servoPwmRate, servoConfig->servoCenterPulse);
-    for (uint8_t servoIndex = 0; servoIndex < MAX_SUPPORTED_SERVOS; servoIndex++) {
+    printf("[SITL] Init servos num %d rate %d\n", servoCount, servoConfig->servoPwmRate);
+    for (uint8_t servoIndex = 0; servoIndex < servoCount; servoIndex++) {
         servos[servoIndex].enabled = true;
     }
 }
