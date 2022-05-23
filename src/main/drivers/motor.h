@@ -42,10 +42,7 @@ typedef enum {
 } motorPwmProtocolTypes_e;
 
 typedef struct motorVTable_s {
-    // Common
     void (*postInit)(void);
-    float (*convertExternalToMotor)(uint16_t externalValue);
-    uint16_t (*convertMotorToExternal)(float motorValue);
     bool (*enable)(void);
     void (*disable)(void);
     bool (*isMotorEnabled)(uint8_t index);
@@ -56,9 +53,6 @@ typedef struct motorVTable_s {
     void (*writeInt)(uint8_t index, uint16_t value);
     void (*updateComplete)(void);
     void (*shutdown)(void);
-
-    // Digital commands
-
 } motorVTable_t;
 
 typedef struct motorDevice_s {
@@ -77,30 +71,29 @@ void motorUpdateCompleteNull(void);
 void motorPostInit();
 void motorWriteAll(float *values);
 
-void motorInitEndpoints(const motorConfig_t *motorConfig, float outputLimit, float *outputLow, float *outputHigh, float *disarm);
+void motorDevInit(const struct motorDevConfig_s *motorConfig, uint8_t motorCount);
 
-float motorConvertFromExternal(uint16_t externalValue);
-uint16_t motorConvertToExternal(float motorValue);
-
-struct motorDevConfig_s; // XXX Shouldn't be needed once pwm_output* is really cleaned up.
-void motorDevInit(const struct motorDevConfig_s *motorConfig, uint16_t idlePulse, uint8_t motorCount);
 unsigned motorDeviceCount(void);
-motorVTable_t *motorGetVTable(void);
-bool checkMotorProtocolEnabled(const motorDevConfig_t *motorConfig, bool *protocolIsDshot);
+
+motorVTable_t * motorGetVTable(void);
+
+bool checkMotorProtocolEnabled(const motorDevConfig_t *motorDevConfig);
+bool checkMotorProtocolDshot(const motorDevConfig_t *motorDevConfig);
+
 bool isMotorProtocolDshot(void);
 bool isMotorProtocolBidirDshot(void);
 bool isMotorProtocolEnabled(void);
 
 void motorDisable(void);
 void motorEnable(void);
-float motorEstimateMaxRpm(void);
 bool motorIsEnabled(void);
 bool motorIsMotorEnabled(uint8_t index);
 timeMs_t motorGetMotorEnableTimeMs(void);
-void motorShutdown(void); // Replaces stopPwmAllMotors
+
+void motorShutdown(void);
 
 #ifdef USE_DSHOT_BITBANG
-struct motorDevConfig_s;
-typedef struct motorDevConfig_s motorDevConfig_t;
 bool isDshotBitbangActive(const motorDevConfig_t *motorConfig);
 #endif
+
+float motorEstimateMaxRpm(void);

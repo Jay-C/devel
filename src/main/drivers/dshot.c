@@ -53,31 +53,16 @@
 
 #define ERPM_PER_LSB            100.0f
 
-void dshotInitEndpoints(__unused const motorConfig_t *motorConfig, float outputLimit, float *outputLow, float *outputHigh, float *disarm)
+uint16_t dshotConvertToInternal(uint8_t index, float throttle)
 {
-    float outputLimitOffset = DSHOT_RANGE * (1 - outputLimit);
-    *disarm = DSHOT_CMD_MOTOR_STOP;
-    *outputLow = DSHOT_MIN_THROTTLE;
-    *outputHigh = DSHOT_MAX_THROTTLE - outputLimitOffset;
-}
+    UNUSED(index);
 
-float dshotConvertFromExternal(uint16_t externalValue)
-{
-    float motorValue;
+    uint16_t value = DSHOT_CMD_MOTOR_STOP;
 
-    externalValue = constrain(externalValue, PWM_RANGE_MIN, PWM_RANGE_MAX);
-    motorValue = (externalValue == PWM_RANGE_MIN) ? DSHOT_CMD_MOTOR_STOP : scaleRangef(externalValue, PWM_RANGE_MIN + 1, PWM_RANGE_MAX, DSHOT_MIN_THROTTLE, DSHOT_MAX_THROTTLE);
+    if (throttle > 0)
+        value = scaleRangef(throttle, 0, 1, DSHOT_MIN_THROTTLE, DSHOT_MAX_THROTTLE);
 
-    return motorValue;
-}
-
-uint16_t dshotConvertToExternal(float motorValue)
-{
-    float externalValue;
-
-    externalValue = (motorValue < DSHOT_MIN_THROTTLE) ? PWM_RANGE_MIN : scaleRangef(motorValue, DSHOT_MIN_THROTTLE, DSHOT_MAX_THROTTLE, PWM_RANGE_MIN + 1, PWM_RANGE_MAX);
-
-    return lrintf(externalValue);
+    return value;
 }
 
 FAST_CODE uint16_t prepareDshotPacket(dshotProtocolControl_t *pcb)

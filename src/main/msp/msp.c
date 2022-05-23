@@ -722,7 +722,7 @@ static bool mspCommonProcessOutCommand(int16_t cmdMSP, sbuf_t *dst, mspPostProce
         }
 #endif
 
-        if (!checkMotorProtocolEnabled(&motorConfig()->dev, NULL)) {
+        if (!checkMotorProtocolEnabled(&motorConfig()->dev)) {
             configurationProblems |= BIT(PROBLEM_MOTOR_PROTOCOL_DISABLED);
         }
 
@@ -1103,7 +1103,7 @@ case MSP_NAME:
                 continue;
             }
 
-            sbufWriteU16(dst, motorConvertToExternal(motor[i]));
+            sbufWriteU16(dst, 0); // motorConvertToExternal(motor[i]));
 #else
             sbufWriteU16(dst, 0);
 #endif
@@ -2477,7 +2477,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
 
     case MSP_SET_MOTOR:
         for (int i = 0; i < getMotorCount(); i++) {
-            motor_disarmed[i] = motorConvertFromExternal(sbufReadU16(src));
+            motor_disarmed[i] = 0; //motorConvertFromExternal(sbufReadU16(src));
         }
         break;
 

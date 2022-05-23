@@ -248,11 +248,6 @@ void initActiveBoxIds(void)
 #endif
 #endif
 
-#ifdef USE_DSHOT
-    bool configuredMotorProtocolDshot;
-    checkMotorProtocolEnabled(&motorConfig()->dev, &configuredMotorProtocolDshot);
-#endif
-
     BME(BOXOSD);
 
 #ifdef USE_TELEMETRY

@@ -528,16 +528,6 @@ pwmOutputPort_t *pwmGetMotors(void)
     return motors;
 }
 
-static float pwmConvertFromExternal(uint16_t externalValue)
-{
-    return (float)externalValue;
-}
-
-static uint16_t pwmConvertToExternal(float motorValue)
-{
-    return (uint16_t)motorValue;
-}
-
 static void pwmDisableMotors(void)
 {
     motorPwmDevice.enabled = false;
@@ -610,8 +600,6 @@ void pwmWriteServo(uint8_t index, float value)
 static motorDevice_t motorPwmDevice = {
     .vTable = {
         .postInit = motorPostInitNull,
-        .convertExternalToMotor = pwmConvertFromExternal,
-        .convertMotorToExternal = pwmConvertToExternal,
         .enable = pwmEnableMotors,
         .disable = pwmDisableMotors,
         .isMotorEnabled = pwmIsMotorEnabled,
