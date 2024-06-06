@@ -57,6 +57,9 @@ else
 	$(V0) git -C $(CONFIG_DIR) pull origin
 endif
 
+.PHONY: all_targets
+all_targets: $(BASE_CONFIGS)
+
 $(BASE_CONFIGS):
 	@echo "Building target config $@"
 	$(V0) $(MAKE) -j hex CONFIG=$@
