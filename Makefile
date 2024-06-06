@@ -16,7 +16,7 @@
 #
 
 # The target to build, see BASE_TARGETS below
-DEFAULT_TARGET ?= STM32F405
+DEFAULT_TARGET ?= STM32F7X2
 TARGET    ?=
 CONFIG    ?=
 
@@ -128,6 +128,7 @@ endif
 HSE_VALUE       ?= 8000000
 
 CI_TARGETS       := $(BASE_TARGETS) $(filter CRAZYBEEF4SX1280 CRAZYBEEF4FR IFLIGHT_BLITZ_F722 NUCLEOF446 SPRACINGH7EXTREME SPRACINGH7RF, $(BASE_CONFIGS))
+
 include $(ROOT)/src/main/target/$(TARGET)/target.mk
 
 REVISION := norevision
@@ -465,7 +466,11 @@ $(TARGET_OBJ_DIR)/%.o: %.S
 
 
 ## all               : Build all currently built targets
-all: $(CI_TARGETS)
+all: base
+
+base: $(BASE_TARGETS)
+
+ci: $(CI_TARGETS)
 
 $(BASE_TARGETS):
 	$(V0) @echo "Building target $@" && \
