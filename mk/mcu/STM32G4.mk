@@ -170,7 +170,6 @@ MCU_COMMON_SRC = \
             drivers/stm32/system_stm32g4xx.c \
             drivers/stm32/timer_hal.c \
             drivers/stm32/timer_stm32g4xx.c \
-            drivers/stm32/transponder_ir_io_hal.c \
             drivers/stm32/camera_control.c \
             startup/system_stm32g4xx.c
 

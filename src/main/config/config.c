@@ -462,10 +462,6 @@ static void validateAndFixConfig(void)
     featureDisableImmediate(FEATURE_SERVO_TILT | FEATURE_CHANNEL_FORWARDING);
 #endif
 
-#ifndef USE_TRANSPONDER
-    featureDisableImmediate(FEATURE_TRANSPONDER);
-#endif
-
 #ifndef USE_RX_SPI
     featureDisableImmediate(FEATURE_RX_SPI);
 #endif
@@ -502,10 +498,6 @@ if (systemConfig()->configurationState == CONFIGURATION_STATE_UNCONFIGURED) {
 #ifdef USE_TELEMETRY
     featureEnableImmediate(FEATURE_TELEMETRY);
 #endif
-#ifdef USE_TRANSPONDER
-    featureEnableImmediate(FEATURE_TRANSPONDER);
-#endif
-
 }
 
 #if defined(USE_BEEPER)
@@ -673,7 +665,7 @@ void validateAndFixGyroConfig(void)
          */
         if (true
 #ifdef USE_PID_DENOM_OVERCLOCK_LEVEL
-        && (systemConfig()->cpu_overclock < USE_PID_DENOM_OVERCLOCK_LEVEL) 
+        && (systemConfig()->cpu_overclock < USE_PID_DENOM_OVERCLOCK_LEVEL)
 #endif
         && motorConfig()->dev.useDshotTelemetry
         ) {
