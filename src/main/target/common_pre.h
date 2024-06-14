@@ -373,10 +373,6 @@
 // any thing defined here will be in the standard (git hub actions)
 // builds or included in CLOUD_BUILD by default.
 
-#if !defined(USE_LAUNCH_CONTROL)
-#define USE_LAUNCH_CONTROL
-#endif
-
 #endif // !defined(CORE_BUILD)
 
 #ifdef USE_GPS
