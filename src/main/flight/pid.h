@@ -186,7 +186,6 @@ typedef struct pidProfile_s {
     uint8_t feedforward_max_rate_limit;     // Maximum setpoint rate percentage for feedforward
 
     uint8_t dterm_lpf1_dyn_expo;            // set the curve for dynamic dterm lowpass filter
-    uint8_t level_race_mode;                // NFE race mode - when true pitch setpoint calculation is gyro based in level mode
     uint8_t vbat_sag_compensation;          // Reduce motor output by this percentage of the maximum compensation amount
 
     uint8_t simplified_pids_mode;
@@ -285,7 +284,6 @@ typedef struct pidRuntime_s {
     float itermLimit;
     bool itermRotation;
     bool zeroThrottleItermReset;
-    bool levelRaceMode;
     float tpaFactor;
     float tpaBreakpoint;
     float tpaMultiplier;
