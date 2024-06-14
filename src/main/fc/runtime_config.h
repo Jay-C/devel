@@ -46,7 +46,7 @@ typedef enum {
     ARMING_DISABLED_NOT_DISARMED    = (1 << 3),
     ARMING_DISABLED_BOXFAILSAFE     = (1 << 4),
     ARMING_DISABLED_UNUSED_5        = (1 << 5),
-    ARMING_DISABLED_CRASH_DETECTED  = (1 << 6),
+    ARMING_DISABLED_UNUSED_6        = (1 << 6),
     ARMING_DISABLED_THROTTLE        = (1 << 7),
     ARMING_DISABLED_ANGLE           = (1 << 8),
     ARMING_DISABLED_BOOT_GRACE_TIME = (1 << 9),

@@ -1115,7 +1115,6 @@ extern "C" {
     void pidSetAntiGravityState(bool) {}
     void osdSuppressStats(bool) {}
     float scaleRangef(float, float, float, float, float) { return 0.0f; }
-    bool crashRecoveryModeActive(void) { return false; }
     int32_t getEstimatedAltitudeCm(void) { return 0; }
     bool gpsIsHealthy(void) { return false; }
     float getCosTiltAngle(void) { return 0.0f; }

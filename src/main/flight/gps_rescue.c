@@ -69,7 +69,6 @@ typedef enum {
     RESCUE_FLYAWAY,
     RESCUE_GPSLOST,
     RESCUE_LOWSATS,
-    RESCUE_CRASH_FLIP_DETECTED,
     RESCUE_STALLED,
     RESCUE_TOO_CLOSE,
     RESCUE_NO_HOME_POINT
@@ -449,13 +448,6 @@ static void performSanityChecks(void)
                 rescueState.phase = RESCUE_ABORT;
             }
         }
-    }
-
-    // Crash detection is enabled in all rescues.  If triggered, immediately disarm.
-    if (crashRecoveryModeActive()) {
-        setArmingDisabled(ARMING_DISABLED_ARM_SWITCH);
-        disarm(DISARM_REASON_CRASH_PROTECTION);
-        rescueStop();
     }
 
     // Check if GPS comms are healthy
