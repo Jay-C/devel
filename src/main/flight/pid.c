@@ -164,7 +164,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .feedforward_jitter_factor = 7,
         .feedforward_boost = 15,
         .dterm_lpf1_dyn_expo = 5,
-        .level_race_mode = false,
         .vbat_sag_compensation = 0,
         .simplified_pids_mode = PID_SIMPLIFIED_TUNING_RPY,
         .simplified_master_multiplier = SIMPLIFIED_TUNING_DEFAULT,
@@ -637,11 +636,7 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
     const bool gpsRescueIsActive = FLIGHT_MODE(GPS_RESCUE_MODE);
     levelMode_e levelMode;
     if (FLIGHT_MODE(ANGLE_MODE) || FLIGHT_MODE(HORIZON_MODE) || gpsRescueIsActive) {
-        if (pidRuntime.levelRaceMode && !gpsRescueIsActive) {
-            levelMode = LEVEL_MODE_R;
-        } else {
-            levelMode = LEVEL_MODE_RP;
-        }
+        levelMode = LEVEL_MODE_RP;
 
         // Keep track of when we entered a self-level mode so that we can
         // add a guard time before crash recovery can activate.
