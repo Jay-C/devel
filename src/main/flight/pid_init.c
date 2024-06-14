@@ -199,10 +199,6 @@ void pidInitFilters(const pidProfile_t *pidProfile)
         pt1FilterInit(&pidRuntime.ptermYawLowpass, pt1FilterGain(pidProfile->yaw_lowpass_hz, pidRuntime.dT));
     }
 
-#if defined(USE_THROTTLE_BOOST)
-    pt1FilterInit(&throttleLpf, pt1FilterGain(pidProfile->throttle_boost_cutoff, pidRuntime.dT));
-#endif
-
 #if defined(USE_ITERM_RELAX)
     if (pidRuntime.itermRelax) {
         for (int i = 0; i < XYZ_AXIS_COUNT; i++) {
@@ -300,9 +296,6 @@ void pidInitConfig(const pidProfile_t *pidProfile)
     }
     pidRuntime.antiGravityGain = pidProfile->anti_gravity_gain;
     pidRuntime.itermLimit = pidProfile->itermLimit;
-#if defined(USE_THROTTLE_BOOST)
-    throttleBoost = pidProfile->throttle_boost * 0.1f;
-#endif
     pidRuntime.itermRotation = pidProfile->iterm_rotation;
 
     // Calculate the anti-gravity value that will trigger the OSD display when its strength exceeds 25% of max.

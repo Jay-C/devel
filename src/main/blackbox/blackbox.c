@@ -1611,8 +1611,6 @@ static bool blackboxWriteSysinfo(void)
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_MOTOR_OUTPUT_LIMIT, "%d",        currentPidProfile->motor_output_limit);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_THROTTLE_LIMIT_TYPE, "%d",       currentControlRateProfile->throttle_limit_type);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_THROTTLE_LIMIT_PERCENT, "%d",    currentControlRateProfile->throttle_limit_percent);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_THROTTLE_BOOST, "%d",            currentPidProfile->throttle_boost);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_THROTTLE_BOOST_CUTOFF, "%d",     currentPidProfile->throttle_boost_cutoff);
 
 #ifdef USE_GPS
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_GPS_PROVIDER, "%d",               gpsConfig()->provider)
