@@ -189,9 +189,6 @@
 #define MSP_BLACKBOX_CONFIG             80 //out message         Get blackbox settings
 #define MSP_SET_BLACKBOX_CONFIG         81 //in message          Set blackbox settings
 
-#define MSP_TRANSPONDER_CONFIG          82 //out message         Get transponder settings
-#define MSP_SET_TRANSPONDER_CONFIG      83 //in message          Set transponder settings
-
 #define MSP_OSD_CONFIG                  84 //out message         Get osd settings - betaflight
 #define MSP_SET_OSD_CONFIG              85 //in message          Set osd settings - betaflight
 
