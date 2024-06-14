@@ -317,8 +317,6 @@
 #define USE_DYN_LPF
 #define USE_D_MIN
 
-#define USE_THROTTLE_BOOST
-
 #define USE_ITERM_RELAX
 #define USE_RC_SMOOTHING_FILTER
 #define USE_TPA_MODE
