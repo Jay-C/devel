@@ -196,7 +196,6 @@ void processRcStickPositions(void)
             else {
                 beeper(BEEPER_DISARM_REPEAT);     // sound tone while stick held
                 repeatAfter(STICK_AUTOREPEAT_MS); // disarm tone will repeat
-                unsetArmingDisabled(ARMING_DISABLED_CRASH_DETECTED);
             }
         }
         return;
@@ -219,7 +218,7 @@ void processRcStickPositions(void)
         resetTryingToArm();
     }
 
-    if (ARMING_FLAG(ARMED) || doNotRepeat || rcDelayMs <= STICK_DELAY_MS || (getArmingDisableFlags() & (ARMING_DISABLED_CRASH_DETECTED))) {
+    if (ARMING_FLAG(ARMED) || doNotRepeat || rcDelayMs <= STICK_DELAY_MS) {
         return;
     }
     doNotRepeat = true;
