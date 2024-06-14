@@ -115,7 +115,6 @@ enum {
 enum {
     ARMING_DELAYED_DISARMED = 0,
     ARMING_DELAYED_NORMAL = 1,
-    ARMING_DELAYED_CRASHFLIP = 2,
 };
 
 #define GYRO_WATCHDOG_DELAY 80 //  delay for gyro sync
@@ -125,8 +124,6 @@ int16_t magHold;
 #endif
 
 static FAST_DATA_ZERO_INIT uint8_t pidUpdateCounter;
-
-static bool flipOverAfterCrashActive = false;
 
 static timeUs_t disarmAt;     // Time of automatic disarm when "Don't spin the motors when armed" is enabled and auto_disarm_delay is nonzero
 
@@ -216,17 +213,12 @@ void updateArmingStatus(void)
         if ((getArmingDisableFlags() & ARMING_DISABLED_BOOT_GRACE_TIME) && (millis() >= systemConfig()->powerOnArmingGraceTime * 1000)
 #ifdef USE_DSHOT
             // We also need to prevent arming until it's possible to send DSHOT commands.
-            // Otherwise if the initial arming is in crash-flip the motor direction commands
-            // might not be sent.
             && (!isMotorProtocolDshot() || dshotStreamingCommandsAreEnabled())
 #endif
         ) {
             // If so, unset the grace time arming disable flag
             unsetArmingDisabled(ARMING_DISABLED_BOOT_GRACE_TIME);
         }
-
-        // Clear the crash flip active status
-        flipOverAfterCrashActive = false;
 
         // If switch is used for arming then check it is not defaulting to on when the RX link recovers from a fault
         if (!isUsingSticksForArming()) {
@@ -258,7 +250,7 @@ void updateArmingStatus(void)
             unsetArmingDisabled(ARMING_DISABLED_THROTTLE);
         }
 
-        if (!isUpright() && !IS_RC_MODE_ACTIVE(BOXFLIPOVERAFTERCRASH)) {
+        if (!isUpright()) {
             setArmingDisabled(ARMING_DISABLED_ANGLE);
         } else {
             unsetArmingDisabled(ARMING_DISABLED_ANGLE);
@@ -289,7 +281,7 @@ void updateArmingStatus(void)
 #ifdef USE_GPS_RESCUE
         if (gpsRescueIsConfigured()) {
             if (gpsRescueConfig()->allowArmingWithoutFix || (STATE(GPS_FIX) && (gpsSol.numSat >= gpsRescueConfig()->minSats)) ||
-            ARMING_FLAG(WAS_EVER_ARMED) || IS_RC_MODE_ACTIVE(BOXFLIPOVERAFTERCRASH)) {
+                ARMING_FLAG(WAS_EVER_ARMED)) {
                 unsetArmingDisabled(ARMING_DISABLED_GPS);
             } else {
                 setArmingDisabled(ARMING_DISABLED_GPS);
@@ -336,10 +328,6 @@ void updateArmingStatus(void)
         }
 
         if (!isUsingSticksForArming()) {
-            if (!IS_RC_MODE_ACTIVE(BOXARM)) {
-                unsetArmingDisabled(ARMING_DISABLED_CRASH_DETECTED);
-            }
-
             /* Ignore ARMING_DISABLED_CALIBRATING if we are going to calibrate gyro on first arm */
             bool ignoreGyro = armingConfig()->gyro_cal_on_first_arm
                 && !(getArmingDisableFlags() & ~(ARMING_DISABLED_ARM_SWITCH | ARMING_DISABLED_CALIBRATING));
@@ -374,17 +362,9 @@ void updateArmingStatus(void)
 void disarm(flightLogDisarmReason_e reason)
 {
     if (ARMING_FLAG(ARMED)) {
-        if (!flipOverAfterCrashActive) {
-            ENABLE_ARMING_FLAG(WAS_EVER_ARMED);
-        }
+        ENABLE_ARMING_FLAG(WAS_EVER_ARMED);
         DISABLE_ARMING_FLAG(ARMED);
         lastDisarmTimeUs = micros();
-
-#ifdef USE_OSD
-        if (IS_RC_MODE_ACTIVE(BOXFLIPOVERAFTERCRASH)) {
-            osdSuppressStats(true);
-        }
-#endif
 
 #ifdef USE_BLACKBOX
         flightLogEvent_disarm_t eventData;
@@ -399,21 +379,15 @@ void disarm(flightLogDisarmReason_e reason)
 #endif
         BEEP_OFF;
 #ifdef USE_DSHOT
-        if (isMotorProtocolDshot() && flipOverAfterCrashActive && !featureIsEnabled(FEATURE_3D)) {
+        if (isMotorProtocolDshot() && !featureIsEnabled(FEATURE_3D)) {
             dshotCommandWrite(ALL_MOTORS, getMotorCount(), DSHOT_CMD_SPIN_DIRECTION_NORMAL, DSHOT_CMD_TYPE_INLINE);
         }
 #endif
 #ifdef USE_PERSISTENT_STATS
-        if (!flipOverAfterCrashActive) {
-            statsOnDisarm();
-        }
+        statsOnDisarm();
 #endif
 
-        flipOverAfterCrashActive = false;
-
-        if (!(getArmingDisableFlags() & ARMING_DISABLED_CRASH_DETECTED)) {
-            beeper(BEEPER_DISARMING);      // emit disarm tone
-        }
+        beeper(BEEPER_DISARMING);      // emit disarm tone
     }
 }
 
@@ -435,11 +409,7 @@ void tryArm(void)
 #ifdef USE_DSHOT
         if (cmpTimeUs(currentTimeUs, getLastDshotBeaconCommandTimeUs()) < DSHOT_BEACON_GUARD_DELAY_US) {
             if (tryingToArm == ARMING_DELAYED_DISARMED) {
-                if (IS_RC_MODE_ACTIVE(BOXFLIPOVERAFTERCRASH)) {
-                    tryingToArm = ARMING_DELAYED_CRASHFLIP;
-                } else {
-                    tryingToArm = ARMING_DELAYED_NORMAL;
-                }
+                tryingToArm = ARMING_DELAYED_NORMAL;
             }
             return;
         }
@@ -454,21 +424,6 @@ void tryArm(void)
                 }
             }
 #endif
-
-            if (isModeActivationConditionPresent(BOXFLIPOVERAFTERCRASH)) {
-                // Set motor spin direction
-                if (!(IS_RC_MODE_ACTIVE(BOXFLIPOVERAFTERCRASH) || (tryingToArm == ARMING_DELAYED_CRASHFLIP))) {
-                    flipOverAfterCrashActive = false;
-                    if (!featureIsEnabled(FEATURE_3D)) {
-                        dshotCommandWrite(ALL_MOTORS, getMotorCount(), DSHOT_CMD_SPIN_DIRECTION_NORMAL, DSHOT_CMD_TYPE_INLINE);
-                    }
-                } else {
-                    flipOverAfterCrashActive = true;
-                    if (!featureIsEnabled(FEATURE_3D)) {
-                        dshotCommandWrite(ALL_MOTORS, getMotorCount(), DSHOT_CMD_SPIN_DIRECTION_REVERSED, DSHOT_CMD_TYPE_INLINE);
-                    }
-                }
-            }
         }
 #endif
 
@@ -771,13 +726,6 @@ void processRxModes(timeUs_t currentTimeUs)
 
     updateActivatedModes();
 
-#ifdef USE_DSHOT
-    /* Enable beep warning when the crash flip mode is active */
-    if (flipOverAfterCrashActive) {
-        beeper(BEEPER_CRASH_FLIP_MODE);
-    }
-#endif
-
     if (!cliMode && !(IS_RC_MODE_ACTIVE(BOXPARALYZE) && !ARMING_FLAG(ARMED))) {
         processRcAdjustments(currentControlRateProfile);
     }
@@ -1074,11 +1022,6 @@ FAST_CODE void taskMainPidLoop(timeUs_t currentTimeUs)
 
     DEBUG_SET(DEBUG_CYCLETIME, 0, getTaskDeltaTimeUs(TASK_SELF));
     DEBUG_SET(DEBUG_CYCLETIME, 1, getAverageSystemLoadPercent());
-}
-
-bool isFlipOverAfterCrashActive(void)
-{
-    return flipOverAfterCrashActive;
 }
 
 timeUs_t getLastDisarmTimeUs(void)
