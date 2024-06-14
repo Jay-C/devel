@@ -154,7 +154,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .dterm_lpf2_type = FILTER_PT1,
         .dterm_lpf1_dyn_min_hz = DTERM_LPF1_DYN_MIN_HZ_DEFAULT,
         .dterm_lpf1_dyn_max_hz = DTERM_LPF1_DYN_MAX_HZ_DEFAULT,
-        .thrustLinearization = 0,
         .d_min = D_MIN_DEFAULT,
         .d_min_gain = 37,
         .d_min_advance = 20,
@@ -294,24 +293,6 @@ void pidAcroTrainerInit(void)
     pidRuntime.acroTrainerAxisState[FD_PITCH] = 0;
 }
 #endif // USE_ACRO_TRAINER
-
-#ifdef USE_THRUST_LINEARIZATION
-float pidCompensateThrustLinearization(float throttle)
-{
-    if (pidRuntime.thrustLinearization != 0.0f) {
-        // for whoops where a lot of TL is needed, allow more throttle boost
-        const float throttleReversed = (1.0f - throttle);
-        throttle /= 1.0f + pidRuntime.throttleCompensateAmount * sq(throttleReversed);
-    }
-    return throttle;
-}
-
-float pidApplyThrustLinearization(float motorOutput)
-{
-    motorOutput *= 1.0f + pidRuntime.thrustLinearization * sq(1.0f - motorOutput);
-    return motorOutput;
-}
-#endif
 
 #if defined(USE_ACC)
 // Calculate strength of horizon leveling; 0 = none, 1.0 = most leveling
