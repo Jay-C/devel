@@ -112,9 +112,6 @@ COMMON_SRC = \
             drivers/stack_check.c \
             drivers/system.c \
             drivers/timer_common.c \
-            drivers/transponder_ir_arcitimer.c \
-            drivers/transponder_ir_ilap.c \
-            drivers/transponder_ir_erlt.c \
             fc/board_info.c \
             fc/dispatch.c \
             fc/hardfaults.c \
@@ -127,7 +124,6 @@ COMMON_SRC = \
             io/smartaudio_protocol.c \
             io/statusindicator.c \
             io/tramp_protocol.c \
-            io/transponder_ir.c \
             io/usb_cdc_hid.c \
             io/usb_msc.c \
             msp/msp.c \
@@ -506,7 +502,6 @@ SIZE_OPTIMISED_SRC := $(SIZE_OPTIMISED_SRC) \
             io/serial_4way.c \
             io/serial_4way_avrootloader.c \
             io/serial_4way_stk500v2.c \
-            io/transponder_ir.c \
             io/usb_cdc_hid.c \
             msp/msp_serial.c \
             cms/cms.c \

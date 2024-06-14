@@ -91,7 +91,6 @@ bool cliMode = false;
 #include "drivers/system.h"
 #include "drivers/time.h"
 #include "drivers/timer.h"
-#include "drivers/transponder_ir.h"
 #include "drivers/usb_msc.h"
 #include "drivers/vtx_common.h"
 #include "drivers/vtx_table.h"
@@ -118,7 +117,6 @@ bool cliMode = false;
 #include "io/gps.h"
 #include "io/ledstrip.h"
 #include "io/serial.h"
-#include "io/transponder_ir.h"
 #include "io/usb_msc.h"
 #include "io/vtx_control.h"
 #include "io/vtx.h"
@@ -245,7 +243,6 @@ static const char * const featureNames[] = {
     _R(FEATURE_DASHBOARD, "DISPLAY"),
     _R(FEATURE_OSD, "OSD"),
     _R(FEATURE_CHANNEL_FORWARDING, "CHANNEL_FORWARDING"),
-    _R(FEATURE_TRANSPONDER, "TRANSPONDER"),
     _R(FEATURE_AIRMODE, "AIRMODE"),
     _R(FEATURE_RX_SPI, "RX_SPI"),
     _R(FEATURE_ESC_SENSOR, "ESC_SENSOR"),
@@ -5052,9 +5049,6 @@ const cliResourceValue_t resourceTable[] = {
 #ifdef USE_SPEKTRUM_BIND
     DEFS( OWNER_RX_BIND,       PG_RX_CONFIG, rxConfig_t, spektrum_bind_pin_override_ioTag ),
     DEFS( OWNER_RX_BIND_PLUG,  PG_RX_CONFIG, rxConfig_t, spektrum_bind_plug_ioTag ),
-#endif
-#ifdef USE_TRANSPONDER
-    DEFS( OWNER_TRANSPONDER,   PG_TRANSPONDER_CONFIG, transponderConfig_t, ioTag ),
 #endif
 #ifdef USE_SPI
     DEFW( OWNER_SPI_SCK,       PG_SPI_PIN_CONFIG, spiPinConfig_t, ioTagSck, SPIDEV_COUNT ),
