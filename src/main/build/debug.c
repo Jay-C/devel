@@ -58,7 +58,6 @@ const char * const debugModeNames[DEBUG_COUNT] = {
     "RANGEFINDER_QUALITY",
     "LIDAR_TF",
     "ADC_INTERNAL",
-    "RUNAWAY_TAKEOFF",
     "SDIO",
     "CURRENT_SENSOR",
     "USB",
