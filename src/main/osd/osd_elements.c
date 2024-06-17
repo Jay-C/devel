@@ -2200,12 +2200,6 @@ bool osdDrawSpec(displayPort_t *osdDisplayPort)
 
     case THR:
 #endif // #USE_RPM_LIMIT
-        len = tfp_sprintf(buff, "THR LIMIT %s", lookupTableThrottleLimitType[currentControlRateProfile->throttle_limit_type]);
-        if (currentControlRateProfile->throttle_limit_type != THROTTLE_LIMIT_TYPE_OFF) {
-            len = tfp_sprintf(buff, "%s %d", buff, currentControlRateProfile->throttle_limit_percent);
-        }
-        displayWrite(osdDisplayPort, midCol - (len / 2), currentRow++, DISPLAYPORT_SEVERITY_NORMAL, buff);
-
         specState = MOTOR;
         break;
 
