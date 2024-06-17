@@ -38,7 +38,6 @@
 
 #define PID_GAIN_MAX 250
 #define F_GAIN_MAX 1000
-#define D_MIN_GAIN_MAX 250
 
 // Scaling factors for Pids for better tunable range in configurator for betaflight pid controller. The scaling is based on legacy pid controller or previous float
 #define PTERM_SCALE 0.032029f
@@ -62,7 +61,6 @@
 #define PID_ROLL_DEFAULT  { 45, 80, 40, 120 }
 #define PID_PITCH_DEFAULT { 47, 84, 46, 125 }
 #define PID_YAW_DEFAULT   { 45, 80,  0, 120 }
-#define D_MIN_DEFAULT     { 30, 34, 0 }
 
 #define DTERM_LPF1_DYN_MIN_HZ_DEFAULT 75
 #define DTERM_LPF1_DYN_MAX_HZ_DEFAULT 150
@@ -166,9 +164,6 @@ typedef struct pidProfile_s {
     uint8_t dterm_lpf2_type;                // Filter type for 2nd dterm lowpass
     uint16_t dterm_lpf1_dyn_min_hz;         // Dterm lowpass filter 1 min hz when in dynamic mode
     uint16_t dterm_lpf1_dyn_max_hz;         // Dterm lowpass filter 1 max hz when in dynamic mode
-    uint8_t d_min[XYZ_AXIS_COUNT];          // Minimum D value on each axis
-    uint8_t d_min_gain;                     // Gain factor for amount of gyro / setpoint activity required to boost D
-    uint8_t d_min_advance;                  // Percentage multiplier for setpoint input to boost algorithm
     int8_t auto_profile_cell_count;         // Cell count for this profile to be used with if auto PID profile switching is used
     uint8_t transient_throttle_limit;       // Maximum DC component of throttle change to mix into throttle to prevent airmode mirroring noise
     char profileName[MAX_PROFILE_NAME_LENGTH + 1]; // Descriptive name for profile
@@ -306,14 +301,6 @@ typedef struct pidRuntime_s {
     float acErrorLimit;
     pt1Filter_t acLpf[XYZ_AXIS_COUNT];
     float oldSetpointCorrection[XYZ_AXIS_COUNT];
-#endif
-
-#ifdef USE_D_MIN
-    pt2Filter_t dMinRange[XYZ_AXIS_COUNT];
-    pt2Filter_t dMinLowpass[XYZ_AXIS_COUNT];
-    float dMinPercent[XYZ_AXIS_COUNT];
-    float dMinGyroGain;
-    float dMinSetpointGain;
 #endif
 
 #ifdef USE_AIRMODE_LPF
