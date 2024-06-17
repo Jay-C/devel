@@ -460,10 +460,6 @@ static uint8_t  cmsx_d_min_gain;
 static uint8_t  cmsx_d_min_advance;
 #endif
 
-#ifdef USE_BATTERY_VOLTAGE_SAG_COMPENSATION
-static uint8_t  cmsx_vbat_sag_compensation;
-#endif
-
 #ifdef USE_ITERM_RELAX
 static uint8_t cmsx_iterm_relax;
 static uint8_t cmsx_iterm_relax_type;
@@ -527,9 +523,6 @@ static const void *cmsx_profileOtherOnEnter(displayPort_t *pDisp)
     cmsx_feedforward_jitter_factor = pidProfile->feedforward_jitter_factor;
 #endif
 
-#ifdef USE_BATTERY_VOLTAGE_SAG_COMPENSATION
-    cmsx_vbat_sag_compensation = pidProfile->vbat_sag_compensation;
-#endif
     cmsx_tpa_rate = pidProfile->tpa_rate;
     cmsx_tpa_breakpoint = pidProfile->tpa_breakpoint;
     cmsx_tpa_low_rate = pidProfile->tpa_low_rate;
@@ -582,9 +575,6 @@ static const void *cmsx_profileOtherOnExit(displayPort_t *pDisp, const OSD_Entry
     pidProfile->feedforward_jitter_factor = cmsx_feedforward_jitter_factor;
 #endif
 
-#ifdef USE_BATTERY_VOLTAGE_SAG_COMPENSATION
-    pidProfile->vbat_sag_compensation = cmsx_vbat_sag_compensation;
-#endif
     pidProfile->tpa_rate = cmsx_tpa_rate;
     pidProfile->tpa_breakpoint = cmsx_tpa_breakpoint;
     pidProfile->tpa_low_rate = cmsx_tpa_low_rate;
@@ -628,10 +618,6 @@ static const OSD_Entry cmsx_menuProfileOtherEntries[] = {
     { "D_MIN YAW",   OME_UINT8 | SLIDER_RPY,  NULL, &(OSD_UINT8_t) { &cmsx_d_min[FD_YAW],       0, 100, 1 } },
     { "D_MIN GAIN",  OME_UINT8,  NULL, &(OSD_UINT8_t) { &cmsx_d_min_gain,          0, 100, 1 } },
     { "D_MIN ADV",   OME_UINT8,  NULL, &(OSD_UINT8_t) { &cmsx_d_min_advance,       0, 200, 1 } },
-#endif
-
-#ifdef USE_BATTERY_VOLTAGE_SAG_COMPENSATION
-    { "VBAT_SAG_COMP", OME_UINT8,  NULL, &(OSD_UINT8_t) { &cmsx_vbat_sag_compensation, 0, 150, 1 } },
 #endif
 
     { "TPA RATE",      OME_FLOAT,  NULL, &(OSD_FLOAT_t) { &cmsx_tpa_rate, 0, 100, 1, 10} },
