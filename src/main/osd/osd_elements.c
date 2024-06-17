@@ -450,11 +450,10 @@ void osdFormatDistanceString(char *ptr, int distance, char leadingSymbol)
 
 static void osdFormatPID(char * buff, const char * label, uint8_t axis)
 {
-    tfp_sprintf(buff, "%s %3d %3d %3d %3d %3d", label,
+    tfp_sprintf(buff, "%s %3d %3d %3d %3d", label,
         currentPidProfile->pid[axis].P,
         currentPidProfile->pid[axis].I,
         currentPidProfile->pid[axis].D,
-        currentPidProfile->d_min[axis],
         currentPidProfile->pid[axis].F);
 }
 
