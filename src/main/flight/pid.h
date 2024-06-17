@@ -318,14 +318,6 @@ typedef struct pidRuntime_s {
     float oldSetpointCorrection[XYZ_AXIS_COUNT];
 #endif
 
-#ifdef USE_D_MIN
-    pt2Filter_t dMinRange[XYZ_AXIS_COUNT];
-    pt2Filter_t dMinLowpass[XYZ_AXIS_COUNT];
-    float dMinPercent[XYZ_AXIS_COUNT];
-    float dMinGyroGain;
-    float dMinSetpointGain;
-#endif
-
 #ifdef USE_AIRMODE_LPF
     pt1Filter_t airmodeThrottleLpf1;
     pt1Filter_t airmodeThrottleLpf2;

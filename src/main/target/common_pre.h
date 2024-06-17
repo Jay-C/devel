@@ -311,7 +311,6 @@
 
 #define USE_GYRO_LPF2
 #define USE_DYN_LPF
-#define USE_D_MIN
 
 #define USE_ITERM_RELAX
 #define USE_RC_SMOOTHING_FILTER
