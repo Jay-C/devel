@@ -333,7 +333,6 @@ TEST(BlackboxTest, Test_CalculateRates)
 // STUBS
 extern "C" {
 
-PG_REGISTER(flight3DConfig_t, flight3DConfig, PG_MOTOR_3D_CONFIG, 0);
 PG_REGISTER(mixerConfig_t, mixerConfig, PG_MIXER_CONFIG, 0);
 PG_REGISTER(motorConfig_t, motorConfig, PG_MOTOR_CONFIG, 0);
 PG_REGISTER(batteryConfig_t, batteryConfig, PG_BATTERY_CONFIG, 0);
