@@ -321,7 +321,6 @@ static void rescueAttainPosition(void)
     gpsRescueAngle[AI_ROLL] = constrainf(rollAdjustment, -rollLimit, rollLimit);
     // gpsRescueAngle is added to the normal roll Angle Mode corrections in pid.c
 
-    rescueYaw *= GET_DIRECTION(rcControlsConfig()->yaw_control_reversed);
     // rescueYaw is the yaw rate in deg/s to correct the heading error
 
     DEBUG_SET(DEBUG_GPS_RESCUE_HEADING, 5, rollMixAttenuator);          // 0-1 to suppress roll adjustments at higher yaw rates
