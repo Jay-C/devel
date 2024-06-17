@@ -281,11 +281,6 @@ typedef struct pidRuntime_s {
     float oldSetpointCorrection[XYZ_AXIS_COUNT];
 #endif
 
-#ifdef USE_AIRMODE_LPF
-    pt1Filter_t airmodeThrottleLpf1;
-    pt1Filter_t airmodeThrottleLpf2;
-#endif
-
 #ifdef USE_ACRO_TRAINER
     float acroTrainerAngleLimit;
     float acroTrainerLookaheadTime;
@@ -300,10 +295,6 @@ typedef struct pidRuntime_s {
     uint16_t dynLpfMin;
     uint16_t dynLpfMax;
     uint8_t dynLpfCurveExpo;
-#endif
-
-#ifdef USE_AIRMODE_LPF
-    float airmodeThrottleOffsetLimit;
 #endif
 
 #ifdef USE_FEEDFORWARD
@@ -351,11 +342,6 @@ void pidUpdateAntiGravityThrottleFilter(float throttle);
 bool pidOsdAntiGravityActive(void);
 void pidSetAntiGravityState(bool newState);
 bool pidAntiGravityEnabled(void);
-
-#ifdef USE_AIRMODE_LPF
-void pidUpdateAirmodeLpf(float currentOffset);
-float pidGetAirmodeThrottleOffset();
-#endif
 
 #ifdef UNIT_TEST
 #include "sensors/acceleration.h"
