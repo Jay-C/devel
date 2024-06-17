@@ -313,7 +313,7 @@ bool mixerIsTricopter(void)
 // DSHOT scaling is done to the actual dshot range
 void initEscEndpoints(void)
 {
-    motorInitEndpoints(motorConfig(), 1, &mixerRuntime.motorOutputLow, &mixerRuntime.motorOutputHigh, &mixerRuntime.disarmMotorOutput, &mixerRuntime.deadbandMotor3dHigh, &mixerRuntime.deadbandMotor3dLow);
+    motorInitEndpoints(motorConfig(), 1, &mixerRuntime.motorOutputLow, &mixerRuntime.motorOutputHigh, &mixerRuntime.disarmMotorOutput);
 }
 
 // Initialize pidProfile related mixer settings
@@ -332,7 +332,7 @@ void mixerInitProfile(void)
     mixerRuntime.dynIdleMaxIncrease = currentPidProfile->dyn_idle_max_increase * 0.001f;
     mixerRuntime.dynIdleStartIncrease = currentPidProfile->dyn_idle_start_increase * 0.001f;
     mixerRuntime.minRpsDelayK = 800 * pidGetDT() / 20.0f; //approx 20ms D delay, arbitrarily suits many motors
-    if (!mixerRuntime.feature3dEnabled && mixerRuntime.dynIdleMinRps) {
+    if (mixerRuntime.dynIdleMinRps) {
         mixerRuntime.motorOutputLow = DSHOT_MIN_THROTTLE; // Override value set by initEscEndpoints to allow zero motor drive
     }
 #endif
@@ -422,8 +422,6 @@ static void mixerConfigureOutput(void)
 void mixerInit(mixerMode_e mixerMode)
 {
     currentMixerMode = mixerMode;
-
-    mixerRuntime.feature3dEnabled = featureIsEnabled(FEATURE_3D);
 
     initEscEndpoints();
 #ifdef USE_SERVOS
