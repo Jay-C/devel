@@ -49,7 +49,6 @@ extern "C" {
         .enabledFeatures = 0
     );
 
-    PG_REGISTER(flight3DConfig_t, flight3DConfig, PG_MOTOR_3D_CONFIG, 0);
     PG_REGISTER(failsafeConfig_t, failsafeConfig, PG_FAILSAFE_CONFIG, 0);
 }
 
