@@ -435,10 +435,6 @@ static uint8_t  cmsx_horizonLimitDegrees;
 static uint8_t  cmsx_antiGravityGain;
 static int8_t   cmsx_autoProfileCellCount;
 
-#ifdef USE_BATTERY_VOLTAGE_SAG_COMPENSATION
-static uint8_t  cmsx_vbat_sag_compensation;
-#endif
-
 #ifdef USE_ITERM_RELAX
 static uint8_t cmsx_iterm_relax;
 static uint8_t cmsx_iterm_relax_type;
@@ -488,10 +484,6 @@ static const void *cmsx_profileOtherOnEnter(displayPort_t *pDisp)
     cmsx_feedforward_jitter_factor = pidProfile->feedforward_jitter_factor;
 #endif
 
-#ifdef USE_BATTERY_VOLTAGE_SAG_COMPENSATION
-    cmsx_vbat_sag_compensation = pidProfile->vbat_sag_compensation;
-#endif
-
     return NULL;
 }
 
@@ -530,10 +522,6 @@ static const void *cmsx_profileOtherOnExit(displayPort_t *pDisp, const OSD_Entry
     pidProfile->feedforward_jitter_factor = cmsx_feedforward_jitter_factor;
 #endif
 
-#ifdef USE_BATTERY_VOLTAGE_SAG_COMPENSATION
-    pidProfile->vbat_sag_compensation = cmsx_vbat_sag_compensation;
-#endif
-
     initEscEndpoints();
     return NULL;
 }
@@ -564,10 +552,6 @@ static const OSD_Entry cmsx_menuProfileOtherEntries[] = {
     { "I_RELAX CUTOFF",  OME_UINT8,  NULL, &(OSD_UINT8_t)   { &cmsx_iterm_relax_cutoff, 1, 50, 1 } },
 #endif
     { "AUTO CELL CNT", OME_INT8, NULL, &(OSD_INT8_t) { &cmsx_autoProfileCellCount, AUTO_PROFILE_CELL_COUNT_CHANGE, MAX_AUTO_DETECT_CELL_COUNT, 1} },
-
-#ifdef USE_BATTERY_VOLTAGE_SAG_COMPENSATION
-    { "VBAT_SAG_COMP", OME_UINT8,  NULL, &(OSD_UINT8_t) { &cmsx_vbat_sag_compensation, 0, 150, 1 } },
-#endif
 
     { "BACK", OME_Back, NULL, NULL },
     { NULL, OME_END, NULL, NULL}
