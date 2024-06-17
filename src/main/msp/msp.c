@@ -1989,11 +1989,7 @@ case MSP_NAME:
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
 #endif
-#if defined(USE_BATTERY_VOLTAGE_SAG_COMPENSATION)
-        sbufWriteU8(dst, currentPidProfile->vbat_sag_compensation);
-#else
         sbufWriteU8(dst, 0);
-#endif
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, currentPidProfile->tpa_mode);
         sbufWriteU8(dst, currentPidProfile->tpa_rate);
@@ -3192,12 +3188,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
             sbufReadU8(src);
             sbufReadU8(src);
 #endif
-
-#if defined(USE_BATTERY_VOLTAGE_SAG_COMPENSATION)
-            currentPidProfile->vbat_sag_compensation = sbufReadU8(src);
-#else
             sbufReadU8(src);
-#endif
             sbufReadU8(src);
         }
         if (sbufBytesRemaining(src) >= 4) {
