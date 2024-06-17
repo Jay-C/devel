@@ -476,6 +476,8 @@ STATIC_UNIT_TESTED void rotateItermAndAxisError(void)
 #if defined(USE_ABSOLUTE_CONTROL)
 STATIC_UNIT_TESTED void applyAbsoluteControl(const int axis, const float gyroRate, float *currentPidSetpoint, float *itermErrorRate)
 {
+    UNUSED(itermErrorRate);
+
     if (pidRuntime.acGain > 0 || debugMode == DEBUG_AC_ERROR) {
         const float setpointLpf = pt1FilterApply(&pidRuntime.acLpf[axis], *currentPidSetpoint);
         const float setpointHpf = fabsf(*currentPidSetpoint - setpointLpf);
@@ -497,17 +499,6 @@ STATIC_UNIT_TESTED void applyAbsoluteControl(const int axis, const float gyroRat
             acErrorRate = (gyroRate > gmaxac ? gmaxac : gminac ) - gyroRate;
         }
 
-        if (isAirmodeActivated()) {
-            axisError[axis] = constrainf(axisError[axis] + acErrorRate * pidRuntime.dT,
-                -pidRuntime.acErrorLimit, pidRuntime.acErrorLimit);
-            const float acCorrection = constrainf(axisError[axis] * pidRuntime.acGain, -pidRuntime.acLimit, pidRuntime.acLimit);
-            *currentPidSetpoint += acCorrection;
-            *itermErrorRate += acCorrection;
-            DEBUG_SET(DEBUG_AC_CORRECTION, axis, lrintf(acCorrection * 10));
-            if (axis == FD_ROLL) {
-                DEBUG_SET(DEBUG_ITERM_RELAX, 3, lrintf(acCorrection * 10));
-            }
-        }
         DEBUG_SET(DEBUG_AC_ERROR, axis, lrintf(axisError[axis] * 10));
     }
 }
@@ -552,36 +543,11 @@ STATIC_UNIT_TESTED void applyItermRelax(const int axis, const float iterm,
 }
 #endif
 
-#ifdef USE_AIRMODE_LPF
-void pidUpdateAirmodeLpf(float currentOffset)
-{
-    if (pidRuntime.airmodeThrottleOffsetLimit == 0.0f) {
-        return;
-    }
-
-    float offsetHpf = currentOffset * 2.5f;
-    offsetHpf = offsetHpf - pt1FilterApply(&pidRuntime.airmodeThrottleLpf2, offsetHpf);
-
-    // During high frequency oscillation 2 * currentOffset averages to the offset required to avoid mirroring of the waveform
-    pt1FilterApply(&pidRuntime.airmodeThrottleLpf1, offsetHpf);
-    // Bring offset up immediately so the filter only applies to the decline
-    if (currentOffset * pidRuntime.airmodeThrottleLpf1.state >= 0 && fabsf(currentOffset) > pidRuntime.airmodeThrottleLpf1.state) {
-        pidRuntime.airmodeThrottleLpf1.state = currentOffset;
-    }
-    pidRuntime.airmodeThrottleLpf1.state = constrainf(pidRuntime.airmodeThrottleLpf1.state, -pidRuntime.airmodeThrottleOffsetLimit, pidRuntime.airmodeThrottleOffsetLimit);
-}
-
-float pidGetAirmodeThrottleOffset(void)
-{
-    return pidRuntime.airmodeThrottleLpf1.state;
-}
-#endif
-
 static FAST_CODE_NOINLINE void disarmOnImpact(void)
 {
     // if all sticks are within 5% of center, and throttle low, check accDelta for impacts
     // threshold should be high enough to avoid unwanted disarms in the air on throttle chops
-    if (isAirmodeActivated() && getMaxRcDeflectionAbs() < 0.05f && mixerGetRcThrottle() < 0.05f &&
+    if (getMaxRcDeflectionAbs() < 0.05f && mixerGetRcThrottle() < 0.05f &&
         fabsf(acc.accDelta) > pidRuntime.landingDisarmThreshold) {
         // disarm on accDelta transients
         setArmingDisabled(ARMING_DISABLED_ARM_SWITCH);
