@@ -22,8 +22,7 @@
 
 #include "voltage_ids.h"
 
-#define SLOW_VOLTAGE_TASK_FREQ_HZ 50
-#define FAST_VOLTAGE_TASK_FREQ_HZ 200
+#define VOLTAGE_TASK_FREQ_HZ 100
 
 #define PREV_DISPLAY_FILTERED_TIME_DIFF 500 // ms
 
@@ -48,9 +47,6 @@ typedef struct voltageMeter_s {
     timeMs_t prevDisplayFilteredTime;
     bool isVoltageStable;
     uint16_t unfiltered;                    // voltage in 0.01V steps
-#if defined(USE_BATTERY_VOLTAGE_SAG_COMPENSATION)
-    uint16_t sagFiltered;                   // voltage in 0.01V steps
-#endif
     bool lowVoltageCutoff;
 } voltageMeter_t;
 
@@ -125,5 +121,3 @@ extern const uint8_t voltageMeterADCtoIDMap[MAX_VOLTAGE_SENSOR_ADC];
 extern const uint8_t supportedVoltageMeterCount;
 extern const uint8_t voltageMeterIds[];
 void voltageMeterRead(voltageMeterId_e id, voltageMeter_t *voltageMeter);
-
-bool isSagCompensationConfigured(void);
