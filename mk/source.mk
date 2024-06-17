@@ -238,7 +238,6 @@ COMMON_SRC = \
             io/rcdevice.c \
             io/gps.c \
             io/ledstrip.c \
-            io/pidaudio.c \
             osd/osd.c \
             osd/osd_elements.c \
             osd/osd_warnings.c \
