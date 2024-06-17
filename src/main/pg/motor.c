@@ -52,12 +52,6 @@ PG_REGISTER_WITH_RESET_FN(motorConfig_t, motorConfig, PG_MOTOR_CONFIG, 2);
 
 void pgResetFn_motorConfig(motorConfig_t *motorConfig)
 {
-#ifdef BRUSHED_MOTORS
-    motorConfig->minthrottle = 1000;
-    motorConfig->dev.motorPwmRate = BRUSHED_MOTORS_PWM_RATE;
-    motorConfig->dev.motorPwmProtocol = PWM_TYPE_BRUSHED;
-    motorConfig->dev.useUnsyncedPwm = true;
-#else
     motorConfig->minthrottle = 1070;
     motorConfig->dev.motorPwmRate = BRUSHLESS_MOTORS_PWM_RATE;
 #ifndef USE_DSHOT
@@ -70,7 +64,6 @@ void pgResetFn_motorConfig(motorConfig_t *motorConfig)
 #else
     motorConfig->dev.motorPwmProtocol = PWM_TYPE_DSHOT600;
 #endif // USE_DSHOT
-#endif // BRUSHED_MOTORS
 
     motorConfig->maxthrottle = 2000;
     motorConfig->mincommand = 1000;
