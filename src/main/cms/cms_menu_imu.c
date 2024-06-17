@@ -258,11 +258,7 @@ static uint8_t cmsx_simplified_dterm_filter;
 static uint8_t cmsx_simplified_dterm_filter_multiplier;
 static uint8_t cmsx_simplified_gyro_filter;
 static uint8_t cmsx_simplified_gyro_filter_multiplier;
-static uint8_t cmsx_tpa_rate;
-static uint16_t cmsx_tpa_breakpoint;
-static int8_t cmsx_tpa_low_rate;
-static uint16_t cmsx_tpa_low_breakpoint;
-static uint8_t cmsx_tpa_low_always;
+
 static uint8_t cmsx_landing_disarm_threshold;
 
 static const void *cmsx_simplifiedTuningOnEnter(displayPort_t *pDisp)
@@ -455,12 +451,6 @@ static uint8_t cmsx_feedforward_smooth_factor;
 static uint8_t cmsx_feedforward_jitter_factor;
 #endif
 
-static uint8_t cmsx_tpa_rate;
-static uint16_t cmsx_tpa_breakpoint;
-static int8_t cmsx_tpa_low_rate;
-static uint16_t cmsx_tpa_low_breakpoint;
-static uint8_t cmsx_tpa_low_always;
-
 static const void *cmsx_profileOtherOnEnter(displayPort_t *pDisp)
 {
     UNUSED(pDisp);
@@ -496,12 +486,8 @@ static const void *cmsx_profileOtherOnEnter(displayPort_t *pDisp)
     cmsx_feedforward_jitter_factor = pidProfile->feedforward_jitter_factor;
 #endif
 
-    cmsx_tpa_rate = pidProfile->tpa_rate;
-    cmsx_tpa_breakpoint = pidProfile->tpa_breakpoint;
-    cmsx_tpa_low_rate = pidProfile->tpa_low_rate;
-    cmsx_tpa_low_breakpoint = pidProfile->tpa_low_breakpoint;
-    cmsx_tpa_low_always = pidProfile->tpa_low_always;
     cmsx_landing_disarm_threshold = pidProfile->landing_disarm_threshold;
+
     return NULL;
 }
 
@@ -540,11 +526,6 @@ static const void *cmsx_profileOtherOnExit(displayPort_t *pDisp, const OSD_Entry
     pidProfile->feedforward_jitter_factor = cmsx_feedforward_jitter_factor;
 #endif
 
-    pidProfile->tpa_rate = cmsx_tpa_rate;
-    pidProfile->tpa_breakpoint = cmsx_tpa_breakpoint;
-    pidProfile->tpa_low_rate = cmsx_tpa_low_rate;
-    pidProfile->tpa_low_breakpoint = cmsx_tpa_low_breakpoint;
-    pidProfile->tpa_low_always = cmsx_tpa_low_always;
     pidProfile->landing_disarm_threshold = cmsx_landing_disarm_threshold;
 
     initEscEndpoints();
@@ -578,11 +559,6 @@ static const OSD_Entry cmsx_menuProfileOtherEntries[] = {
 #endif
     { "AUTO CELL CNT", OME_INT8, NULL, &(OSD_INT8_t) { &cmsx_autoProfileCellCount, AUTO_PROFILE_CELL_COUNT_CHANGE, MAX_AUTO_DETECT_CELL_COUNT, 1} },
 
-    { "TPA RATE",      OME_FLOAT,  NULL, &(OSD_FLOAT_t) { &cmsx_tpa_rate, 0, 100, 1, 10} },
-    { "TPA BRKPT",     OME_UINT16, NULL, &(OSD_UINT16_t){ &cmsx_tpa_breakpoint, 1000, 2000, 10} },
-    { "TPA LOW RATE",  OME_INT8,   NULL, &(OSD_INT8_t) { &cmsx_tpa_low_rate, TPA_LOW_RATE_MIN, TPA_MAX , 1} },
-    { "TPA LOW BRKPT", OME_UINT16, NULL, &(OSD_UINT16_t){ &cmsx_tpa_low_breakpoint, 1000, 2000, 10} },
-    { "TPA LOW ALWYS", OME_Bool,   NULL, &cmsx_tpa_low_always },
     { "EZDISARM THR",  OME_UINT8,  NULL, &(OSD_UINT8_t) { &cmsx_landing_disarm_threshold, 0, 150, 1} },
 
     { "BACK", OME_Back, NULL, NULL },

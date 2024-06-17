@@ -174,15 +174,9 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .simplified_dterm_filter_multiplier = SIMPLIFIED_TUNING_DEFAULT,
         .anti_gravity_cutoff_hz = 5,
         .anti_gravity_p_gain = 100,
-        .tpa_mode = TPA_MODE_D,
-        .tpa_rate = 65,
-        .tpa_breakpoint = 1350,
         .angle_feedforward_smoothing_ms = 80,
         .angle_earth_ref = 100,
         .horizon_delay_ms = 500, // 500ms time constant on any increase in horizon strength
-        .tpa_low_rate = 20,
-        .tpa_low_breakpoint = 1050,
-        .tpa_low_always = 0,
         .ez_landing_threshold = 25,
         .ez_landing_limit = 15,
         .ez_landing_speed = 50,
@@ -199,7 +193,6 @@ void pgResetFn_pidProfiles(pidProfile_t *pidProfiles)
 
 // Scale factors to make best use of range with D_LPF debugging, aiming for max +/-16K as debug values are 16 bit
 #define D_LPF_RAW_SCALE 25
-#define D_LPF_PRE_TPA_SCALE 10
 
 
 void pidSetItermAccelerator(float newItermAccelerator)
@@ -227,30 +220,6 @@ void pidResetIterm(void)
         axisError[axis] = 0.0f;
 #endif
     }
-}
-
-void pidUpdateTpaFactor(float throttle)
-{
-    static bool isTpaLowFaded = false;
-    // don't permit throttle > 1 & throttle < 0 ? is this needed ? can throttle be > 1 or < 0 at this point
-    throttle = constrainf(throttle, 0.0f, 1.0f);
-
-    const float tpaArgument = throttle;
-
-    bool isThrottlePastTpaLowBreakpoint = (tpaArgument >= pidRuntime.tpaLowBreakpoint || pidRuntime.tpaLowBreakpoint <= 0.01f);
-    float tpaRate = 0.0f;
-    if (isThrottlePastTpaLowBreakpoint || isTpaLowFaded) {
-        tpaRate = pidRuntime.tpaMultiplier * fmaxf(tpaArgument - pidRuntime.tpaBreakpoint, 0.0f);
-        if (!pidRuntime.tpaLowAlways && !isTpaLowFaded) {
-            isTpaLowFaded = true;
-        }
-    } else {
-        tpaRate = pidRuntime.tpaLowMultiplier * (pidRuntime.tpaLowBreakpoint - tpaArgument);
-    }
-
-    float tpaFactor = 1.0f - tpaRate;
-    DEBUG_SET(DEBUG_TPA, 0, lrintf(tpaFactor * 1000));
-    pidRuntime.tpaFactor = tpaFactor;
 }
 
 void pidUpdateAntiGravityThrottleFilter(float throttle)
@@ -629,12 +598,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
     static float previousGyroRateDterm[XYZ_AXIS_COUNT];
     static float previousRawGyroRateDterm[XYZ_AXIS_COUNT];
 
-#ifdef USE_TPA_MODE
-    const float tpaFactorKp = (pidProfile->tpa_mode == TPA_MODE_PD) ? pidRuntime.tpaFactor : 1.0f;
-#else
-    const float tpaFactorKp = pidRuntime.tpaFactor;
-#endif
-
 #if defined(USE_ACC)
     static timeUs_t levelModeStartTimeUs = 0;
     static bool gpsRescuePreviousState = false;
@@ -774,7 +737,7 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
         // --------low-level gyro-based PID based on 2DOF PID controller. ----------
 
         // -----calculate P component
-        pidData[axis].P = pidRuntime.pidCoefficient[axis].Kp * errorRate * tpaFactorKp;
+        pidData[axis].P = pidRuntime.pidCoefficient[axis].Kp * errorRate;
 
         // -----calculate I component
         float Ki = pidRuntime.pidCoefficient[axis].Ki;
@@ -818,14 +781,7 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
             // calculated deltaT whenever another task causes the PID
             // loop execution to be delayed.
             const float delta = - (gyroRateDterm[axis] - previousGyroRateDterm[axis]) * pidRuntime.pidFrequency;
-            float preTpaD = pidRuntime.pidCoefficient[axis].Kd * delta;
-
-            pidData[axis].D = preTpaD * pidRuntime.tpaFactor;
-
-            // Log the value of D pre application of TPA
-            if (axis != FD_YAW) {
-                DEBUG_SET(DEBUG_D_LPF, axis - FD_ROLL + 2, lrintf(preTpaD * D_LPF_PRE_TPA_SCALE));
-            }
+            pidData[axis].D = pidRuntime.pidCoefficient[axis].Kd * delta;
         } else {
             pidData[axis].D = 0;
             if (axis != FD_YAW) {

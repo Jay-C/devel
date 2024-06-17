@@ -66,15 +66,6 @@
 #define DTERM_LPF1_DYN_MAX_HZ_DEFAULT 150
 #define DTERM_LPF2_HZ_DEFAULT 150
 
-#define TPA_MAX 100
-
-#define TPA_LOW_RATE_MIN 0
-
-typedef enum {
-    TPA_MODE_PD,
-    TPA_MODE_D
-} tpaMode_e;
-
 typedef enum {
     PID_ROLL,
     PID_PITCH,
@@ -198,16 +189,9 @@ typedef struct pidProfile_s {
 
     uint8_t anti_gravity_cutoff_hz;
     uint8_t anti_gravity_p_gain;
-    uint8_t tpa_mode;                       // Controls which PID terms TPA effects
-    uint8_t tpa_rate;                       // Percent reduction in P or D at full throttle
-    uint16_t tpa_breakpoint;                // Breakpoint where TPA is activated
-
     uint8_t angle_feedforward_smoothing_ms; // Smoothing factor for angle feedforward as time constant in milliseconds
     uint8_t angle_earth_ref;                // Control amount of "co-ordination" from yaw into roll while pitched forward in angle mode
     uint16_t horizon_delay_ms;              // delay when Horizon Strength increases, 50 = 500ms time constant
-    int8_t tpa_low_rate;                    // Percent reduction in P or D at zero throttle
-    uint16_t tpa_low_breakpoint;            // Breakpoint where lower TPA is deactivated
-    uint8_t tpa_low_always;                 // off, on - if OFF then low TPA is only active until tpa_low_breakpoint is reached the first time
 
     uint8_t ez_landing_threshold;           // Threshold stick position below which motor output is limited
     uint8_t ez_landing_limit;               // Maximum motor output when all sticks centred and throttle zero
@@ -283,12 +267,6 @@ typedef struct pidRuntime_s {
     float itermLimit;
     bool itermRotation;
     bool zeroThrottleItermReset;
-    float tpaFactor;
-    float tpaBreakpoint;
-    float tpaMultiplier;
-    float tpaLowBreakpoint;
-    float tpaLowMultiplier;
-    bool tpaLowAlways;
     bool useEzDisarm;
     float landingDisarmThreshold;
 
@@ -374,7 +352,6 @@ void pidStabilisationState(pidStabilisationState_e pidControllerState);
 void pidSetItermAccelerator(float newItermAccelerator);
 void pidAcroTrainerInit(void);
 void pidSetAcroTrainerState(bool newState);
-void pidUpdateTpaFactor(float throttle);
 void pidUpdateAntiGravityThrottleFilter(float throttle);
 bool pidOsdAntiGravityActive(void);
 void pidSetAntiGravityState(bool newState);
