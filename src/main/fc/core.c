@@ -569,13 +569,6 @@ uint8_t calculateThrottlePercentAbs(void)
     return abs(calculateThrottlePercent());
 }
 
-static bool airmodeIsActivated;
-
-bool isAirmodeActivated(void)
-{
-    return airmodeIsActivated;
-}
-
 
 /*
  * processRx called from taskUpdateRxMain
@@ -595,18 +588,8 @@ bool processRx(timeUs_t currentTimeUs)
     }
 
     const bool throttleActive = calculateThrottleStatus() != THROTTLE_LOW;
-    const uint8_t throttlePercent = calculateThrottlePercentAbs();
 
-    if (airmodeIsEnabled() && ARMING_FLAG(ARMED)) {
-        // once throttle exceeds activate threshold, airmode latches active until disarm
-        if (throttlePercent >= rxConfig()->airModeActivateThreshold) {
-            airmodeIsActivated = true;
-        }
-    } else {
-        airmodeIsActivated = false;
-    }
-
-    if (ARMING_FLAG(ARMED) && (airmodeIsActivated || throttleActive || isFixedWing())) {
+    if (ARMING_FLAG(ARMED) && (throttleActive || isFixedWing())) {
         pidSetItermReset(false);
         pidStabilisationState(PID_STABILISATION_ON);
     } else {
@@ -631,7 +614,6 @@ void processRxModes(timeUs_t currentTimeUs)
     const timeUs_t autoDisarmDelayUs = armingConfig()->auto_disarm_delay * 1e6;
     if (ARMING_FLAG(ARMED)
         && !isFixedWing()
-        && !airmodeIsEnabled()
         && !FLIGHT_MODE(GPS_RESCUE_MODE)  // disable auto-disarm when GPS Rescue is active
     ) {
         if (isUsingSticksForArming()) {
