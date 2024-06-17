@@ -1339,8 +1339,8 @@ case MSP_NAME:
             sbufWriteU8(dst, currentControlRateProfile->rates[i]); // R,P,Y see flight_dynamics_index_t
         }
         sbufWriteU8(dst, 0);   // was currentControlRateProfile->tpa_rate
-        sbufWriteU8(dst, currentControlRateProfile->thrMid8);
-        sbufWriteU8(dst, currentControlRateProfile->thrExpo8);
+        sbufWriteU8(dst, 0);   // currentControlRateProfile->thrMid8
+        sbufWriteU8(dst, 0);   // currentControlRateProfile->thrExpo8
         sbufWriteU16(dst, 0);   // was currentControlRateProfile->tpa_breakpoint
         sbufWriteU8(dst, currentControlRateProfile->rcExpo[FD_YAW]);
         sbufWriteU8(dst, currentControlRateProfile->rcRates[FD_YAW]);
@@ -2744,8 +2744,8 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
             }
 
             sbufReadU8(src);    // tpa_rate is moved to PID profile
-            currentControlRateProfile->thrMid8 = sbufReadU8(src);
-            currentControlRateProfile->thrExpo8 = sbufReadU8(src);
+            sbufReadU8(src);    // currentControlRateProfile->thrMid8
+            sbufReadU8(src);    // currentControlRateProfile->thrExpo8
             sbufReadU16(src);   // tpa_breakpoint is moved to PID profile
 
             if (sbufBytesRemaining(src) >= 1) {
