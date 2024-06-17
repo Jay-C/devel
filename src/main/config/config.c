@@ -589,8 +589,6 @@ if (systemConfig()->configurationState == CONFIGURATION_STATE_UNCONFIGURED) {
     }
 #endif
 
-    validateAndfixMotorOutputReordering(motorConfigMutable()->dev.motorOutputReordering, MAX_SUPPORTED_MOTORS);
-
     // validate that the minimum battery cell voltage is less than the maximum cell voltage
     // reset to defaults if not
     if (batteryConfig()->vbatmincellvoltage >=  batteryConfig()->vbatmaxcellvoltage) {
