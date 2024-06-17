@@ -2211,9 +2211,6 @@ bool osdDrawSpec(displayPort_t *osdDisplayPort)
         break;
 
     case MOTOR:
-        len = tfp_sprintf(buff, "MOTOR LIMIT %d", currentPidProfile->motor_output_limit);
-        displayWrite(osdDisplayPort, midCol - (len / 2), currentRow++, DISPLAYPORT_SEVERITY_NORMAL, buff);
-
         specState = BAT;
         break;
 
