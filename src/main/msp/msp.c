@@ -820,25 +820,6 @@ static bool mspCommonProcessOutCommand(int16_t cmdMSP, sbuf_t *dst, mspPostProce
         break;
     }
 
-    case MSP_CURRENT_METERS: {
-        // write out id and current meter values, once for each meter we support
-        uint8_t count = supportedCurrentMeterCount;
-#ifdef USE_ESC_SENSOR
-        count -= VOLTAGE_METER_ID_ESC_COUNT - getMotorCount();
-#endif
-        for (int i = 0; i < count; i++) {
-
-            currentMeter_t meter;
-            uint8_t id = (uint8_t)currentMeterIds[i];
-            currentMeterRead(id, &meter);
-
-            sbufWriteU8(dst, id);
-            sbufWriteU16(dst, (uint16_t)constrain(meter.mAhDrawn, 0, 0xFFFF)); // milliamp hours drawn from battery
-            sbufWriteU16(dst, (uint16_t)constrain(meter.amperage * 10, 0, 0xFFFF)); // send amperage in 0.001 A steps (mA). Negative range is truncated to zero
-        }
-        break;
-    }
-
     case MSP_VOLTAGE_METER_CONFIG:
         {
             // by using a sensor type and a sub-frame length it's possible to configure any type of voltage meter,
@@ -861,25 +842,6 @@ static bool mspCommonProcessOutCommand(int16_t cmdMSP, sbuf_t *dst, mspPostProce
         }
 
         break;
-    case MSP_CURRENT_METER_CONFIG: {
-        // the ADC and VIRTUAL sensors have the same configuration requirements, however this API reflects
-        // that this situation may change and allows us to support configuration of any current sensor with
-        // specialist configuration requirements.
-
-        int currentMeterCount = 1;
-
-        sbufWriteU8(dst, currentMeterCount);
-
-        const uint8_t adcSensorSubframeLength = 1 + 1 + 2 + 2; // length of id, type, scale, offset, in bytes
-        sbufWriteU8(dst, adcSensorSubframeLength);
-        sbufWriteU8(dst, CURRENT_METER_ID_BATTERY_1); // the id of the meter
-        sbufWriteU8(dst, CURRENT_SENSOR_ADC); // indicate the type of sensor that the next part of the payload is for
-        sbufWriteU16(dst, currentSensorADCConfig()->scale);
-        sbufWriteU16(dst, currentSensorADCConfig()->offset);
-
-        // if we had any other current sensors, this is where we would output any needed configuration
-        break;
-    }
 
     case MSP_BATTERY_CONFIG:
         sbufWriteU8(dst, (batteryConfig()->vbatmincellvoltage + 5) / 10);
@@ -3988,22 +3950,6 @@ static mspResult_e mspCommonProcessInCommand(mspDescriptor_t srcDesc, int16_t cm
         break;
     }
 
-    case MSP_SET_CURRENT_METER_CONFIG: {
-        int id = sbufReadU8(src);
-
-        switch (id) {
-            case CURRENT_METER_ID_BATTERY_1:
-                currentSensorADCConfigMutable()->scale = sbufReadU16(src);
-                currentSensorADCConfigMutable()->offset = sbufReadU16(src);
-                break;
-            default:
-                sbufReadU16(src);
-                sbufReadU16(src);
-                break;
-        }
-        break;
-    }
-
     case MSP_SET_BATTERY_CONFIG:
         batteryConfigMutable()->vbatmincellvoltage = sbufReadU8(src) * 10;      // vbatlevel_warn1 in MWC2.3 GUI
         batteryConfigMutable()->vbatmaxcellvoltage = sbufReadU8(src) * 10;      // vbatlevel_warn2 in MWC2.3 GUI
@@ -4241,27 +4187,7 @@ mspResult_e mspFcProcessCommand(mspDescriptor_t srcDesc, mspPacket_t *cmd, mspPa
 void mspFcProcessReply(mspPacket_t *reply)
 {
     sbuf_t *src = &reply->buf;
-    UNUSED(src); // potentially unused depending on compile options.
-
-    switch (reply->cmd) {
-    case MSP_ANALOG:
-        {
-            uint8_t batteryVoltage = sbufReadU8(src);
-            uint16_t mAhDrawn = sbufReadU16(src);
-            uint16_t rssi = sbufReadU16(src);
-            uint16_t amperage = sbufReadU16(src);
-
-            UNUSED(rssi);
-            UNUSED(batteryVoltage);
-            UNUSED(amperage);
-            UNUSED(mAhDrawn);
-
-#ifdef USE_MSP_CURRENT_METER
-            currentMeterMSPSet(amperage, mAhDrawn);
-#endif
-        }
-        break;
-    }
+    UNUSED(src);
 }
 
 void mspInit(void)
