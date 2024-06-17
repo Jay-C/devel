@@ -52,7 +52,6 @@ PG_REGISTER_WITH_RESET_FN(mixerConfig_t, mixerConfig, PG_MIXER_CONFIG, 1);
 void pgResetFn_mixerConfig(mixerConfig_t *mixerConfig)
 {
     mixerConfig->mixerMode = DEFAULT_MIXER;
-    mixerConfig->yaw_motors_reversed = false;
     mixerConfig->mixer_type = MIXER_LEGACY;
 #ifdef USE_RPM_LIMIT
     mixerConfig->rpm_limit = false;
