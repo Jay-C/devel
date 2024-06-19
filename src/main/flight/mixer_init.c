@@ -445,7 +445,7 @@ void mixerInit(mixerMode_e mixerMode)
 #endif
 
 #ifdef USE_DYN_IDLE
-    mixerRuntime.idleThrottleOffset = getDigitalIdleOffset(motorConfig());
+    mixerRuntime.idleThrottleOffset = 0;
     mixerRuntime.dynIdleI = 0.0f;
     mixerRuntime.prevMinRps = 0.0f;
 #endif
