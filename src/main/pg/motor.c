@@ -67,7 +67,6 @@ void pgResetFn_motorConfig(motorConfig_t *motorConfig)
 
     motorConfig->maxthrottle = 2000;
     motorConfig->mincommand = 1000;
-    motorConfig->digitalIdleOffsetValue = 550;
     motorConfig->kv = 1960;
 
 #ifdef USE_TIMER
