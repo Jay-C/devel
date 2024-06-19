@@ -938,7 +938,6 @@ const clivalue_t valueTable[] = {
 // PG_IMU_CONFIG
     { PARAM_NAME_IMU_DCM_KP,          VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { 0, 32000 }, PG_IMU_CONFIG, offsetof(imuConfig_t, imu_dcm_kp) },
     { PARAM_NAME_IMU_DCM_KI,          VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { 0, 32000 }, PG_IMU_CONFIG, offsetof(imuConfig_t, imu_dcm_ki) },
-    { PARAM_NAME_IMU_SMALL_ANGLE,     VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { 0,   180 }, PG_IMU_CONFIG, offsetof(imuConfig_t, small_angle) },
     { PARAM_NAME_IMU_PROCESS_DENOM,   VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { 1,     4 }, PG_IMU_CONFIG, offsetof(imuConfig_t, imu_process_denom) },
 #ifdef USE_MAG
     { PARAM_NAME_IMU_MAG_DECLINATION, VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { 0,  3599 }, PG_IMU_CONFIG, offsetof(imuConfig_t, mag_declination) },
