@@ -436,7 +436,7 @@ static void validateAndFixConfig(void)
 #endif
 
 #ifndef USE_SERVOS
-    featureDisableImmediate(FEATURE_SERVO_TILT | FEATURE_CHANNEL_FORWARDING);
+    featureDisableImmediate(FEATURE_CHANNEL_FORWARDING);
 #endif
 
 #ifndef USE_RX_SPI
@@ -467,7 +467,6 @@ if (systemConfig()->configurationState == CONFIGURATION_STATE_UNCONFIGURED) {
 #endif
 #ifdef USE_SERVOS
     featureEnableImmediate(FEATURE_CHANNEL_FORWARDING);
-    featureEnableImmediate(FEATURE_SERVO_TILT);
 #endif
 #if defined(SOFTSERIAL1_RX_PIN) || defined(SOFTSERIAL2_RX_PIN) || defined(SOFTSERIAL1_TX_PIN) || defined(SOFTSERIAL2_TX_PIN)
     featureEnableImmediate(FEATURE_SOFTSERIAL);
