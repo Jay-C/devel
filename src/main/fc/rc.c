@@ -81,25 +81,6 @@ enum {
     THROTTLE_FLAG = 1 << THROTTLE,
 };
 
-#ifdef USE_FEEDFORWARD
-static float feedforwardSmoothed[3];
-static float feedforwardRaw[3];
-typedef struct laggedMovingAverageCombined_s {
-    laggedMovingAverage_t filter;
-    float buf[4];
-} laggedMovingAverageCombined_t;
-laggedMovingAverageCombined_t  feedforwardDeltaAvg[XYZ_AXIS_COUNT];
-
-float getFeedforward(int axis)
-{
-#ifdef USE_RC_SMOOTHING_FILTER
-    return feedforwardSmoothed[axis];
-#else
-    return feedforwardRaw[axis];
-#endif
-}
-#endif // USE_FEEDFORWARD
-
 #ifdef USE_RC_SMOOTHING_FILTER
 static FAST_DATA_ZERO_INIT rcSmoothingFilter_t rcSmoothingData;
 static float rcDeflectionSmoothed[3];
@@ -456,8 +437,6 @@ static FAST_CODE void processRcSmoothingFilter(void)
     }
 
     for (int axis = FD_ROLL; axis <= FD_YAW; axis++) {
-        // Feedforward smoothing
-        feedforwardSmoothed[axis] = pt3FilterApply(&rcSmoothingData.filterFeedforward[axis], feedforwardRaw[axis]);
         // Horizon mode smoothing of rcDeflection on pitch and roll to provide a smooth angle element
         const bool smoothRcDeflection = FLIGHT_MODE(HORIZON_MODE) && rcSmoothingData.filterInitialized;
         if (smoothRcDeflection && axis < FD_YAW) {
@@ -468,142 +447,6 @@ static FAST_CODE void processRcSmoothingFilter(void)
     }
 }
 #endif // USE_RC_SMOOTHING_FILTER
-
-NOINLINE void initAveraging(uint16_t feedforwardAveraging)
-{
-    for (int i = 0; i < XYZ_AXIS_COUNT; i++) {
-        laggedMovingAverageInit(&feedforwardDeltaAvg[i].filter, feedforwardAveraging + 1, (float *)&feedforwardDeltaAvg[i].buf[0]);
-    }
-}
-
-FAST_CODE_NOINLINE void calculateFeedforward(const pidRuntime_t *pid, int axis)
-{
-    const float rxInterval = currentRxIntervalUs * 1e-6f; // seconds
-    float rxRate = currentRxRateHz;
-    static float prevRxInterval;
-
-    static float prevRcCommand[3];
-    static float prevRcCommandDeltaAbs[3];          // for duplicate interpolation
-    static float prevSetpoint[3];                   // equals raw unless interpolated 
-    static float prevSetpointSpeed[3];
-    static float prevAcceleration[3];               // for duplicate interpolation
-    static bool prevDuplicatePacket[3];             // to identify multiple identical packets
-    static uint16_t feedforwardAveraging = 0;
-
-    if (feedforwardAveraging != pid->feedforwardAveraging) {
-        feedforwardAveraging = pid->feedforwardAveraging;
-        initAveraging(feedforwardAveraging);
-    }
-
-    const float rcCommandDeltaAbs = fabsf(rcCommand[axis] - prevRcCommand[axis]);
-    prevRcCommand[axis] = rcCommand[axis];
-
-    float setpoint = rawSetpoint[axis];
-    float setpointSpeed = (setpoint - prevSetpoint[axis]);
-    prevSetpoint[axis] = setpoint;
-    float setpointAcceleration = 0.0f;
-
-
-    if (axis == FD_ROLL) {
-        DEBUG_SET(DEBUG_FEEDFORWARD, 0, lrintf(setpoint * 10.0f)); // un-smoothed final feedforward
-    }
-
-    // attenuators
-    float zeroTheAcceleration = 1.0f;
-    float jitterAttenuator = 1.0f;
-    if (pid->feedforwardJitterFactor) {
-        if (rcCommandDeltaAbs < pid->feedforwardJitterFactor) {
-            jitterAttenuator = MAX(1.0f - (rcCommandDeltaAbs + prevRcCommandDeltaAbs[axis]) * pid->feedforwardJitterFactorInv, 0.0f);
-            // note that feedforwardJitterFactorInv includes a divide by 2 to average the two previous rcCommandDeltaAbs values
-            jitterAttenuator = 1.0f - jitterAttenuator * jitterAttenuator;
-        }
-    }
-    prevRcCommandDeltaAbs[axis] = rcCommandDeltaAbs;
-
-    // interpolate setpoint if necessary
-    if (rcCommandDeltaAbs) {
-        // movement!
-        if (prevDuplicatePacket[axis] == true) {
-            rxRate = 1.0f / (rxInterval + prevRxInterval);
-            zeroTheAcceleration = 0.0f;
-            // don't add acceleration, empirically seems better on FrSky
-        }
-        setpointSpeed *= rxRate;
-        prevDuplicatePacket[axis] = false;
-    } else {
-        // no movement!
-        if (prevDuplicatePacket[axis] == false) {
-            // first duplicate after movement
-            setpointSpeed = prevSetpointSpeed[axis];
-            if (fabsf(setpoint) < 0.95f * maxRcRate[axis]) {
-                setpointSpeed += prevAcceleration[axis];
-            }
-            zeroTheAcceleration = 0.0f; // force acceleration to zero
-        } else {
-            // second and subsequent duplicates after movement should be zeroed
-            setpointSpeed = 0.0f;
-            prevSetpointSpeed[axis] = 0.0f;
-            zeroTheAcceleration = 0.0f; // force acceleration to zero
-        }
-        prevDuplicatePacket[axis] = true;
-    }
-    prevRxInterval = rxInterval;
-
-    // smooth the setpointSpeed value
-    setpointSpeed = prevSetpointSpeed[axis] + pid->feedforwardSmoothFactor * (setpointSpeed - prevSetpointSpeed[axis]);
-
-    // calculate acceleration and attenuate
-    setpointAcceleration = (setpointSpeed - prevSetpointSpeed[axis]) * rxRate * 0.01f;
-    prevSetpointSpeed[axis] = setpointSpeed;
-
-    // smooth the acceleration element (effectively a second order filter) and apply jitter reduction
-    setpointAcceleration = prevAcceleration[axis] + pid->feedforwardSmoothFactor * (setpointAcceleration - prevAcceleration[axis]);
-    prevAcceleration[axis] = setpointAcceleration * zeroTheAcceleration;
-    setpointAcceleration = setpointAcceleration * pid->feedforwardBoostFactor * jitterAttenuator * zeroTheAcceleration;
-
-    if (axis == FD_ROLL) {
-        DEBUG_SET(DEBUG_FEEDFORWARD, 1, lrintf(setpointSpeed * 0.1f)); // base feedforward without acceleration
-    }
-
-    float feedforward = setpointSpeed + setpointAcceleration;
-
-    if (axis == FD_ROLL) {
-        DEBUG_SET(DEBUG_FEEDFORWARD, 2, lrintf(feedforward * 0.1f));
-        // un-smoothed feedforward including acceleration but before limiting, transition, averaging, and jitter reduction
-    }
-
-    // apply feedforward transition
-    const bool useTransition = (pid->feedforwardTransition != 0.0f) && (rcDeflectionAbs[axis] < pid->feedforwardTransition);
-    if (useTransition) {
-        feedforward *= rcDeflectionAbs[axis] * pid->feedforwardTransitionInv;
-    }
-
-    // apply averaging
-    if (feedforwardAveraging) {
-        feedforward = laggedMovingAverageUpdate(&feedforwardDeltaAvg[axis].filter, feedforward);
-    }
-
-    // apply jitter reduction
-     feedforward *= jitterAttenuator;
-
-    // apply max rate limiting
-    if (pid->feedforwardMaxRateLimit && axis < FD_YAW) {
-        if (feedforward * setpoint > 0.0f) { // in same direction
-            const float limit = (maxRcRate[axis] - fabsf(setpoint)) * pid->feedforwardMaxRateLimit;
-            feedforward = (limit > 0.0f) ? constrainf(feedforward, -limit, limit) : 0.0f;
-        }
-    }
-
-    feedforwardRaw[axis] = feedforward;
-
-    if (axis == FD_ROLL) {
-        DEBUG_SET(DEBUG_FEEDFORWARD, 3, lrintf(feedforwardRaw[axis] * 0.1f)); // un-smoothed final feedforward
-        DEBUG_SET(DEBUG_FEEDFORWARD_LIMIT, 0, lrintf(jitterAttenuator * 100.0f)); // un-smoothed final feedforward
-        DEBUG_SET(DEBUG_FEEDFORWARD_LIMIT, 1, lrintf(maxRcRate[axis])); // un-smoothed final feedforward
-        DEBUG_SET(DEBUG_FEEDFORWARD_LIMIT, 2, lrintf(setpoint)); // un-smoothed final feedforward
-        DEBUG_SET(DEBUG_FEEDFORWARD_LIMIT, 3, lrintf(feedforwardRaw[axis])); // un-smoothed final feedforward
-    }
-}
 
 FAST_CODE void processRcCommand(void)
 {
@@ -642,11 +485,6 @@ FAST_CODE void processRcCommand(void)
 
             rawSetpoint[axis] = constrainf(angleRate, -1.0f * currentControlRateProfile->rate_limit[axis], 1.0f * currentControlRateProfile->rate_limit[axis]);
             DEBUG_SET(DEBUG_ANGLERATE, axis, angleRate);
-
-#ifdef USE_FEEDFORWARD
-        calculateFeedforward(&pidRuntime, axis);
-#endif // USE_FEEDFORWARD
-
         }
     }
 
@@ -746,10 +584,6 @@ void initRcProcessing(void)
 
     for (int i = 0; i < 3; i++) {
         maxRcRate[i] = applyRates(i, 1.0f, 1.0f);
-#ifdef USE_FEEDFORWARD
-        feedforwardSmoothed[i] = 0.0f;
-        feedforwardRaw[i] = 0.0f;
-#endif // USE_FEEDFORWARD
     }
 }
 
