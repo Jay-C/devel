@@ -391,8 +391,7 @@ pid_unittest_SRC :=  \
 pid_unittest_DEFINES := \
 		USE_ITERM_RELAX= \
 		USE_RC_SMOOTHING_FILTER= \
-		USE_ABSOLUTE_CONTROL= \
-		USE_FEEDFORWARD=
+		USE_ABSOLUTE_CONTROL=
 
 rcdevice_unittest_DEFINES := \
 		USE_RCDEVICE=
