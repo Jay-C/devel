@@ -435,10 +435,6 @@ static void validateAndFixConfig(void)
     featureDisableImmediate(FEATURE_OSD);
 #endif
 
-#ifndef USE_SERVOS
-    featureDisableImmediate(FEATURE_CHANNEL_FORWARDING);
-#endif
-
 #ifndef USE_RX_SPI
     featureDisableImmediate(FEATURE_RX_SPI);
 #endif
@@ -464,9 +460,6 @@ if (systemConfig()->configurationState == CONFIGURATION_STATE_UNCONFIGURED) {
 #endif
 #ifdef USE_RANGEFINDER
     featureEnableImmediate(FEATURE_RANGEFINDER);
-#endif
-#ifdef USE_SERVOS
-    featureEnableImmediate(FEATURE_CHANNEL_FORWARDING);
 #endif
 #if defined(SOFTSERIAL1_RX_PIN) || defined(SOFTSERIAL2_RX_PIN) || defined(SOFTSERIAL1_TX_PIN) || defined(SOFTSERIAL2_TX_PIN)
     featureEnableImmediate(FEATURE_SOFTSERIAL);
