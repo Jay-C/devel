@@ -230,7 +230,7 @@ static const char * const featureNames[] = {
     "", "SOFTSERIAL", "GPS", "",
     "RANGEFINDER", "TELEMETRY", "", "3D", "RX_PARALLEL_PWM",
     "RX_MSP", "RSSI_ADC", "LED_STRIP", "DISPLAY", "OSD",
-    "", "CHANNEL_FORWARDING", "", "",
+    "", "", "", "",
     "", "", "RX_SPI", "", "ESC_SENSOR", "ANTI_GRAVITY", "", NULL
 };
 
@@ -2068,7 +2068,7 @@ static void cliModeColor(const char *cmdName, char *cmdline)
 static void printServo(dumpFlags_t dumpMask, const servoParam_t *servoParams, const servoParam_t *defaultServoParams, const char *headingStr)
 {
     // print out servo settings
-    const char *format = "servo %u %d %d %d %d %d";
+    const char *format = "servo %u %d %d %d %d";
     headingStr = cliPrintSectionHeading(dumpMask, false, headingStr);
     for (uint32_t i = 0; i < MAX_SUPPORTED_SERVOS; i++) {
         const servoParam_t *servoConf = &servoParams[i];
@@ -2082,8 +2082,7 @@ static void printServo(dumpFlags_t dumpMask, const servoParam_t *servoParams, co
                 defaultServoConf->min,
                 defaultServoConf->max,
                 defaultServoConf->middle,
-                defaultServoConf->rate,
-                defaultServoConf->forwardFromChannel
+                defaultServoConf->rate
             );
         }
         cliDumpPrintLinef(dumpMask, equalsDefault, format,
@@ -2091,8 +2090,7 @@ static void printServo(dumpFlags_t dumpMask, const servoParam_t *servoParams, co
             servoConf->min,
             servoConf->max,
             servoConf->middle,
-            servoConf->rate,
-            servoConf->forwardFromChannel
+            servoConf->rate
         );
     }
     // print servo directions
@@ -2162,7 +2160,7 @@ static void cliServo(const char *cmdName, char *cmdline)
             }
         }
 
-        enum {INDEX = 0, MIN, MAX, MIDDLE, RATE, FORWARD};
+        enum {INDEX = 0, MIN, MAX, MIDDLE, RATE};
 
         i = arguments[INDEX];
 
@@ -2179,8 +2177,7 @@ static void cliServo(const char *cmdName, char *cmdline)
             arguments[MAX] < PWM_SERVO_MIN || arguments[MAX] > PWM_SERVO_MAX ||
             arguments[MIDDLE] < arguments[MIN] || arguments[MIDDLE] > arguments[MAX] ||
             arguments[MIN] > arguments[MAX] ||
-            arguments[RATE] < -100 || arguments[RATE] > 100 ||
-            arguments[FORWARD] >= MAX_SUPPORTED_RC_CHANNEL_COUNT
+            arguments[RATE] < -100 || arguments[RATE] > 100
         ) {
             cliShowArgumentRangeError(cmdName, NULL, 0, 0);
             return;
@@ -2190,15 +2187,13 @@ static void cliServo(const char *cmdName, char *cmdline)
         servo->max = arguments[MAX];
         servo->middle = arguments[MIDDLE];
         servo->rate = arguments[RATE];
-        servo->forwardFromChannel = arguments[FORWARD];
 
         cliDumpPrintLinef(0, false, format,
             i,
             servo->min,
             servo->max,
             servo->middle,
-            servo->rate,
-            servo->forwardFromChannel
+            servo->rate
         );
 
     }
