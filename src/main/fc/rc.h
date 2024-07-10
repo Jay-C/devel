@@ -43,7 +43,6 @@ bool rcSmoothingAutoCalculate(void);
 bool rcSmoothingInitializationComplete(void);
 
 float getMaxRcRate(int axis);
-float getFeedforward(int axis);
 
 void updateRcRefreshRate(timeUs_t currentTimeUs);
 uint16_t getCurrentRxIntervalUs(void);
