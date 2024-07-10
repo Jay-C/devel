@@ -105,8 +105,6 @@ typedef struct mixerConfig_s {
 
 PG_DECLARE(mixerConfig_t, mixerConfig);
 
-#define CHANNEL_FORWARDING_DISABLED (uint8_t)0xFF
-
 #ifdef USE_RPM_LIMIT
 #define RPM_LIMIT_ACTIVE mixerConfig()->rpm_limit
 #else
