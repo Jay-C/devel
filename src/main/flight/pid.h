@@ -273,15 +273,6 @@ typedef struct pidRuntime_s {
     uint8_t itermRelaxCutoff;
 #endif
 
-#ifdef USE_ABSOLUTE_CONTROL
-    float acCutoff;
-    float acGain;
-    float acLimit;
-    float acErrorLimit;
-    pt1Filter_t acLpf[XYZ_AXIS_COUNT];
-    float oldSetpointCorrection[XYZ_AXIS_COUNT];
-#endif
-
 #ifdef USE_ACRO_TRAINER
     float acroTrainerAngleLimit;
     float acroTrainerLookaheadTime;
@@ -337,7 +328,6 @@ bool pidAntiGravityEnabled(void);
 extern float axisError[XYZ_AXIS_COUNT];
 void applyItermRelax(const int axis, const float iterm,
     const float gyroRate, float *itermErrorRate, float *currentPidSetpoint);
-void applyAbsoluteControl(const int axis, const float gyroRate, float *currentPidSetpoint, float *itermErrorRate);
 void rotateItermAndAxisError();
 float pidLevel(int axis, const pidProfile_t *pidProfile,
     const rollAndPitchTrims_t *angleTrim, float rawSetpoint, float horizonLevelStrength);
