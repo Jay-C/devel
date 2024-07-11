@@ -1517,37 +1517,20 @@ case MSP_NAME:
 #endif
         sbufWriteU8(dst, 0); // was rxConfig()->fpvCamAngleDegrees
         sbufWriteU8(dst, 0); // not required in API 1.44, was rxConfig()->rcSmoothingChannels
-#if defined(USE_RC_SMOOTHING_FILTER)
-        sbufWriteU8(dst, 0); // not required in API 1.44, was rxConfig()->rc_smoothing_type
-        sbufWriteU8(dst, rxConfig()->rc_smoothing_setpoint_cutoff);
-        sbufWriteU8(dst, rxConfig()->rc_smoothing_feedforward_cutoff);
-        sbufWriteU8(dst, 0); // not required in API 1.44, was rxConfig()->rc_smoothing_input_type
-        sbufWriteU8(dst, 0); // not required in API 1.44, was rxConfig()->rc_smoothing_derivative_type
-#else
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
-#endif
 #if defined(USE_USB_CDC_HID)
         sbufWriteU8(dst, usbDevConfig()->type);
 #else
         sbufWriteU8(dst, 0);
 #endif
         // Added in MSP API 1.42
-#if defined(USE_RC_SMOOTHING_FILTER)
-        sbufWriteU8(dst, rxConfig()->rc_smoothing_auto_factor_rpy);
-#else
         sbufWriteU8(dst, 0);
-#endif
         // Added in MSP API 1.44
-#if defined(USE_RC_SMOOTHING_FILTER)
-        sbufWriteU8(dst, rxConfig()->rc_smoothing_mode);
-#else
         sbufWriteU8(dst, 0);
-#endif
-
         // Added in MSP API 1.45
 #ifdef USE_RX_EXPRESSLRS
         sbufWriteData(dst, rxExpressLrsSpiConfig()->UID, sizeof(rxExpressLrsSpiConfig()->UID));
@@ -3519,19 +3502,11 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         if (sbufBytesRemaining(src) >= 6) {
             // Added in MSP API 1.40
             sbufReadU8(src); // not required in API 1.44, was rxConfigMutable()->rcSmoothingChannels
-#if defined(USE_RC_SMOOTHING_FILTER)
-            sbufReadU8(src); // not required in API 1.44, was rc_smoothing_type
-            configRebootUpdateCheckU8(&rxConfigMutable()->rc_smoothing_setpoint_cutoff, sbufReadU8(src));
-            configRebootUpdateCheckU8(&rxConfigMutable()->rc_smoothing_feedforward_cutoff, sbufReadU8(src));
-            sbufReadU8(src); // not required in API 1.44, was rc_smoothing_input_type
-            sbufReadU8(src); // not required in API 1.44, was rc_smoothing_derivative_type
-#else
             sbufReadU8(src);
             sbufReadU8(src);
             sbufReadU8(src);
             sbufReadU8(src);
             sbufReadU8(src);
-#endif
         }
         if (sbufBytesRemaining(src) >= 1) {
             // Added in MSP API 1.40
@@ -3544,23 +3519,11 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         }
         if (sbufBytesRemaining(src) >= 1) {
             // Added in MSP API 1.42
-#if defined(USE_RC_SMOOTHING_FILTER)
-            // Added extra validation/range constraint for rc_smoothing_auto_factor as a workaround for a bug in
-            // the 10.6 configurator where it was possible to submit an invalid out-of-range value. We might be
-            // able to remove the constraint at some point in the future once the affected versions are deprecated
-            // enough that the risk is low.
-            configRebootUpdateCheckU8(&rxConfigMutable()->rc_smoothing_auto_factor_rpy, constrain(sbufReadU8(src), RC_SMOOTHING_AUTO_FACTOR_MIN, RC_SMOOTHING_AUTO_FACTOR_MAX));
-#else
             sbufReadU8(src);
-#endif
         }
         if (sbufBytesRemaining(src) >= 1) {
             // Added in MSP API 1.44
-#if defined(USE_RC_SMOOTHING_FILTER)
-            configRebootUpdateCheckU8(&rxConfigMutable()->rc_smoothing_mode, sbufReadU8(src));
-#else
             sbufReadU8(src);
-#endif
         }
         if (sbufBytesRemaining(src) >= 6) {
             // Added in MSP API 1.45
