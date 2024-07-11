@@ -2161,40 +2161,6 @@ bool osdDrawSpec(displayPort_t *osdDisplayPort)
     default:
     case RPM:
         currentRow = midRow - 3;
-#ifdef USE_RPM_LIMIT
-        {
-            const bool rpmLimitActive = mixerConfig()->rpm_limit > 0 && isMotorProtocolBidirDshot();
-            if (rpmLimitActive) {
-                len = tfp_sprintf(buff, "RPM LIMIT ON  %d", mixerConfig()->rpm_limit_value);
-            } else {
-                len = tfp_sprintf(buff, "%s", "RPM LIMIT OFF");
-            }
-            displayWrite(osdDisplayPort, midCol - (len / 2), currentRow++, DISPLAYPORT_SEVERITY_NORMAL, buff);
-
-            if (rpmLimitActive) {
-                specState = POLES;
-            } else {
-                specState = THR;
-            }
-        }
-        break;
-
-    case POLES:
-        len = tfp_sprintf(buff, "KV %d   POLES %d", motorConfig()->kv, motorConfig()->motorPoleCount);
-        displayWrite(osdDisplayPort, midCol - (len / 2), currentRow++, DISPLAYPORT_SEVERITY_NORMAL, buff);
-
-        specState = MIXER;
-        break;
-
-    case MIXER:
-        len = tfp_sprintf(buff, "%d  %d  %d", mixerConfig()->rpm_limit_p, mixerConfig()->rpm_limit_i, mixerConfig()->rpm_limit_d);
-        displayWrite(osdDisplayPort, midCol - (len / 2), currentRow++, DISPLAYPORT_SEVERITY_NORMAL, buff);
-
-        specState = THR;
-        break;
-
-    case THR:
-#endif // #USE_RPM_LIMIT
         specState = MOTOR;
         break;
 
