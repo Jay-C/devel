@@ -274,15 +274,6 @@ typedef struct pidRuntime_s {
     uint8_t itermRelaxCutoff;
 #endif
 
-#ifdef USE_ABSOLUTE_CONTROL
-    float acCutoff;
-    float acGain;
-    float acLimit;
-    float acErrorLimit;
-    pt1Filter_t acLpf[XYZ_AXIS_COUNT];
-    float oldSetpointCorrection[XYZ_AXIS_COUNT];
-#endif
-
 #ifdef USE_ACRO_TRAINER
     float acroTrainerAngleLimit;
     float acroTrainerLookaheadTime;
