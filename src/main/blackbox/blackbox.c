@@ -1388,11 +1388,6 @@ static bool blackboxWriteSysinfo(void)
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_DTERM_NOTCH_HZ, "%d",         currentPidProfile->dterm_notch_hz);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_DTERM_NOTCH_CUTOFF, "%d",     currentPidProfile->dterm_notch_cutoff);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ITERM_WINDUP, "%d",           currentPidProfile->itermWindupPointPercent);
-#if defined(USE_ITERM_RELAX)
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ITERM_RELAX, "%d",            currentPidProfile->iterm_relax);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ITERM_RELAX_TYPE, "%d",       currentPidProfile->iterm_relax_type);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ITERM_RELAX_CUTOFF, "%d",     currentPidProfile->iterm_relax_cutoff);
-#endif
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_PID_AT_MIN_THROTTLE, "%d",    currentPidProfile->pidAtMinThrottle);
 
         // Betaflight PID controller parameters
