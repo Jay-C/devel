@@ -24,11 +24,6 @@
 
 #include "fc/rc_controls.h"
 
-#ifdef USE_RC_SMOOTHING_FILTER
-#define RC_SMOOTHING_AUTO_FACTOR_MIN 0
-#define RC_SMOOTHING_AUTO_FACTOR_MAX 250
-#endif
-
 void processRcCommand(void);
 float getSetpointRate(int axis);
 float getRcDeflection(int axis);
