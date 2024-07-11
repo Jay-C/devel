@@ -599,10 +599,6 @@ extern uint8_t __config_end;
 #define RAM_CODE                   __attribute__((section(".ram_code")))
 #endif
 
-#ifndef USE_ITERM_RELAX
-#undef USE_ABSOLUTE_CONTROL
-#endif
-
 #if defined(USE_RX_EXPRESSLRS)
 // ELRS depends on CRSF telemetry
 #if !defined(USE_TELEMETRY)
