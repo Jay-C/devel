@@ -63,7 +63,6 @@ const char * const debugModeNames[DEBUG_COUNT] = {
     "USB",
     "SMARTAUDIO",
     "RTH",
-    "ACRO_TRAINER",
     "RX_SIGNAL_LOSS",
     "ANTI_GRAVITY",
     "DYN_LPF",
