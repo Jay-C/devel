@@ -103,7 +103,6 @@ const char * const debugModeNames[DEBUG_COUNT] = {
     "ANGLE_TARGET",
     "CURRENT_ANGLE",
     "DSHOT_TELEMETRY_COUNTS",
-    "RPM_LIMIT",
     "RC_STATS",
     "MAG_CALIB",
     "MAG_TASK_RATE",
