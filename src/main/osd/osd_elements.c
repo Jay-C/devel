@@ -993,7 +993,7 @@ static void osdElementFlymode(osdElementParms_t *element)
     // Note that flight mode display has precedence in what to display.
     //  1. FS
     //  2. GPS RESCUE
-    //  3. ANGLE, HORIZON, ACRO TRAINER
+    //  3. ANGLE, HORIZON
     //  4. AIR
     //  5. ACRO
 
@@ -1007,8 +1007,6 @@ static void osdElementFlymode(osdElementParms_t *element)
         strcpy(element->buff, "ANGL");
     } else if (FLIGHT_MODE(HORIZON_MODE)) {
         strcpy(element->buff, "HOR ");
-    } else if (IS_RC_MODE_ACTIVE(BOXACROTRAINER)) {
-        strcpy(element->buff, "ATRN");
     } else {
         strcpy(element->buff, "ACRO");
     }
