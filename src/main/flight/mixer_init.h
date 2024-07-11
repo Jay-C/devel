@@ -30,9 +30,6 @@ typedef struct mixerRuntime_s {
     float motorOutputLow;
     float motorOutputHigh;
     float disarmMotorOutput;
-    float ezLandingThreshold;
-    float ezLandingLimit;
-    float ezLandingSpeed;
 } mixerRuntime_t;
 
 extern mixerRuntime_t mixerRuntime;
