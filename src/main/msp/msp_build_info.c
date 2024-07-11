@@ -35,7 +35,7 @@
 
 #include "msp/msp_build_info.h"
 
-void sbufWriteBuildInfoFlags(sbuf_t *dst) 
+void sbufWriteBuildInfoFlags(sbuf_t *dst)
 {
     static const uint16_t options[] = {
 #ifdef USE_SERIALRX_CRSF
@@ -94,9 +94,6 @@ void sbufWriteBuildInfoFlags(sbuf_t *dst)
 #endif
 #ifdef USE_TELEMETRY_SRXL
         BUILD_OPTION_TELEMETRY_SRXL,
-#endif
-#ifdef USE_ACRO_TRAINER
-        BUILD_OPTION_ACRO_TRAINER,
 #endif
 #ifdef USE_AKK_SMARTAUDIO
         BUILD_OPTION_AKK_SMARTAUDIO,
