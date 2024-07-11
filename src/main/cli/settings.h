@@ -95,10 +95,6 @@ typedef enum {
 #if defined(USE_VIDEO_SYSTEM)
     TABLE_VIDEO_SYSTEM,
 #endif
-#if defined(USE_ITERM_RELAX)
-    TABLE_ITERM_RELAX,
-    TABLE_ITERM_RELAX_TYPE,
-#endif
 #ifdef USE_ACRO_TRAINER
     TABLE_ACRO_TRAINER_DEBUG,
 #endif // USE_ACRO_TRAINER
