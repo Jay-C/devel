@@ -211,9 +211,6 @@ void batteryUpdatePresence(void)
             }
             batteryCellCount = cells;
         }
-#ifdef USE_RPM_LIMIT
-        mixerResetRpmLimiter();
-#endif
         batteryWarningVoltage = batteryCellCount * batteryConfig()->vbatwarningcellvoltage;
         batteryCriticalVoltage = batteryCellCount * batteryConfig()->vbatmincellvoltage;
         batteryWarningHysteresisVoltage = (batteryWarningVoltage > batteryConfig()->vbathysteresis) ? batteryWarningVoltage - batteryConfig()->vbathysteresis : 0;
@@ -223,7 +220,7 @@ void batteryUpdatePresence(void)
     } else if (voltageState != BATTERY_NOT_PRESENT && voltageMeter.isVoltageStable && !isVoltageFromBattery()) {
         /* battery has been disconnected - can take a while for filter cap to disharge so we use a threshold of batteryConfig()->vbatnotpresentcellvoltage */
         consumptionState = voltageState = BATTERY_NOT_PRESENT;
-        
+
         voltageMeter.isVoltageStable = false;
         batteryCellCount = 0;
         batteryWarningVoltage = 0;

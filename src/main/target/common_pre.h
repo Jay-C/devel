@@ -226,10 +226,6 @@
 
 #endif // USE_TELEMETRY
 
-#ifdef USE_DSHOT_TELEMETRY
-#define USE_RPM_LIMIT
-#endif
-
 #ifdef USE_OSD
 // Dependency for CMS is defined outside this block.
 #define USE_OSD_QUICK_MENU
@@ -410,12 +406,6 @@
 
 // USE_RACE_PRO feature pack
 #ifdef USE_RACE_PRO
-
-#ifdef USE_DSHOT_TELEMETRY
-#ifndef USE_RPM_LIMIT
-#define USE_RPM_LIMIT
-#endif
-#endif
 
 #ifdef USE_OSD
 #ifndef USE_OSD_QUICK_MENU
