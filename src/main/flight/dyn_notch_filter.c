@@ -378,7 +378,7 @@ static FAST_CODE_NOINLINE void dynNotchProcess(void)
                 for (int p = 0; p < dynNotch.count && p < 3; p++) {
                     DEBUG_SET(DEBUG_FFT_FREQ, p, lrintf(dynNotch.centerFreq[state.axis][p]));
                 }
-                DEBUG_SET(DEBUG_DYN_LPF, 1, lrintf(dynNotch.centerFreq[state.axis][0]));
+                //DEBUG_SET(DEBUG_DYN_LPF, 1, lrintf(dynNotch.centerFreq[state.axis][0]));
             }
 
             DEBUG_SET(DEBUG_FFT_TIME, 1, micros() - startTime);
