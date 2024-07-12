@@ -1835,7 +1835,7 @@ case MSP_NAME:
         sbufWriteU8(dst, currentPidProfile->angle_limit);
         sbufWriteU8(dst, 0); // was pidProfile.levelSensitivity
         sbufWriteU16(dst, 0); // was currentPidProfile->itermThrottleThreshold
-        sbufWriteU16(dst, currentPidProfile->anti_gravity_gain);
+        sbufWriteU16(dst, 0); // was currentPidProfile->anti_gravity_gain
         sbufWriteU16(dst, 0); // was currentPidProfile->dtermSetpointWeight
         sbufWriteU8(dst, currentPidProfile->iterm_rotation);
         sbufWriteU8(dst, 0); // was currentPidProfile->smart_feedforward
@@ -2761,7 +2761,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         }
         if (sbufBytesRemaining(src) >= 4) {
             sbufReadU16(src); // was currentPidProfile->itermThrottleThreshold
-            currentPidProfile->anti_gravity_gain = sbufReadU16(src);
+            sbufReadU16(src); // was currentPidProfile->anti_gravity_gain
         }
         if (sbufBytesRemaining(src) >= 2) {
             sbufReadU16(src); // was currentPidProfile->dtermSetpointWeight
