@@ -8,7 +8,6 @@ PG_SRC = \
             pg/bus_spi.c \
             pg/dashboard.c \
             pg/displayport_profiles.c \
-            pg/dyn_notch.c \
             pg/flash.c \
             pg/gps.c \
             pg/gps_rescue.c \
@@ -149,7 +148,6 @@ COMMON_SRC = \
             flight/position.c \
             flight/failsafe.c \
             flight/gps_rescue.c \
-            flight/dyn_notch_filter.c \
             flight/imu.c \
             flight/mixer.c \
             flight/mixer_init.c \
@@ -423,7 +421,6 @@ SPEED_OPTIMISED_SRC := $(SPEED_OPTIMISED_SRC) \
             fc/rc.c \
             fc/rc_controls.c \
             fc/runtime_config.c \
-            flight/dyn_notch_filter.c \
             flight/imu.c \
             flight/mixer.c \
             flight/pid.c \
