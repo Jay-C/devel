@@ -65,7 +65,6 @@
 #include "flight/failsafe.h"
 #include "flight/mixer.h"
 #include "flight/pid.h"
-#include "flight/rpm_filter.h"
 #include "flight/servos.h"
 #include "flight/gps_rescue.h"
 #include "flight/position.h"
@@ -1429,16 +1428,6 @@ static bool blackboxWriteSysinfo(void)
 #ifdef USE_DSHOT_TELEMETRY
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_DSHOT_BIDIR, "%d",            useDshotTelemetry);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_MOTOR_POLES, "%d",            motorConfig()->motorPoleCount);
-#endif
-#ifdef USE_RPM_FILTER
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_RPM_FILTER_HARMONICS, "%d",     rpmFilterConfig()->rpm_filter_harmonics);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_RPM_FILTER_WEIGHTS, "%d,%d,%d", rpmFilterConfig()->rpm_filter_weights[0],
-                                                                              rpmFilterConfig()->rpm_filter_weights[1],
-                                                                              rpmFilterConfig()->rpm_filter_weights[2]);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_RPM_FILTER_Q, "%d",             rpmFilterConfig()->rpm_filter_q);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_RPM_FILTER_MIN_HZ, "%d",        rpmFilterConfig()->rpm_filter_min_hz);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_RPM_FILTER_FADE_RANGE_HZ, "%d", rpmFilterConfig()->rpm_filter_fade_range_hz);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_RPM_FILTER_LPF_HZ, "%d",        rpmFilterConfig()->rpm_filter_lpf_hz);
 #endif
 #if defined(USE_ACC)
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ACC_LPF_HZ, "%d",        (int)(accelerometerConfig()->acc_lpf_hz * 100.0f));
