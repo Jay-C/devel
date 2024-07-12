@@ -140,7 +140,6 @@
 
 #include "fc/controlrate_profile.h"
 #include "fc/core.h"
-#include "fc/gps_lap_timer.h"
 #include "fc/rc_adjustments.h"
 #include "fc/rc_controls.h"
 #include "fc/runtime_config.h"
@@ -1025,12 +1024,6 @@ static void osdElementGpsHomeDirection(osdElementParms_t *element)
     if (STATE(GPS_FIX) && STATE(GPS_FIX_HOME)) {
         if (GPS_distanceToHome > 0) {
             int direction = GPS_directionToHome;
-#ifdef USE_GPS_LAP_TIMER
-            // Override the "home" point to the start/finish location if the lap timer is running
-            if (gpsLapTimerData.timerRunning) {
-                direction = lrintf(gpsLapTimerData.dirToPoint * 0.1f); // Convert from centidegree to degree and round to nearest
-            }
-#endif
             element->buff[0] = osdGetDirectionSymbolFromHeading(DECIDEGREES_TO_DEGREES(direction - attitude.values.yaw));
         } else {
             element->buff[0] = SYM_OVER_HOME;
@@ -1048,12 +1041,6 @@ static void osdElementGpsHomeDistance(osdElementParms_t *element)
 {
     if (STATE(GPS_FIX) && STATE(GPS_FIX_HOME)) {
         int distance = GPS_distanceToHome;
-#ifdef USE_GPS_LAP_TIMER
-        // Change the "home" point to the start/finish location if the lap timer is running
-        if (gpsLapTimerData.timerRunning) {
-            distance = lrintf(gpsLapTimerData.distToPointCM * 0.01f); // Round to nearest natural number
-        }
-#endif
         osdFormatDistanceString(element->buff, distance, SYM_HOMEFLAG);
     } else {
         element->buff[0] = SYM_HOMEFLAG;
@@ -1125,35 +1112,6 @@ static void osdElementEfficiency(osdElementParms_t *element)
     }
 }
 #endif // USE_GPS
-
-#ifdef USE_GPS_LAP_TIMER
-static void osdFormatLapTime(osdElementParms_t *element, uint32_t timeMs, uint8_t symbol)
-{
-    timeMs += 5;  // round to nearest centisecond (+/- 5ms)
-    uint32_t seconds = timeMs / 1000;
-    uint32_t decimals = (timeMs % 1000) / 10;
-    tfp_sprintf(element->buff, "%c%3u.%02u", symbol, seconds, decimals);
-}
-
-static void osdElementGpsLapTimeCurrent(osdElementParms_t *element)
-{
-    if (gpsLapTimerData.timerRunning) {
-        osdFormatLapTime(element, gpsSol.time - gpsLapTimerData.timeOfLastLap, SYM_TOTAL_DISTANCE);
-    } else {
-        osdFormatLapTime(element, 0, SYM_TOTAL_DISTANCE);
-    }
-}
-
-static void osdElementGpsLapTimePrevious(osdElementParms_t *element)
-{
-    osdFormatLapTime(element, gpsLapTimerData.previousLaps[0], SYM_PREV_LAP_TIME);
-}
-
-static void osdElementGpsLapTimeBest3(osdElementParms_t *element)
-{
-    osdFormatLapTime(element, gpsLapTimerData.best3Consec, SYM_CHECKERED_FLAG);
-}
-#endif // GPS_LAP_TIMER
 
 static void osdBackgroundHorizonSidebars(osdElementParms_t *element)
 {
@@ -1922,11 +1880,6 @@ const osdElementDrawFn osdElementDrawFunction[OSD_ITEM_COUNT] = {
 #ifdef USE_GPS
     [OSD_EFFICIENCY]              = osdElementEfficiency,
 #endif
-#ifdef USE_GPS_LAP_TIMER
-    [OSD_GPS_LAP_TIME_CURRENT]    = osdElementGpsLapTimeCurrent,
-    [OSD_GPS_LAP_TIME_PREVIOUS]   = osdElementGpsLapTimePrevious,
-    [OSD_GPS_LAP_TIME_BEST3]      = osdElementGpsLapTimeBest3,
-#endif // GPS_LAP_TIMER
 #ifdef USE_PERSISTENT_STATS
     [OSD_TOTAL_FLIGHTS]           = osdElementTotalFlights,
 #endif
@@ -2006,14 +1959,6 @@ void osdAddActiveElements(void)
         osdAddActiveElement(OSD_ESC_RPM_FREQ);
     }
 #endif
-
-#ifdef USE_GPS_LAP_TIMER
-    if (sensors(SENSOR_GPS)) {
-        osdAddActiveElement(OSD_GPS_LAP_TIME_CURRENT);
-        osdAddActiveElement(OSD_GPS_LAP_TIME_PREVIOUS);
-        osdAddActiveElement(OSD_GPS_LAP_TIME_BEST3);
-    }
-#endif // GPS_LAP_TIMER
 
 #ifdef USE_PERSISTENT_STATS
     osdAddActiveElement(OSD_TOTAL_FLIGHTS);
