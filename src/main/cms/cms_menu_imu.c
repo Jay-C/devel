@@ -462,21 +462,13 @@ static CMS_Menu cmsx_menuFilterGlobal = {
     .entries = cmsx_menuFilterGlobalEntries,
 };
 
-#if (defined(USE_DYN_NOTCH_FILTER) || defined(USE_DYN_LPF)) && defined(USE_EXTENDED_CMS_MENUS)
+#if defined(USE_DYN_NOTCH_FILTER) && defined(USE_EXTENDED_CMS_MENUS)
 
 #ifdef USE_DYN_NOTCH_FILTER
 static uint16_t dynFiltNotchMaxHz;
 static uint8_t  dynFiltNotchCount;
 static uint16_t dynFiltNotchQ;
 static uint16_t dynFiltNotchMinHz;
-#endif
-#ifdef USE_DYN_LPF
-static uint16_t gyroLpfDynMin;
-static uint16_t gyroLpfDynMax;
-static uint8_t gyroLpfDynExpo;
-static uint16_t dtermLpfDynMin;
-static uint16_t dtermLpfDynMax;
-static uint8_t dtermLpfDynExpo;
 #endif
 
 static const void *cmsx_menuDynFilt_onEnter(displayPort_t *pDisp)
@@ -489,16 +481,6 @@ static const void *cmsx_menuDynFilt_onEnter(displayPort_t *pDisp)
     dynFiltNotchQ       = dynNotchConfig()->dyn_notch_q;
     dynFiltNotchMinHz   = dynNotchConfig()->dyn_notch_min_hz;
 #endif
-#ifdef USE_DYN_LPF
-    const pidProfile_t *pidProfile = pidProfiles(pidProfileIndex);
-    gyroLpfDynMin   = gyroConfig()->gyro_lpf1_dyn_min_hz;
-    gyroLpfDynMax   = gyroConfig()->gyro_lpf1_dyn_max_hz;
-    gyroLpfDynExpo  = gyroConfig()->gyro_lpf1_dyn_expo;
-    dtermLpfDynMin  = pidProfile->dterm_lpf1_dyn_min_hz;
-    dtermLpfDynMax  = pidProfile->dterm_lpf1_dyn_max_hz;
-    dtermLpfDynExpo = pidProfile->dterm_lpf1_dyn_expo;
-#endif
-
     return NULL;
 }
 
@@ -513,15 +495,6 @@ static const void *cmsx_menuDynFilt_onExit(displayPort_t *pDisp, const OSD_Entry
     dynNotchConfigMutable()->dyn_notch_q             = dynFiltNotchQ;
     dynNotchConfigMutable()->dyn_notch_min_hz        = dynFiltNotchMinHz;
 #endif
-#ifdef USE_DYN_LPF
-    pidProfile_t *pidProfile = currentPidProfile;
-    gyroConfigMutable()->gyro_lpf1_dyn_min_hz = gyroLpfDynMin;
-    gyroConfigMutable()->gyro_lpf1_dyn_max_hz = gyroLpfDynMax;
-    gyroConfigMutable()->gyro_lpf1_dyn_expo   = gyroLpfDynExpo;
-    pidProfile->dterm_lpf1_dyn_min_hz         = dtermLpfDynMin;
-    pidProfile->dterm_lpf1_dyn_max_hz         = dtermLpfDynMax;
-    pidProfile->dterm_lpf1_dyn_expo           = dtermLpfDynExpo;
-#endif
 
     return NULL;
 }
@@ -535,15 +508,6 @@ static const OSD_Entry cmsx_menuDynFiltEntries[] =
     { "NOTCH Q",        OME_UINT16, NULL, &(OSD_UINT16_t) { &dynFiltNotchQ,       1, 1000, 1 } },
     { "NOTCH MIN HZ",   OME_UINT16, NULL, &(OSD_UINT16_t) { &dynFiltNotchMinHz,   20, 250, 1 } },
     { "NOTCH MAX HZ",   OME_UINT16, NULL, &(OSD_UINT16_t) { &dynFiltNotchMaxHz,   200, 1000, 1 } },
-#endif
-
-#ifdef USE_DYN_LPF
-    { "GYRO DLPF MIN",   OME_UINT16, NULL, &(OSD_UINT16_t) { &gyroLpfDynMin,  0, 1000, 1 } },
-    { "GYRO DLPF MAX",   OME_UINT16, NULL, &(OSD_UINT16_t) { &gyroLpfDynMax,  0, 1000, 1 } },
-    { "GYRO DLPF EXPO",  OME_UINT8, NULL, &(OSD_UINT8_t) { &gyroLpfDynExpo,   0, 10, 1 } },
-    { "DTERM DLPF MIN",  OME_UINT16, NULL, &(OSD_UINT16_t) { &dtermLpfDynMin, 0, 1000, 1 } },
-    { "DTERM DLPF MAX",  OME_UINT16, NULL, &(OSD_UINT16_t) { &dtermLpfDynMax, 0, 1000, 1 } },
-    { "DTERM DLPF EXPO", OME_UINT8, NULL, &(OSD_UINT8_t) { &dtermLpfDynExpo,  0, 10, 1 } },
 #endif
 
     { "BACK", OME_Back, NULL, NULL },
@@ -709,7 +673,7 @@ static const OSD_Entry cmsx_menuImuEntries[] =
     {"RATE",      OME_Submenu, cmsMenuChange,                 &cmsx_menuRateProfile},
 
     {"FILT GLB",  OME_Submenu, cmsMenuChange,                 &cmsx_menuFilterGlobal},
-#if  (defined(USE_DYN_NOTCH_FILTER) || defined(USE_DYN_LPF)) && defined(USE_EXTENDED_CMS_MENUS)
+#if defined(USE_DYN_NOTCH_FILTER) && defined(USE_EXTENDED_CMS_MENUS)
     {"DYN FILT",  OME_Submenu, cmsMenuChange,                 &cmsx_menuDynFilt},
 #endif
 
