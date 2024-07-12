@@ -106,7 +106,6 @@ const OSD_Entry menuOsdActiveElemsEntries[] =
 #ifdef USE_ADC_INTERNAL
     {"CORE TEMPERATURE",   OME_VISIBLE | DYNAMIC, NULL, &osdConfig_item_pos[OSD_CORE_TEMPERATURE]},
 #endif
-    {"ANTI GRAVITY",       OME_VISIBLE | DYNAMIC, NULL, &osdConfig_item_pos[OSD_ANTI_GRAVITY]},
     {"FLY MODE",           OME_VISIBLE | DYNAMIC, NULL, &osdConfig_item_pos[OSD_FLYMODE]},
     {"CRAFT NAME",         OME_VISIBLE | DYNAMIC, NULL, &osdConfig_item_pos[OSD_CRAFT_NAME]},
     {"THROTTLE",           OME_VISIBLE | DYNAMIC, NULL, &osdConfig_item_pos[OSD_THROTTLE_POS]},
