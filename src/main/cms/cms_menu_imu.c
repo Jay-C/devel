@@ -314,8 +314,6 @@ static uint8_t  cmsx_horizonStrength;
 static uint8_t  cmsx_horizonLimitSticks;
 static uint8_t  cmsx_horizonLimitDegrees;
 
-static uint8_t  cmsx_antiGravityGain;
-
 static const void *cmsx_profileOtherOnEnter(displayPort_t *pDisp)
 {
     UNUSED(pDisp);
@@ -332,8 +330,6 @@ static const void *cmsx_profileOtherOnEnter(displayPort_t *pDisp)
     cmsx_horizonStrength =    pidProfile->pid[PID_LEVEL].I;
     cmsx_horizonLimitSticks = pidProfile->pid[PID_LEVEL].D;
     cmsx_horizonLimitDegrees = pidProfile->horizon_limit_degrees;
-
-    cmsx_antiGravityGain   = pidProfile->anti_gravity_gain;
 
     return NULL;
 }
@@ -355,8 +351,6 @@ static const void *cmsx_profileOtherOnExit(displayPort_t *pDisp, const OSD_Entry
     pidProfile->pid[PID_LEVEL].D = cmsx_horizonLimitSticks;
     pidProfile->horizon_limit_degrees = cmsx_horizonLimitDegrees;
 
-    pidProfile->anti_gravity_gain   = cmsx_antiGravityGain;
-
     initEscEndpoints();
     return NULL;
 }
@@ -372,8 +366,6 @@ static const OSD_Entry cmsx_menuProfileOtherEntries[] = {
     { "HORZN STR",       OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_horizonStrength,            0,    100,   1  }    },
     { "HORZN LIM_STK",   OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_horizonLimitSticks,        10,    200,   1  }    },
     { "HORZN LIM_DEG",   OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_horizonLimitDegrees,       10,    250,   1  }    },
-
-    { "AG GAIN",     OME_FLOAT,  NULL, &(OSD_FLOAT_t) { &cmsx_antiGravityGain,   ITERM_ACCELERATOR_GAIN_OFF, ITERM_ACCELERATOR_GAIN_MAX, 1, 100 }    },
 
     { "BACK", OME_Back, NULL, NULL },
     { NULL, OME_END, NULL, NULL}
