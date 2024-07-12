@@ -11,7 +11,6 @@ PG_SRC = \
             pg/dyn_notch.c \
             pg/flash.c \
             pg/gps.c \
-            pg/gps_lap_timer.c \
             pg/gps_rescue.c \
             pg/gyrodev.c \
             pg/max7456.c \
@@ -150,7 +149,6 @@ COMMON_SRC = \
             flight/position.c \
             flight/failsafe.c \
             flight/gps_rescue.c \
-            fc/gps_lap_timer.c \
             flight/dyn_notch_filter.c \
             flight/imu.c \
             flight/mixer.c \
@@ -202,7 +200,6 @@ COMMON_SRC = \
             cms/cms_menu_failsafe.c \
             cms/cms_menu_firmware.c \
             cms/cms_menu_gps_rescue.c \
-            cms/cms_menu_gps_lap_timer.c \
             cms/cms_menu_imu.c \
             cms/cms_menu_ledstrip.c \
             cms/cms_menu_main.c \
@@ -505,7 +502,6 @@ SIZE_OPTIMISED_SRC := $(SIZE_OPTIMISED_SRC) \
             cms/cms_menu_failsafe.c \
             cms/cms_menu_firmware.c \
             cms/cms_menu_gps_rescue.c \
-            cms/cms_menu_gps_lap_timer.c \
             cms/cms_menu_imu.c \
             cms/cms_menu_ledstrip.c \
             cms/cms_menu_main.c \
