@@ -52,8 +52,8 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
     { .boxId = BOXHORIZON, .boxName = "HORIZON", .permanentId = 2 },
 //    { .boxId = BOXBARO, .boxName = "BARO", .permanentId = 3 },
     { .boxId = BOXMAG, .boxName = "MAG", .permanentId = 5 },
-    { .boxId = BOXHEADFREE, .boxName = "HEADFREE", .permanentId = 6 },
-    { .boxId = BOXHEADADJ, .boxName = "HEADADJ", .permanentId = 7 },
+//    { .boxId = BOXHEADFREE, .boxName = "HEADFREE", .permanentId = 6 },
+//    { .boxId = BOXHEADADJ, .boxName = "HEADADJ", .permanentId = 7 },
 //    { .boxId = BOXGPSHOME, .boxName = "GPS HOME", .permanentId = 10 },
 //    { .boxId = BOXGPSHOLD, .boxName = "GPS HOLD", .permanentId = 11 },
 //    { .boxId = BOXPASSTHRU, .boxName = "PASSTHRU", .permanentId = 12 },
@@ -180,8 +180,6 @@ void initActiveBoxIds(void)
     if (sensors(SENSOR_ACC)) {
         BME(BOXANGLE);
         BME(BOXHORIZON);
-        BME(BOXHEADFREE);
-        BME(BOXHEADADJ);
         if (featureIsEnabled(FEATURE_INFLIGHT_ACC_CAL)) {
             BME(BOXCALIB);
         }
