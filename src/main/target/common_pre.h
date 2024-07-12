@@ -309,7 +309,6 @@
 #define USE_RCDEVICE
 
 #define USE_GYRO_LPF2
-#define USE_DYN_LPF
 
 #ifdef USE_SERIALRX_SPEKTRUM
 #define USE_SPEKTRUM_BIND
