@@ -149,7 +149,6 @@ COMMON_SRC = \
             flight/gps_rescue.c \
             flight/imu.c \
             flight/mixer.c \
-            flight/mixer_init.c \
             flight/pid.c \
             flight/pid_init.c \
             flight/servos.c \
