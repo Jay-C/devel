@@ -112,7 +112,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         },
         .pidSumLimit = PIDSUM_LIMIT,
         .pidSumLimitYaw = PIDSUM_LIMIT_YAW,
-        .yaw_lowpass_hz = 100,
         .dterm_notch_hz = 0,
         .dterm_notch_cutoff = 0,
         .itermWindupPointPercent = 85,
@@ -790,10 +789,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
 
         // -----calculate P component
         pidData[axis].P = pidRuntime.pidCoefficient[axis].Kp * errorRate * tpaFactorKp;
-        if (axis == FD_YAW) {
-            pidData[axis].P = pidRuntime.ptermYawLowpassApplyFn((filter_t *) &pidRuntime.ptermYawLowpass, pidData[axis].P);
-        }
-
 
         // -----calculate I component
         float Ki = pidRuntime.pidCoefficient[axis].Ki;
