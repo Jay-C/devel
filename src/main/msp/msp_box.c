@@ -303,10 +303,6 @@ void initActiveBoxIds(void)
     BME(BOXSTICKCOMMANDDISABLE);
     BME(BOXREADY);
 
-#if defined(USE_GPS_LAP_TIMER)
-    BME(BOXLAPTIMERRESET);
-#endif
-
 #undef BME
     // check that all enabled IDs are in boxes array (check may be skipped when using findBoxById() functions)
     for (boxId_e boxId = 0;  boxId < CHECKBOX_ITEM_COUNT; boxId++)
