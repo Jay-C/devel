@@ -101,5 +101,4 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
 #define USE_LATE_TASK_STATISTICS
 
-#define USE_RPM_FILTER
 #define USE_DYN_NOTCH_FILTER
