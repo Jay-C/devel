@@ -524,8 +524,6 @@ void init(void)
     serialInit(featureIsEnabled(FEATURE_SOFTSERIAL), SERIAL_PORT_NONE);
 #endif
 
-    mixerInit(mixerConfig()->mixerMode);
-
     uint16_t idlePulse = motorConfig()->mincommand;
     if (motorConfig()->dev.motorPwmProtocol == PWM_TYPE_BRUSHED) {
         idlePulse = 0; // brushed motors
@@ -696,14 +694,9 @@ void init(void)
 
     pidInit(currentPidProfile);
 
-    mixerInitProfile();
-
 #ifdef USE_SERVOS
     servosInit();
-    if (isMixerUsingServos()) {
-        servoDevInit(&servoConfig()->dev);
-    }
-    servosFilterInit();
+    servoDevInit(&servoConfig()->dev);
 #endif
 
 #ifdef USE_PINIO
