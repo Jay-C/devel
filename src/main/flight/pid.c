@@ -103,7 +103,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .pidSumLimitYaw = PIDSUM_LIMIT_YAW,
         .dterm_notch_hz = 0,
         .dterm_notch_cutoff = 0,
-        .itermWindupPointPercent = 85,
         .angle_limit = 60,
         .yawRateAccelLimit = 0,
         .rateAccelLimit = 0,
@@ -322,12 +321,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
     UNUSED(currentTimeUs);
 #endif
 
-    // iTerm windup (attenuation of iTerm if motorMix range is large)
-    float dynCi = 1.0;
-    if (pidRuntime.itermWindupPointInv > 1.0f) {
-        dynCi = constrainf((1.0f - getMotorMixRange()) * pidRuntime.itermWindupPointInv, 0.0f, 1.0f);
-    }
-
     // Precalculate gyro delta for D-term here, this allows loop unrolling
     float gyroRateDterm[XYZ_AXIS_COUNT];
     for (int axis = FD_ROLL; axis <= FD_YAW; ++axis) {
@@ -398,7 +391,7 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
 
         // -----calculate I component
         float Ki = pidRuntime.pidCoefficient[axis].Ki;
-        float iTermChange = Ki * dynCi * pidRuntime.dT * itermErrorRate;
+        float iTermChange = Ki * pidRuntime.dT * itermErrorRate;
         pidData[axis].I = constrainf(previousIterm + iTermChange, -pidRuntime.itermLimit, pidRuntime.itermLimit);
 
         // -----calculate D component

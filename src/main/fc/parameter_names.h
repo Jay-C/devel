@@ -51,7 +51,6 @@
 #define PARAM_NAME_DTERM_NOTCH_CUTOFF "dterm_notch_cutoff"
 #define PARAM_NAME_ACC_LIMIT_YAW "acc_limit_yaw"
 #define PARAM_NAME_ACC_LIMIT "acc_limit"
-#define PARAM_NAME_ITERM_WINDUP "iterm_windup"
 #define PARAM_NAME_PIDSUM_LIMIT "pidsum_limit"
 #define PARAM_NAME_PIDSUM_LIMIT_YAW "pidsum_limit_yaw"
 #define PARAM_NAME_D_MAX_GAIN "d_max_gain"
