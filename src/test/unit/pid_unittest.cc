@@ -132,7 +132,6 @@ void setDefaultTestSettings(void)
     pidProfile->feedforward_transition = 100;
     pidProfile->yawRateAccelLimit = 100;
     pidProfile->rateAccelLimit = 0;
-    pidProfile->anti_gravity_gain = 10;
     pidProfile->horizon_limit_degrees = 135;
     pidProfile->horizon_ignore_sticks = false;
     pidProfile->itermLimit = 150;
