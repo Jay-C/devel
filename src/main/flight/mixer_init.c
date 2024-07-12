@@ -52,7 +52,6 @@ PG_REGISTER_WITH_RESET_FN(mixerConfig_t, mixerConfig, PG_MIXER_CONFIG, 1);
 void pgResetFn_mixerConfig(mixerConfig_t *mixerConfig)
 {
     mixerConfig->mixerMode = DEFAULT_MIXER;
-    mixerConfig->mixer_type = MIXER_LEGACY;
 }
 
 PG_REGISTER_ARRAY(motorMixer_t, MAX_SUPPORTED_MOTORS, customMotorMixer, PG_MOTOR_MIXER, 0);
