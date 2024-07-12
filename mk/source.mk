@@ -22,7 +22,6 @@ PG_SRC = \
             pg/pinio.c \
             pg/pin_pull_up_down.c \
             pg/rcdevice.c \
-            pg/rpm_filter.c \
             pg/rx.c \
             pg/rx_pwm.c \
             pg/rx_spi.c \
@@ -156,7 +155,6 @@ COMMON_SRC = \
             flight/mixer_tricopter.c \
             flight/pid.c \
             flight/pid_init.c \
-            flight/rpm_filter.c \
             flight/servos.c \
             flight/servos_tricopter.c \
             io/serial_4way.c \
@@ -427,7 +425,6 @@ SPEED_OPTIMISED_SRC := $(SPEED_OPTIMISED_SRC) \
             flight/imu.c \
             flight/mixer.c \
             flight/pid.c \
-            flight/rpm_filter.c \
             rx/ibus.c \
             rx/rc_stats.c \
             rx/rx.c \
