@@ -50,7 +50,6 @@
 
 #include "config/config.h"
 
-#include "fc/gps_lap_timer.h"
 #include "fc/runtime_config.h"
 
 #include "flight/imu.h"
@@ -2618,9 +2617,6 @@ void onGpsNewData(void)
 #ifdef USE_GPS_RESCUE
     gpsRescueNewGpsData();
 #endif
-#ifdef USE_GPS_LAP_TIMER
-    gpsLapTimerNewGpsData();
-#endif // USE_GPS_LAP_TIMER
 }
 
 void gpsSetFixState(bool state)
