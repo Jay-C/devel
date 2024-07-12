@@ -568,16 +568,6 @@ bool processRx(timeUs_t currentTimeUs)
         failsafeStartMonitoring();
     }
 
-    const bool throttleActive = calculateThrottleStatus() != THROTTLE_LOW;
-
-    if (ARMING_FLAG(ARMED) && (throttleActive || isFixedWing())) {
-        pidSetItermReset(false);
-        pidStabilisationState(PID_STABILISATION_ON);
-    } else {
-        pidSetItermReset(true);
-        pidStabilisationState(currentPidProfile->pidAtMinThrottle ? PID_STABILISATION_ON : PID_STABILISATION_OFF);
-    }
-
     return true;
 }
 
