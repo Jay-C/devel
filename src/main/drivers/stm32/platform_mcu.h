@@ -115,7 +115,6 @@
 #define USE_FAST_DATA
 #endif
 
-#define USE_DYN_NOTCH_FILTER
 #define USE_ADC_INTERNAL
 #define USE_USB_CDC_HID
 #define USE_USB_MSC
@@ -134,7 +133,6 @@
 #define USE_ITCM_RAM
 #define ITCM_RAM_OPTIMISATION "-O2", "-freorder-blocks-algorithm=simple"
 #define USE_FAST_DATA
-#define USE_DYN_NOTCH_FILTER
 #define USE_OVERCLOCK
 #define USE_ADC_INTERNAL
 #define USE_USB_CDC_HID
@@ -154,7 +152,6 @@
 
 #define USE_ITCM_RAM
 #define USE_FAST_DATA
-#define USE_DYN_NOTCH_FILTER
 #define USE_ADC_INTERNAL
 #define USE_USB_CDC_HID
 #define USE_DMA_SPEC
@@ -168,7 +165,6 @@
 
 #ifdef STM32G4
 #define USE_OVERCLOCK
-#define USE_DYN_NOTCH_FILTER
 #define USE_ADC_INTERNAL
 #define USE_USB_MSC
 #define USE_USB_CDC_HID

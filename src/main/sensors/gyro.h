@@ -29,10 +29,6 @@
 #include "drivers/bus.h"
 #include "drivers/sensor.h"
 
-#ifdef USE_DYN_NOTCH_FILTER
-#include "flight/dyn_notch_filter.h"
-#endif
-
 #include "flight/pid.h"
 
 #include "pg/pg.h"
