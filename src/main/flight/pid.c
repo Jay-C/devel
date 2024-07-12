@@ -146,7 +146,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .dterm_lpf2_type = FILTER_PT1,
         .dterm_lpf1_dyn_min_hz = DTERM_LPF1_DYN_MIN_HZ_DEFAULT,
         .dterm_lpf1_dyn_max_hz = DTERM_LPF1_DYN_MAX_HZ_DEFAULT,
-        .auto_profile_cell_count = AUTO_PROFILE_CELL_COUNT_STAY,
         .transient_throttle_limit = 0,
         .profileName = { 0 },
         .dyn_idle_min_rpm = 0,
