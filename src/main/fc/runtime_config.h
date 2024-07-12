@@ -80,7 +80,6 @@ armingDisableFlags_e getArmingDisableFlags(void);
 typedef enum {
     ANGLE_MODE      = (1 << 0),
     HORIZON_MODE    = (1 << 1),
-    MAG_MODE        = (1 << 2),
 //    BARO_MODE       = (1 << 3),
 //    GPS_HOME_MODE   = (1 << 4),
 //    GPS_HOLD_MODE   = (1 << 5),
@@ -100,7 +99,6 @@ extern uint16_t flightModeFlags;
 #define BOXID_TO_FLIGHT_MODE_MAP_INITIALIZER {           \
    [BOXANGLE]       = LOG2(ANGLE_MODE),                  \
    [BOXHORIZON]     = LOG2(HORIZON_MODE),                \
-   [BOXMAG]         = LOG2(MAG_MODE),                    \
    [BOXFAILSAFE]    = LOG2(FAILSAFE_MODE),               \
    [BOXGPSRESCUE]   = LOG2(GPS_RESCUE_MODE),             \
 }                                                        \
