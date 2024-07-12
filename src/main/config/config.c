@@ -259,13 +259,6 @@ static void validateAndFixConfig(void)
         if (pidProfilesMutable(i)->dterm_notch_cutoff >= pidProfilesMutable(i)->dterm_notch_hz) {
             pidProfilesMutable(i)->dterm_notch_hz = 0;
         }
-
-#ifdef USE_DYN_LPF
-        //Prevent invalid dynamic lowpass
-        if (pidProfilesMutable(i)->dterm_lpf1_dyn_min_hz > pidProfilesMutable(i)->dterm_lpf1_dyn_max_hz) {
-            pidProfilesMutable(i)->dterm_lpf1_dyn_min_hz = 0;
-        }
-#endif
     }
 
     if (motorConfig()->dev.motorPwmProtocol == PWM_TYPE_BRUSHED) {
@@ -613,12 +606,6 @@ void validateAndFixGyroConfig(void)
     if (gyroConfig()->gyro_soft_notch_cutoff_2 >= gyroConfig()->gyro_soft_notch_hz_2) {
         gyroConfigMutable()->gyro_soft_notch_hz_2 = 0;
     }
-#ifdef USE_DYN_LPF
-    //Prevent invalid dynamic lowpass filter
-    if (gyroConfig()->gyro_lpf1_dyn_min_hz > gyroConfig()->gyro_lpf1_dyn_max_hz) {
-        gyroConfigMutable()->gyro_lpf1_dyn_min_hz = 0;
-    }
-#endif
 
     if (gyro.sampleRateHz > 0) {
         float samplingTime = 1.0f / gyro.sampleRateHz;
