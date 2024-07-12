@@ -125,7 +125,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .dterm_lpf1_dyn_max_hz = DTERM_LPF1_DYN_MAX_HZ_DEFAULT,
         .transient_throttle_limit = 0,
         .profileName = { 0 },
-        .dterm_lpf1_dyn_expo = 5,
         .angle_earth_ref = 100,
         .horizon_delay_ms = 500, // 500ms time constant on any increase in horizon strength
     );

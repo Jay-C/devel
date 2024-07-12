@@ -1802,12 +1802,7 @@ case MSP_NAME:
 #else
         sbufWriteU16(dst, 0);
 #endif
-#if defined(USE_DYN_LPF)
-        // Added in MSP API 1.44
-        sbufWriteU8(dst, currentPidProfile->dterm_lpf1_dyn_expo);
-#else
         sbufWriteU8(dst, 0);
-#endif
 #if defined(USE_DYN_NOTCH_FILTER)
         sbufWriteU8(dst, dynNotchConfig()->dyn_notch_count);
 #else
@@ -2714,11 +2709,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         }
         if (sbufBytesRemaining(src) >= 2) {
             // Added in MSP API 1.44
-#if defined(USE_DYN_LPF)
-            currentPidProfile->dterm_lpf1_dyn_expo = sbufReadU8(src);
-#else
             sbufReadU8(src);
-#endif
 #if defined(USE_DYN_NOTCH_FILTER)
             dynNotchConfigMutable()->dyn_notch_count = sbufReadU8(src);
 #else

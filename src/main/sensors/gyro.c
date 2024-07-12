@@ -118,7 +118,6 @@ void pgResetFn_gyroConfig(gyroConfig_t *gyroConfig)
     gyroConfig->gyro_lpf1_dyn_min_hz = GYRO_LPF1_DYN_MIN_HZ_DEFAULT;
     gyroConfig->gyro_lpf1_dyn_max_hz = GYRO_LPF1_DYN_MAX_HZ_DEFAULT;
     gyroConfig->gyro_filter_debug_axis = FD_ROLL;
-    gyroConfig->gyro_lpf1_dyn_expo = 5;
 }
 
 bool isGyroSensorCalibrationComplete(const gyroSensor_t *gyroSensor)
