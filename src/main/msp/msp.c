@@ -87,7 +87,6 @@
 #include "flight/pid.h"
 #include "flight/pid_init.h"
 #include "flight/position.h"
-#include "flight/rpm_filter.h"
 #include "flight/servos.h"
 
 #include "io/asyncfatfs/asyncfatfs.h"
@@ -1782,13 +1781,8 @@ case MSP_NAME:
         sbufWriteU16(dst, 0);
         sbufWriteU16(dst, 0);
 #endif
-#if defined(USE_RPM_FILTER)
-        sbufWriteU8(dst, rpmFilterConfig()->rpm_filter_harmonics);
-        sbufWriteU8(dst, rpmFilterConfig()->rpm_filter_min_hz);
-#else
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
-#endif
 #if defined(USE_DYN_NOTCH_FILTER)
         // Added in MSP API 1.43
         sbufWriteU16(dst, dynNotchConfig()->dyn_notch_max_hz);
@@ -2677,13 +2671,8 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
             sbufReadU16(src);
             sbufReadU16(src);
 #endif
-#if defined(USE_RPM_FILTER)
-            rpmFilterConfigMutable()->rpm_filter_harmonics = sbufReadU8(src);
-            rpmFilterConfigMutable()->rpm_filter_min_hz = sbufReadU8(src);
-#else
             sbufReadU8(src);
             sbufReadU8(src);
-#endif
         }
         if (sbufBytesRemaining(src) >= 2) {
 #if defined(USE_DYN_NOTCH_FILTER)
