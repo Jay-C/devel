@@ -156,54 +156,6 @@ static void applyMotorStop(void)
     }
 }
 
-static void applyMixerAdjustmentLinear(float *motorMix)
-{
-    float motorDeltaScale = 0.5f;
-
-    const float motorMixNormalizationFactor = motorMixRange > 1.0f ? 1.0f / motorMixRange : 1.0f;
-
-    const float motorMixDelta = motorDeltaScale * motorMixRange;
-
-    float minMotor = FLT_MAX;
-    float maxMotor = FLT_MIN;
-
-    for (int i = 0; i < mixerRuntime.motorCount; ++i) {
-        if (mixerConfig()->mixer_type == MIXER_LINEAR) {
-            motorMix[i] = scaleRangef(throttle, 0.0f, 1.0f, motorMix[i] + motorMixDelta, motorMix[i] - motorMixDelta);
-        } else {
-            motorMix[i] = scaleRangef(throttle, 0.0f, 1.0f, motorMix[i] + fabsf(motorMix[i]), motorMix[i] - fabsf(motorMix[i]));
-        }
-        motorMix[i] *= motorMixNormalizationFactor;
-
-        maxMotor = MAX(motorMix[i], maxMotor);
-        minMotor = MIN(motorMix[i], minMotor);
-    }
-
-    // constrain throttle so it won't clip any outputs
-    throttle = constrainf(throttle, -minMotor, 1.0f - maxMotor);
-}
-
-static void applyMixerAdjustment(float *motorMix, const float motorMixMin, const float motorMixMax)
-{
-    float airmodeTransitionPercent = 1.0f;
-
-    if (throttle < 0.5f) {
-        // this scales the motor mix authority to be 0.5 at 0 throttle, and 1.0 at 0.5 throttle as airmode off intended for things to work.
-        // also lays the groundwork for how an airmode percent would work.
-        airmodeTransitionPercent = scaleRangef(throttle, 0.0f, 0.5f, 0.5f, 1.0f); // 0.5 throttle is full transition, and 0.0 throttle is 50% airmodeTransitionPercent
-    }
-
-    const float motorMixNormalizationFactor = motorMixRange > 1.0f ? airmodeTransitionPercent / motorMixRange : airmodeTransitionPercent;
-
-    for (int i = 0; i < mixerRuntime.motorCount; i++) {
-        motorMix[i] *= motorMixNormalizationFactor;
-    }
-
-    const float normalizedMotorMixMin = motorMixMin * motorMixNormalizationFactor;
-    const float normalizedMotorMixMax = motorMixMax * motorMixNormalizationFactor;
-    throttle = constrainf(throttle, -normalizedMotorMixMin, 1.0f - normalizedMotorMixMax);
-}
-
 FAST_CODE_NOINLINE void mixTable(timeUs_t currentTimeUs)
 {
     // Find min and max throttle based on conditions. Throttle has to be known before mixing
@@ -252,19 +204,6 @@ FAST_CODE_NOINLINE void mixTable(timeUs_t currentTimeUs)
 #endif
 
     motorMixRange = motorMixMax - motorMixMin;
-
-    switch (mixerConfig()->mixer_type) {
-    case MIXER_LEGACY:
-        applyMixerAdjustment(motorMix, motorMixMin, motorMixMax);
-        break;
-    case MIXER_LINEAR:
-    case MIXER_DYNAMIC:
-        applyMixerAdjustmentLinear(motorMix);
-        break;
-    default:
-        applyMixerAdjustment(motorMix, motorMixMin, motorMixMax);
-        break;
-    }
 
     if (ARMING_FLAG(ARMED)
         && !FLIGHT_MODE(GPS_RESCUE_MODE)   // disable motor_stop while GPS Rescue is active

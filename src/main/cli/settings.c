@@ -441,10 +441,6 @@ static const char * const lookupTableOsdLogoOnArming[] = {
 };
 #endif
 
-const char* const lookupTableMixerType[] = {
-    "LEGACY", "LINEAR", "DYNAMIC",
-};
-
 #ifdef USE_OSD
 const char * const lookupTableCMSMenuBackgroundType[] = {
     "TRANSPARENT", "BLACK", "GRAY", "LIGHT_GRAY"
@@ -562,9 +558,6 @@ const lookupTableEntry_t lookupTables[] = {
 
 #ifdef USE_OSD
     LOOKUP_TABLE_ENTRY(lookupTableOsdLogoOnArming),
-#endif
-    LOOKUP_TABLE_ENTRY(lookupTableMixerType),
-#ifdef USE_OSD
     LOOKUP_TABLE_ENTRY(lookupTableCMSMenuBackgroundType),
 #endif
 #ifdef USE_RX_EXPRESSLRS
@@ -815,9 +808,6 @@ const clivalue_t valueTable[] = {
     { "beeper_dshot_beacon_tone",   VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = {1, DSHOT_CMD_BEACON5 }, PG_BEEPER_CONFIG, offsetof(beeperConfig_t, dshotBeaconTone) },
 #endif
 #endif // USE_BEEPER
-
-// PG_MIXER_CONFIG
-    { PARAM_NAME_MIXER_TYPE,        VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_MIXER_TYPE }, PG_MIXER_CONFIG, offsetof(mixerConfig_t, mixer_type) },
 
 // PG_SERVO_CONFIG
 #ifdef USE_SERVOS
