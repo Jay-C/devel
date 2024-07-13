@@ -29,6 +29,26 @@
 #include "pg/pg_ids.h"
 
 
+#define ENTRY(_FEA)  [FEATURE_BIT_ ## _FEA] = #_FEA
+const char * const featureNames[FEATURE_BIT_COUNT] = {
+    ENTRY(RX_PPM),
+    ENTRY(INFLIGHT_ACC_CAL),
+    ENTRY(RX_SERIAL),
+    ENTRY(SOFTSERIAL),
+    ENTRY(GPS),
+    ENTRY(RANGEFINDER),
+    ENTRY(TELEMETRY),
+    ENTRY(RX_PARALLEL_PWM),
+    ENTRY(RX_MSP),
+    ENTRY(RSSI_ADC),
+    ENTRY(LED_STRIP),
+    ENTRY(DASHBOARD),
+    ENTRY(OSD),
+    ENTRY(RX_SPI),
+    ENTRY(ESC_SENSOR),
+};
+#undef ENTRY
+
 PG_REGISTER_WITH_RESET_TEMPLATE(featureConfig_t, featureConfig, PG_FEATURE_CONFIG, 1);
 
 PG_RESET_TEMPLATE(featureConfig_t, featureConfig,
@@ -36,8 +56,7 @@ PG_RESET_TEMPLATE(featureConfig_t, featureConfig,
 );
 
 // bitmask of features that are supported in current build configuration
-uint32_t featuresSupportedByBuild =
-    0
+uint32_t featuresSupportedByBuild = 0
 #ifdef USE_PPM
     | FEATURE_RX_PPM,
 #endif
