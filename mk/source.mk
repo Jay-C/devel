@@ -150,7 +150,6 @@ COMMON_SRC = \
             flight/imu.c \
             flight/mixer.c \
             flight/pid.c \
-            flight/pid_init.c \
             flight/servos.c \
             io/serial_4way.c \
             io/serial_4way_avrootloader.c \
