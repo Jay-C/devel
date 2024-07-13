@@ -22,7 +22,7 @@
 
 #include "platform.h"
 #include "build/build_config.h"
-#include "common/time.h"
+#include "common/rtc.h"
 #include "pg/pg.h"
 
 typedef enum BlackboxDevice {
