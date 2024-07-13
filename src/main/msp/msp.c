@@ -85,7 +85,6 @@
 #include "flight/imu.h"
 #include "flight/mixer.h"
 #include "flight/pid.h"
-#include "flight/pid_init.h"
 #include "flight/position.h"
 #include "flight/servos.h"
 
@@ -1293,16 +1292,6 @@ case MSP_NAME:
         }
         break;
 
-    case MSP_PIDNAMES:
-        for (const char *c = pidNames; *c; c++) {
-            sbufWriteU8(dst, *c);
-        }
-        break;
-
-    case MSP_PID_CONTROLLER:
-        sbufWriteU8(dst, PID_CONTROLLER_BETAFLIGHT);
-        break;
-
     case MSP_MODE_RANGES:
         for (int i = 0; i < MAX_MODE_ACTIVATION_CONDITION_COUNT; i++) {
             const modeActivationCondition_t *mac = modeActivationConditions(i);
@@ -1738,24 +1727,24 @@ case MSP_NAME:
         break;
     case MSP_FILTER_CONFIG :
         sbufWriteU8(dst, gyroConfig()->gyro_lpf1_static_hz);
-        sbufWriteU16(dst, currentPidProfile->dterm_lpf1_static_hz);
+        sbufWriteU16(dst, 0); // was currentPidProfile->dterm_lpf1_static_hz
         sbufWriteU16(dst, 0); // was currentPidProfile->yaw_lowpass_hz
         sbufWriteU16(dst, gyroConfig()->gyro_soft_notch_hz_1);
         sbufWriteU16(dst, gyroConfig()->gyro_soft_notch_cutoff_1);
-        sbufWriteU16(dst, currentPidProfile->dterm_notch_hz);
-        sbufWriteU16(dst, currentPidProfile->dterm_notch_cutoff);
+        sbufWriteU16(dst, 0); // was currentPidProfile->dterm_notch_hz
+        sbufWriteU16(dst, 0); // was urrentPidProfile->dterm_notch_cutoff
         sbufWriteU16(dst, gyroConfig()->gyro_soft_notch_hz_2);
         sbufWriteU16(dst, gyroConfig()->gyro_soft_notch_cutoff_2);
-        sbufWriteU8(dst, currentPidProfile->dterm_lpf1_type);
+        sbufWriteU8(dst, 0); // was currentPidProfile->dterm_lpf1_type
         sbufWriteU8(dst, gyroConfig()->gyro_hardware_lpf);
         sbufWriteU8(dst, 0); // DEPRECATED: gyro_32khz_hardware_lpf
         sbufWriteU16(dst, gyroConfig()->gyro_lpf1_static_hz);
         sbufWriteU16(dst, gyroConfig()->gyro_lpf2_static_hz);
         sbufWriteU8(dst, gyroConfig()->gyro_lpf1_type);
         sbufWriteU8(dst, gyroConfig()->gyro_lpf2_type);
-        sbufWriteU16(dst, currentPidProfile->dterm_lpf2_static_hz);
+        sbufWriteU16(dst, 0); // was currentPidProfile->dterm_lpf2_static_hz
         // Added in MSP API 1.41
-        sbufWriteU8(dst, currentPidProfile->dterm_lpf2_type);
+        sbufWriteU8(dst, 0); // was currentPidProfile->dterm_lpf2_type
         sbufWriteU16(dst, 0);
         sbufWriteU16(dst, 0);
         sbufWriteU16(dst, 0);
@@ -1784,23 +1773,23 @@ case MSP_NAME:
         sbufWriteU8(dst, 0); // reserved
         sbufWriteU8(dst, 0); // reserved
         sbufWriteU8(dst, 0); // reserved
-        sbufWriteU16(dst, currentPidProfile->rateAccelLimit);
-        sbufWriteU16(dst, currentPidProfile->yawRateAccelLimit);
-        sbufWriteU8(dst, currentPidProfile->angle_limit);
+        sbufWriteU16(dst, 0); // was currentPidProfile->rateAccelLimit
+        sbufWriteU16(dst, 0); // was currentPidProfile->yawRateAccelLimit
+        sbufWriteU8(dst, 0); // was currentPidProfile->angle_limit
         sbufWriteU8(dst, 0); // was pidProfile.levelSensitivity
         sbufWriteU16(dst, 0); // was currentPidProfile->itermThrottleThreshold
         sbufWriteU16(dst, 0); // was currentPidProfile->anti_gravity_gain
         sbufWriteU16(dst, 0); // was currentPidProfile->dtermSetpointWeight
-        sbufWriteU8(dst, currentPidProfile->iterm_rotation);
+        sbufWriteU8(dst, 0); // was currentPidProfile->iterm_rotation
         sbufWriteU8(dst, 0); // was currentPidProfile->smart_feedforward
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
-        sbufWriteU16(dst, currentPidProfile->pid[PID_ROLL].F);
-        sbufWriteU16(dst, currentPidProfile->pid[PID_PITCH].F);
-        sbufWriteU16(dst, currentPidProfile->pid[PID_YAW].F);
+        sbufWriteU16(dst, 0); // was currentPidProfile->pid[PID_ROLL].F
+        sbufWriteU16(dst, 0); // was currentPidProfile->pid[PID_PITCH].F
+        sbufWriteU16(dst, 0); // was currentPidProfile->pid[PID_YAW].F
         sbufWriteU8(dst, 0); // was currentPidProfile->antiGravityMode
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
@@ -2583,20 +2572,20 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         break;
     case MSP_SET_FILTER_CONFIG:
         gyroConfigMutable()->gyro_lpf1_static_hz = sbufReadU8(src);
-        currentPidProfile->dterm_lpf1_static_hz = sbufReadU16(src);
+        sbufReadU16(src); // was currentPidProfile->dterm_lpf1_static_hz
         sbufReadU16(src); // was currentPidProfile->yaw_lowpass_hz
         if (sbufBytesRemaining(src) >= 8) {
             gyroConfigMutable()->gyro_soft_notch_hz_1 = sbufReadU16(src);
             gyroConfigMutable()->gyro_soft_notch_cutoff_1 = sbufReadU16(src);
-            currentPidProfile->dterm_notch_hz = sbufReadU16(src);
-            currentPidProfile->dterm_notch_cutoff = sbufReadU16(src);
+            sbufReadU16(src); // currentPidProfile->dterm_notch_hz
+            sbufReadU16(src); // currentPidProfile->dterm_notch_cutoff
         }
         if (sbufBytesRemaining(src) >= 4) {
             gyroConfigMutable()->gyro_soft_notch_hz_2 = sbufReadU16(src);
             gyroConfigMutable()->gyro_soft_notch_cutoff_2 = sbufReadU16(src);
         }
         if (sbufBytesRemaining(src) >= 1) {
-            currentPidProfile->dterm_lpf1_type = sbufReadU8(src);
+            sbufReadU8(src); // currentPidProfile->dterm_lpf1_type
         }
         if (sbufBytesRemaining(src) >= 10) {
             gyroConfigMutable()->gyro_hardware_lpf = sbufReadU8(src);
@@ -2605,11 +2594,11 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
             gyroConfigMutable()->gyro_lpf2_static_hz = sbufReadU16(src);
             gyroConfigMutable()->gyro_lpf1_type = sbufReadU8(src);
             gyroConfigMutable()->gyro_lpf2_type = sbufReadU8(src);
-            currentPidProfile->dterm_lpf2_static_hz = sbufReadU16(src);
+            sbufReadU16(src); // currentPidProfile->dterm_lpf2_static_hz
         }
         if (sbufBytesRemaining(src) >= 9) {
             // Added in MSP API 1.41
-            currentPidProfile->dterm_lpf2_type = sbufReadU8(src);
+            sbufReadU8(src); // currentPidProfile->dterm_lpf2_type
             sbufReadU16(src);
             sbufReadU16(src);
             sbufReadU16(src);
@@ -2652,10 +2641,10 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         sbufReadU8(src); // reserved
         sbufReadU8(src); // reserved
         sbufReadU8(src); // reserved
-        currentPidProfile->rateAccelLimit = sbufReadU16(src);
-        currentPidProfile->yawRateAccelLimit = sbufReadU16(src);
+        sbufReadU16(src); // was currentPidProfile->rateAccelLimit
+        sbufReadU16(src); // was currentPidProfile->yawRateAccelLimit
         if (sbufBytesRemaining(src) >= 2) {
-            currentPidProfile->angle_limit = sbufReadU8(src);
+            sbufReadU8(src); // was currentPidProfile->angle_limit
             sbufReadU8(src); // was pidProfile.levelSensitivity
         }
         if (sbufBytesRemaining(src) >= 4) {
@@ -2667,7 +2656,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         }
         if (sbufBytesRemaining(src) >= 14) {
             // Added in MSP API 1.40
-            currentPidProfile->iterm_rotation = sbufReadU8(src);
+            sbufReadU8(src); // currentPidProfile->iterm_rotation
             sbufReadU8(src); // was currentPidProfile->smart_feedforward
             sbufReadU8(src);
             sbufReadU8(src);
@@ -2675,9 +2664,9 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
             sbufReadU8(src);
             sbufReadU8(src);
             // PID controller feedforward terms
-            currentPidProfile->pid[PID_ROLL].F = sbufReadU16(src);
-            currentPidProfile->pid[PID_PITCH].F = sbufReadU16(src);
-            currentPidProfile->pid[PID_YAW].F = sbufReadU16(src);
+            sbufReadU16(src); // was currentPidProfile->pid[PID_ROLL].F
+            sbufReadU16(src); // was currentPidProfile->pid[PID_PITCH].F
+            sbufReadU16(src); // was currentPidProfile->pid[PID_YAW].F
             sbufReadU8(src); // was currentPidProfile->antiGravityMode
         }
         if (sbufBytesRemaining(src) >= 7) {
