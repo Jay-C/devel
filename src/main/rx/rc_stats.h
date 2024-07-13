@@ -23,7 +23,7 @@
 
 #ifdef USE_RC_STATS
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 void rcStatsUpdate(timeUs_t currentTimeUs);
 void NotifyRcStatsArming(void);

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 #include "drivers/motor.h"
 
 #define USE_DMA_REGISTER_CACHE

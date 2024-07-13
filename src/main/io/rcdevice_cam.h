@@ -23,7 +23,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "common/time.h"
+#include "common/rtc.h"
 #include "io/rcdevice.h"
 #include "fc/rc_modes.h"
 

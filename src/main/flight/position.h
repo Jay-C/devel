@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #define TASK_ALTITUDE_RATE_HZ 100
 
