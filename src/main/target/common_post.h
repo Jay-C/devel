@@ -45,6 +45,10 @@
 #define DEFAULT_AUX_CHANNEL_COUNT       6
 #endif
 
+#ifndef __unused
+#define __unused                    __attribute__((__unused__))
+#endif
+
 #define INIT_CODE                   __attribute__((optimize("-Os")))
 
 #ifdef USE_ITCM_RAM
