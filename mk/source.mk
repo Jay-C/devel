@@ -42,12 +42,12 @@ PG_SRC = \
             pg/vtx_table.c
 
 COMMON_SRC = \
+            build/main.c \
             build/build_config.c \
             build/debug.c \
             build/debug_pin.c \
             build/version.c \
             $(TARGET_DIR_SRC) \
-            main.c \
             $(PG_SRC) \
             common/bitarray.c \
             common/colorconversion.c \
