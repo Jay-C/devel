@@ -31,7 +31,7 @@
 #endif
 #endif
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #ifdef USE_HAL_DRIVER
 extern USBD_StorageTypeDef *USBD_STORAGE_fops;

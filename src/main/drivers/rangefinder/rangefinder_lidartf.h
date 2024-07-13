@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #define RANGEFINDER_TF_TASK_PERIOD_MS 10
 
