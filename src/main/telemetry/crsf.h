@@ -23,7 +23,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "rx/crsf_protocol.h"
 #include "telemetry/msp_shared.h"

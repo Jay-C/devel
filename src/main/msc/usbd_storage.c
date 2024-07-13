@@ -23,7 +23,7 @@
  */
 
 #include "platform.h"
-#include "common/time.h"
+#include "common/rtc.h"
 
 #ifdef USE_HAL_DRIVER
 #include "usbd_msc.h"

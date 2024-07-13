@@ -23,7 +23,7 @@
 #include <stdint.h>
 
 #include "platform.h"
-#include "common/time.h"
+#include "common/rtc.h"
 #include "pg/pg.h"
 
 typedef enum {
