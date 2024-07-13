@@ -21,7 +21,7 @@
 #pragma once
 
 #include "common/color.h"
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "drivers/io_types.h"
 #include "drivers/light_ws2811strip.h"

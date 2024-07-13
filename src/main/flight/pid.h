@@ -21,7 +21,7 @@
 #pragma once
 
 #include <stdbool.h>
-#include "common/time.h"
+#include "common/rtc.h"
 #include "common/filter.h"
 #include "common/axis.h"
 

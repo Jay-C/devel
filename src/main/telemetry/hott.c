@@ -67,7 +67,7 @@
 
 #include "common/axis.h"
 #include "common/maths.h"
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "drivers/serial.h"
 #include "drivers/time.h"

@@ -28,7 +28,7 @@
 #include "cli/cli.h"
 
 #include "common/maths.h"
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "drivers/vtx_common.h"
 #include "drivers/vtx_table.h"
