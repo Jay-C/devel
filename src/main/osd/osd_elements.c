@@ -709,16 +709,6 @@ static void osdElementAngleRollPitch(osdElementParms_t *element)
     const float angle = ((element->item == OSD_PITCH_ANGLE) ? attitude.values.pitch : attitude.values.roll) / 10.0f;
     osdPrintFloat(element->buff, (element->item == OSD_PITCH_ANGLE) ? SYM_PITCH : SYM_ROLL, fabsf(angle), ((angle < 0) ? "-%02u" : " %02u"), 1, true, SYM_NONE);
 }
-#endif
-
-static void osdElementAntiGravity(osdElementParms_t *element)
-{
-    if (pidOsdAntiGravityActive()) {
-        strcpy(element->buff, "AG");
-    }
-}
-
-#ifdef USE_ACC
 
 static void osdElementArtificialHorizon(osdElementParms_t *element)
 {
@@ -1726,7 +1716,6 @@ static const uint8_t osdElementDisplayOrder[] = {
     OSD_NUMERICAL_VARIO,
 #endif
     OSD_COMPASS_BAR,
-    OSD_ANTI_GRAVITY,
 #ifdef USE_BLACKBOX
     OSD_LOG_STATUS,
 #endif
@@ -1859,7 +1848,6 @@ const osdElementDrawFn osdElementDrawFunction[OSD_ITEM_COUNT] = {
 #ifdef USE_ADC_INTERNAL
     [OSD_CORE_TEMPERATURE]        = osdElementCoreTemperature,
 #endif
-    [OSD_ANTI_GRAVITY]            = osdElementAntiGravity,
 #ifdef USE_ACC
     [OSD_G_FORCE]                 = osdElementGForce,
 #endif

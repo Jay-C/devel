@@ -254,9 +254,6 @@ FAST_CODE_NOINLINE void mixTable(timeUs_t currentTimeUs)
     float scaledAxisPidYaw =
         constrainf(pidData[FD_YAW].Sum, -yawPidSumLimit, yawPidSumLimit) / PID_MIXER_SCALING;
 
-    // use scaled throttle, without dynamic idle throttle offset, as the input to antigravity
-    pidUpdateAntiGravityThrottleFilter(throttle);
-
 #ifdef USE_DYN_LPF
     // keep the changes to dynamic lowpass clean, without unnecessary dynamic changes
     updateDynLpfCutoffs(currentTimeUs, throttle);
