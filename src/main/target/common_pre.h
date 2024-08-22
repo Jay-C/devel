@@ -300,8 +300,6 @@
 #define USE_CLI_BATCH
 #define USE_RESOURCE_MGMT
 
-#define USE_RUNAWAY_TAKEOFF     // Runaway Takeoff Prevention (anti-taz)
-
 #define USE_GYRO_OVERFLOW_CHECK
 #define USE_YAW_SPIN_RECOVERY
 
