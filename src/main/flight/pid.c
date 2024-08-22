@@ -125,8 +125,8 @@ void resetPidProfile(pidProfile_t *pidProfile)
             [PID_ROLL] =  PID_ROLL_DEFAULT,
             [PID_PITCH] = PID_PITCH_DEFAULT,
             [PID_YAW] =   PID_YAW_DEFAULT,
-            [PID_LEVEL] = { 50, 75, 75, 50, 0 },
-            [PID_MAG] =   { 40, 0, 0, 0, 0 },
+            [PID_LEVEL] = { 50, 75, 75, 50 },
+            [PID_MAG] =   { 40, 0, 0, 0 },
         },
         .pidSumLimit = PIDSUM_LIMIT,
         .pidSumLimitYaw = PIDSUM_LIMIT_YAW,
@@ -230,13 +230,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .ez_landing_threshold = 25,
         .ez_landing_limit = 15,
         .ez_landing_speed = 50,
-        .tpa_delay_ms = 0,
-        .tpa_gravity_thr0 = 0,
-        .tpa_gravity_thr100 = 0,
-        .spa_center = { 0, 0, 0 },
-        .spa_width = { 0, 0, 0 },
-        .spa_mode = { 0, 0, 0 },
-        .landing_disarm_threshold = 0, // relatively safe values are around 100
     );
 
 #ifndef USE_D_MIN
@@ -326,6 +319,7 @@ void pidUpdateTpaFactor(float throttle)
 
     float tpaFactor = 1.0f - tpaRate;
     DEBUG_SET(DEBUG_TPA, 0, lrintf(tpaFactor * 1000));
+
     pidRuntime.tpaFactor = tpaFactor;
 }
 
@@ -832,71 +826,12 @@ static FAST_CODE_NOINLINE float applyLaunchControl(int axis, const rollAndPitchT
 }
 #endif
 
-static float getSterm(int axis, const pidProfile_t *pidProfile)
-{
-#ifdef USE_WING
-    const float sTerm = getSetpointRate(axis) / getMaxRcRate(axis) * 1000.0f *
-        (float)pidProfile->pid[axis].S / 100.0f;
-
-    DEBUG_SET(DEBUG_S_TERM, axis, lrintf(sTerm));
-
-    return sTerm;
-#else
-    UNUSED(axis);
-    UNUSED(pidProfile);
-    return 0.0f;
-#endif
-}
-
-NOINLINE static void calculateSpaValues(const pidProfile_t *pidProfile)
-{
-#ifdef USE_WING
-    for (int axis = 0; axis < XYZ_AXIS_COUNT; axis++) {
-        float currentRate = getSetpointRate(axis);
-        pidRuntime.spa[axis] = 1.0f - smoothStepUpTransition(
-            fabsf(currentRate), pidProfile->spa_center[axis], pidProfile->spa_width[axis]);
-        DEBUG_SET(DEBUG_SPA, axis, lrintf(pidRuntime.spa[axis] * 1000));
-    }    
-#else
-    UNUSED(pidProfile);
-#endif // #ifdef USE_WING ... #else
-}
-
-NOINLINE static void applySpa(int axis, const pidProfile_t *pidProfile)
-{
-#ifdef USE_WING
-    switch(pidProfile->spa_mode[axis]){
-        case SPA_MODE_PID:
-            pidData[axis].P *= pidRuntime.spa[axis];
-            pidData[axis].D *= pidRuntime.spa[axis];
-            pidData[axis].I *= pidRuntime.spa[axis];
-            break;
-        case SPA_MODE_I:
-            pidData[axis].I *= pidRuntime.spa[axis];
-            break;
-        case SPA_MODE_PD_I_FREEZE:
-            pidData[axis].P *= pidRuntime.spa[axis];
-            pidData[axis].D *= pidRuntime.spa[axis];
-            break;
-        case SPA_MODE_I_FREEZE:
-        case SPA_MODE_OFF:
-        default:
-            break;
-    }
-#else
-    UNUSED(axis);
-    UNUSED(pidProfile);
-#endif // #ifdef USE_WING ... #else
-}
-
 // Betaflight pid controller, which will be maintained in the future with additional features specialised for current (mini) multirotor usage.
 // Based on 2DOF reference design (matlab)
 void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTimeUs)
 {
     static float previousGyroRateDterm[XYZ_AXIS_COUNT];
     static float previousRawGyroRateDterm[XYZ_AXIS_COUNT];
-
-    calculateSpaValues(pidProfile);
 
 #ifdef USE_TPA_MODE
     const float tpaFactorKp = (pidProfile->tpa_mode == TPA_MODE_PD) ? pidRuntime.tpaFactor : 1.0f;
@@ -1101,14 +1036,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
         }
 
         float iTermChange = (Ki + pidRuntime.itermAccelerator) * dynCi * pidRuntime.dT * itermErrorRate;
-
-#ifdef USE_WING
-        if (pidProfile->spa_mode[axis] != SPA_MODE_OFF) {
-            // slowing down I-term change, or even making it zero if setpoint is high enough
-            iTermChange *= pidRuntime.spa[axis];
-        }
-#endif // #ifdef USE_WING
-
         pidData[axis].I = constrainf(previousIterm + iTermChange, -pidRuntime.itermLimit, pidRuntime.itermLimit);
 
         // -----calculate D component
@@ -1208,7 +1135,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
                 pidData[axis].P = 0;
                 pidData[axis].D = 0;
                 pidData[axis].F = 0;
-                pidData[axis].S = 0;
             }
         }
 #endif // USE_YAW_SPIN_RECOVERY
@@ -1244,11 +1170,8 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
             }
         }
 
-        pidData[axis].S = getSterm(axis, pidProfile);
-        applySpa(axis, pidProfile);
-
         // calculating the PID sum
-        const float pidSum = pidData[axis].P + pidData[axis].I + pidData[axis].D + pidData[axis].F + pidData[axis].S;
+        const float pidSum = pidData[axis].P + pidData[axis].I + pidData[axis].D + pidData[axis].F;
 #ifdef USE_INTEGRATED_YAW_CONTROL
         if (axis == FD_YAW && pidRuntime.useIntegratedYaw) {
             pidData[axis].Sum += pidSum * pidRuntime.dT * 100.0f;
@@ -1268,7 +1191,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
             pidData[axis].I = 0;
             pidData[axis].D = 0;
             pidData[axis].F = 0;
-            pidData[axis].S = 0;
 
             pidData[axis].Sum = 0;
         }
