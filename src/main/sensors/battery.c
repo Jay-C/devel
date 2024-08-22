@@ -412,12 +412,6 @@ void batteryInit(void)
             currentMeterESCInit();
 #endif
             break;
-        case CURRENT_METER_MSP:
-#ifdef USE_MSP_CURRENT_METER
-            currentMeterMSPInit();
-#endif
-            break;
-
         default:
             break;
     }
@@ -448,13 +442,6 @@ void batteryUpdateCurrentMeter(timeUs_t currentTimeUs)
             }
 #endif
             break;
-        case CURRENT_METER_MSP:
-#ifdef USE_MSP_CURRENT_METER
-            currentMeterMSPRefresh(currentTimeUs);
-            currentMeterMSPRead(&currentMeter);
-#endif
-            break;
-
         default:
         case CURRENT_METER_NONE:
             currentMeterReset(&currentMeter);
