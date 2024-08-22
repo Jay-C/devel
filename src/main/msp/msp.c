@@ -1867,11 +1867,7 @@ case MSP_NAME:
         // Added in MSP API 1.43
         sbufWriteU8(dst, 0);  // was currentPidProfile->motor_output_limit
         sbufWriteU8(dst, 0);  // was currentPidProfile->auto_profile_cell_count
-#if defined(USE_DYN_IDLE)
-        sbufWriteU8(dst, currentPidProfile->dyn_idle_min_rpm);
-#else
         sbufWriteU8(dst, 0);
-#endif
         // Added in MSP API 1.44
         sbufWriteU8(dst, 0);
         sbufWriteU8(dst, 0);
@@ -3011,11 +3007,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
             // Added in MSP API 1.43
             sbufReadU8(src); // currentPidProfile->motor_output_limit
             sbufReadU8(src); // currentPidProfile->auto_profile_cell_count
-#if defined(USE_DYN_IDLE)
-            currentPidProfile->dyn_idle_min_rpm = sbufReadU8(src);
-#else
             sbufReadU8(src);
-#endif
         }
         if (sbufBytesRemaining(src) >= 7) {
             // Added in MSP API 1.44
