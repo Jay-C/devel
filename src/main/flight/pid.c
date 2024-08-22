@@ -682,10 +682,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
     const float tpaFactorKp = pidRuntime.tpaFactor;
 #endif
 
-#ifdef USE_YAW_SPIN_RECOVERY
-    const bool yawSpinActive = gyroYawSpinDetected();
-#endif
-
 #if defined(USE_ACC)
     static timeUs_t levelModeStartTimeUs = 0;
     static bool gpsRescuePreviousState = false;
@@ -809,14 +805,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
         }
 #endif // USE_ACRO_TRAINER
 
-        // Handle yaw spin recovery - zero the setpoint on yaw to aid in recovery
-        // It's not necessary to zero the set points for R/P because the PIDs will be zeroed below
-#ifdef USE_YAW_SPIN_RECOVERY
-        if ((axis == FD_YAW) && yawSpinActive) {
-            currentPidSetpoint = 0.0f;
-        }
-#endif // USE_YAW_SPIN_RECOVERY
-
         // -----calculate error rate
         const float gyroRate = gyro.gyroADCf[axis]; // Process variable from gyro output in deg/sec
         float errorRate = currentPidSetpoint - gyroRate; // r - y
@@ -935,18 +923,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
 #endif
         const float feedforwardGain = pidRuntime.pidCoefficient[axis].Kf;
         pidData[axis].F = feedforwardGain * pidSetpointDelta;
-
-#ifdef USE_YAW_SPIN_RECOVERY
-        if (yawSpinActive) {
-            pidData[axis].I = 0;  // in yaw spin always disable I
-            if (axis <= FD_PITCH)  {
-                // zero PIDs on pitch and roll leaving yaw P to correct spin
-                pidData[axis].P = 0;
-                pidData[axis].D = 0;
-                pidData[axis].F = 0;
-            }
-        }
-#endif // USE_YAW_SPIN_RECOVERY
 
         // Add P boost from antiGravity when sticks are close to zero
         if (axis != FD_YAW) {
