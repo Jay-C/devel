@@ -1,13 +1,13 @@
 /*
- * This file is part of Betaflight.
+ * This file is part of Rotorflight.
  *
- * Betaflight is free software. You can redistribute this software
+ * Rotorflight is free software. You can redistribute this software
  * and/or modify this software under the terms of the GNU General
  * Public License as published by the Free Software Foundation,
  * either version 3 of the License, or (at your option) any later
  * version.
  *
- * Betaflight is distributed in the hope that it will be useful,
+ * Rotorflight is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
