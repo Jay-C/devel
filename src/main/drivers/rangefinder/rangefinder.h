@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 #include "drivers/io_types.h"
 
 #define RANGEFINDER_OUT_OF_RANGE        (-1)

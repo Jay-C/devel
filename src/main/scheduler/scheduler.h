@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 #include "config/config.h"
 #include "pg/scheduler.h"
 

@@ -50,7 +50,7 @@ bool cliMode = false;
 #include "common/printf.h"
 #include "common/printf_serial.h"
 #include "common/strtol.h"
-#include "common/time.h"
+#include "common/rtc.h"
 #include "common/typeconversion.h"
 #include "common/utils.h"
 

@@ -29,7 +29,7 @@
 
 #if defined(USE_VTX_COMMON)
 
-#include "common/time.h"
+#include "common/rtc.h"
 #include "drivers/vtx_common.h"
 #include "drivers/vtx_table.h"
 
