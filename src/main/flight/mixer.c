@@ -72,8 +72,6 @@ static FAST_DATA_ZERO_INIT float motorMixRange;
 float FAST_DATA_ZERO_INIT motor[MAX_SUPPORTED_MOTORS];
 float motor_disarmed[MAX_SUPPORTED_MOTORS];
 
-static FAST_DATA_ZERO_INIT int throttleAngleCorrection;
-
 float getMotorMixRange(void)
 {
     return motorMixRange;
@@ -217,7 +215,7 @@ static void calculateThrottleAndCurrentMotorEndpoints(timeUs_t currentTimeUs)
             pidResetIterm();
         }
     } else {
-        throttle = rcCommand[THROTTLE] - PWM_RANGE_MIN + throttleAngleCorrection;
+        throttle = rcCommand[THROTTLE] - PWM_RANGE_MIN;
         currentThrottleInputRange = PWM_RANGE;
 #ifdef USE_DYN_IDLE
         if (mixerRuntime.dynIdleMinRps > 0.0f) {
@@ -632,11 +630,6 @@ FAST_CODE_NOINLINE void mixTable(timeUs_t currentTimeUs)
         // Apply the mix to motor endpoints
         applyMixToMotors(motorMix, activeMixer);
     }
-}
-
-void mixerSetThrottleAngleCorrection(int correctionValue)
-{
-    throttleAngleCorrection = correctionValue;
 }
 
 float mixerGetThrottle(void)
