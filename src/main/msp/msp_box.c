@@ -87,7 +87,6 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
     { .boxId = BOXUSER2, .boxName = "USER2", .permanentId = 41 },
     { .boxId = BOXUSER3, .boxName = "USER3", .permanentId = 42 },
     { .boxId = BOXUSER4, .boxName = "USER4", .permanentId = 43 },
-    { .boxId = BOXPIDAUDIO, .boxName = "PID AUDIO", .permanentId = 44 },
     { .boxId = BOXPARALYZE, .boxName = "PARALYZE", .permanentId = 45 },
     { .boxId = BOXGPSRESCUE, .boxName = "GPS RESCUE", .permanentId = 46 },
     { .boxId = BOXACROTRAINER, .boxName = "ACRO TRAINER", .permanentId = 47 },
@@ -305,10 +304,6 @@ void initActiveBoxIds(void)
             }
         }
     }
-#endif
-
-#if defined(USE_PID_AUDIO)
-    BME(BOXPIDAUDIO);
 #endif
 
 #if defined(USE_RX_MSP_OVERRIDE)
