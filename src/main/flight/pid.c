@@ -104,7 +104,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .dterm_notch_hz = 0,
         .dterm_notch_cutoff = 0,
         .itermWindupPointPercent = 85,
-        .pidAtMinThrottle = PID_STABILISATION_ON,
         .angle_limit = 60,
         .yawRateAccelLimit = 0,
         .rateAccelLimit = 0,
@@ -132,11 +131,6 @@ void pgResetFn_pidProfiles(pidProfile_t *pidProfiles)
 
 // Scale factors to make best use of range with D_LPF debugging, aiming for max +/-16K as debug values are 16 bit
 #define D_LPF_RAW_SCALE 25
-
-void pidStabilisationState(pidStabilisationState_e pidControllerState)
-{
-    pidRuntime.pidStabilisationEnabled = (pidControllerState == PID_STABILISATION_ON) ? true : false;
-}
 
 const angle_index_t rcAliasToAngleIndexMap[] = { AI_ROLL, AI_PITCH };
 
@@ -422,17 +416,14 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
 
     // Disable PID control if at zero throttle or if gyro overflow detected
     // This may look very innefficient, but it is done on purpose to always show real CPU usage as in flight
-    if (!pidRuntime.pidStabilisationEnabled || gyroOverflowDetected()) {
+    if (gyroOverflowDetected()) {
         for (int axis = FD_ROLL; axis <= FD_YAW; ++axis) {
             pidData[axis].P = 0;
             pidData[axis].I = 0;
             pidData[axis].D = 0;
             pidData[axis].F = 0;
-
             pidData[axis].Sum = 0;
         }
-    } else if (pidRuntime.zeroThrottleItermReset) {
-        pidResetIterm();
     }
 }
 
@@ -441,11 +432,6 @@ float dynLpfCutoffFreq(float throttle, uint16_t dynLpfMin, uint16_t dynLpfMax, u
     const float expof = expo / 10.0f;
     const float curve = throttle * (1 - throttle) * expof + throttle;
     return (dynLpfMax - dynLpfMin) * curve + dynLpfMin;
-}
-
-void pidSetItermReset(bool enabled)
-{
-    pidRuntime.zeroThrottleItermReset = enabled;
 }
 
 float pidGetPreviousSetpoint(int axis)
