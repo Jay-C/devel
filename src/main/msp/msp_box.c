@@ -51,7 +51,7 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
     { .boxId = BOXANGLE, .boxName = "ANGLE", .permanentId = 1 },
     { .boxId = BOXHORIZON, .boxName = "HORIZON", .permanentId = 2 },
 //    { .boxId = BOXBARO, .boxName = "BARO", .permanentId = 3 },
-    { .boxId = BOXMAG, .boxName = "MAG", .permanentId = 5 },
+//    { .boxId = BOXMAG, .boxName = "MAG", .permanentId = 5 },
 //    { .boxId = BOXHEADFREE, .boxName = "HEADFREE", .permanentId = 6 },
 //    { .boxId = BOXHEADADJ, .boxName = "HEADADJ", .permanentId = 7 },
 //    { .boxId = BOXGPSHOME, .boxName = "GPS HOME", .permanentId = 10 },
@@ -184,12 +184,6 @@ void initActiveBoxIds(void)
             BME(BOXCALIB);
         }
     }
-
-#ifdef USE_MAG
-    if (sensors(SENSOR_MAG)) {
-        BME(BOXMAG);
-    }
-#endif
 
 #ifdef USE_GPS
     if (featureIsEnabled(FEATURE_GPS)) {
