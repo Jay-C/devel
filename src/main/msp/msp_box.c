@@ -86,7 +86,7 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
 //    { .boxId = BOXPIDAUDIO, .boxName = "PID AUDIO", .permanentId = 44 }, (removed)
     { .boxId = BOXPARALYZE, .boxName = "PARALYZE", .permanentId = 45 },
     { .boxId = BOXGPSRESCUE, .boxName = "GPS RESCUE", .permanentId = 46 },
-    { .boxId = BOXACROTRAINER, .boxName = "ACRO TRAINER", .permanentId = 47 },
+//    { .boxId = BOXACROTRAINER, .boxName = "ACRO TRAINER", .permanentId = 47 }, (removed)
     { .boxId = BOXVTXCONTROLDISABLE, .boxName = "VTX CONTROL DISABLE", .permanentId = 48},
     { .boxId = BOXMSPOVERRIDE, .boxName = "MSP OVERRIDE", .permanentId = 50},
     { .boxId = BOXSTICKCOMMANDDISABLE, .boxName = "STICK COMMANDS DISABLE", .permanentId = 51},
@@ -221,9 +221,6 @@ void initActiveBoxIds(void)
         if (featureIsEnabled(FEATURE_INFLIGHT_ACC_CAL)) {
             BME(BOXCALIB);
         }
-#if defined(USE_ACRO_TRAINER) && defined(USE_ACC)
-        BME(BOXACROTRAINER);
-#endif // USE_ACRO_TRAINER
     }
 
 #ifdef USE_MAG

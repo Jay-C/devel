@@ -131,10 +131,6 @@ typedef struct pidProfile_s {
     uint16_t itermLimit;
     uint16_t dterm_lpf2_static_hz;          // Static Dterm lowpass 2 filter cutoff value in hz
     uint8_t iterm_rotation;                 // rotates iterm to translate world errors to local coordinate system
-    uint8_t acro_trainer_angle_limit;       // Acro trainer roll/pitch angle limit in degrees
-    uint8_t acro_trainer_debug_axis;        // The axis for which record debugging values are captured 0=roll, 1=pitch
-    uint8_t acro_trainer_gain;              // The strength of the limiting. Raising may reduce overshoot but also lead to oscillation around the angle limit
-    uint16_t acro_trainer_lookahead_ms;     // The lookahead window in milliseconds used to reduce overshoot
     uint8_t dterm_lpf2_type;                // Filter type for 2nd dterm lowpass
     uint16_t dterm_lpf1_dyn_min_hz;         // Dterm lowpass filter 1 min hz when in dynamic mode
     uint16_t dterm_lpf1_dyn_max_hz;         // Dterm lowpass filter 1 max hz when in dynamic mode
@@ -252,15 +248,6 @@ typedef struct pidRuntime_s {
     bool useEzDisarm;
     float landingDisarmThreshold;
 
-#ifdef USE_ACRO_TRAINER
-    float acroTrainerAngleLimit;
-    float acroTrainerLookaheadTime;
-    uint8_t acroTrainerDebugAxis;
-    float acroTrainerGain;
-    bool acroTrainerActive;
-    int acroTrainerAxisState[RP_AXIS_COUNT];  // only need roll and pitch
-#endif
-
 #ifdef USE_DYN_LPF
     uint8_t dynLpfFilter;
     uint16_t dynLpfMin;
@@ -295,8 +282,6 @@ void resetPidProfile(pidProfile_t *profile);
 void pidResetIterm(void);
 void pidStabilisationState(pidStabilisationState_e pidControllerState);
 void pidSetItermAccelerator(float newItermAccelerator);
-void pidAcroTrainerInit(void);
-void pidSetAcroTrainerState(bool newState);
 void pidUpdateAntiGravityThrottleFilter(float throttle);
 bool pidOsdAntiGravityActive(void);
 void pidSetAntiGravityState(bool newState);
