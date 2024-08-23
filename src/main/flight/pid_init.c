@@ -99,12 +99,6 @@ void pidInitFilters(const pidProfile_t *pidProfile)
     //1st Dterm Lowpass Filter
     uint16_t dterm_lpf1_init_hz = pidProfile->dterm_lpf1_static_hz;
 
-#ifdef USE_DYN_LPF
-    if (pidProfile->dterm_lpf1_dyn_min_hz) {
-        dterm_lpf1_init_hz = pidProfile->dterm_lpf1_dyn_min_hz;
-    }
-#endif
-
     if (dterm_lpf1_init_hz > 0) {
         switch (pidProfile->dterm_lpf1_type) {
         case FILTER_PT1:
@@ -115,11 +109,7 @@ void pidInitFilters(const pidProfile_t *pidProfile)
             break;
         case FILTER_BIQUAD:
             if (pidProfile->dterm_lpf1_static_hz < pidFrequencyNyquist) {
-#ifdef USE_DYN_LPF
-                pidRuntime.dtermLowpassApplyFn = (filterApplyFnPtr)biquadFilterApplyDF1;
-#else
                 pidRuntime.dtermLowpassApplyFn = (filterApplyFnPtr)biquadFilterApply;
-#endif
                 for (int axis = FD_ROLL; axis <= FD_YAW; axis++) {
                     biquadFilterInitLPF(&pidRuntime.dtermLowpass[axis].biquadFilter, dterm_lpf1_init_hz, targetPidLooptime);
                 }
@@ -243,36 +233,6 @@ void pidInitConfig(const pidProfile_t *pidProfile)
     pidRuntime.itermLimitYaw = 0.01f * pidProfile->itermWindup * pidProfile->pidSumLimitYaw;
 
     pidRuntime.itermRotation = pidProfile->iterm_rotation;
-
-#ifdef USE_DYN_LPF
-    if (pidProfile->dterm_lpf1_dyn_min_hz > 0) {
-        switch (pidProfile->dterm_lpf1_type) {
-        case FILTER_PT1:
-            pidRuntime.dynLpfFilter = DYN_LPF_PT1;
-            break;
-        case FILTER_BIQUAD:
-            pidRuntime.dynLpfFilter = DYN_LPF_BIQUAD;
-            break;
-        case FILTER_PT2:
-            pidRuntime.dynLpfFilter = DYN_LPF_PT2;
-            break;
-        case FILTER_PT3:
-            pidRuntime.dynLpfFilter = DYN_LPF_PT3;
-            break;
-        default:
-            pidRuntime.dynLpfFilter = DYN_LPF_NONE;
-            break;
-        }
-    } else {
-        pidRuntime.dynLpfFilter = DYN_LPF_NONE;
-    }
-    pidRuntime.dynLpfMin = pidProfile->dterm_lpf1_dyn_min_hz;
-    pidRuntime.dynLpfMax = pidProfile->dterm_lpf1_dyn_max_hz;
-    pidRuntime.dynLpfCurveExpo = pidProfile->dterm_lpf1_dyn_expo;
-#endif
-
-    pidRuntime.useEzDisarm = pidProfile->landing_disarm_threshold > 0;
-    pidRuntime.landingDisarmThreshold = pidProfile->landing_disarm_threshold * 10.0f;
 }
 
 void pidCopyProfile(uint8_t dstPidProfileIndex, uint8_t srcPidProfileIndex)
