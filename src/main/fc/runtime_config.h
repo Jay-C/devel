@@ -46,7 +46,7 @@ typedef enum {
     ARMING_DISABLED_NOT_DISARMED    = (1 << 3),
     ARMING_DISABLED_BOXFAILSAFE     = (1 << 4),
     ARMING_DISABLED_UNUSED_5        = (1 << 5),
-    ARMING_DISABLED_CRASH_DETECTED  = (1 << 6),
+    ARMING_DISABLED_UNUSED_6        = (1 << 6),
     ARMING_DISABLED_THROTTLE        = (1 << 7),
     ARMING_DISABLED_ANGLE           = (1 << 8),
     ARMING_DISABLED_BOOT_GRACE_TIME = (1 << 9),
@@ -65,7 +65,7 @@ typedef enum {
     ARMING_DISABLED_DSHOT_BITBANG   = (1 << 22),
     ARMING_DISABLED_ACC_CALIBRATION = (1 << 23),
     ARMING_DISABLED_MOTOR_PROTOCOL  = (1 << 24),
-    ARMING_DISABLED_CRASHFLIP       = (1 << 25),
+    ARMING_DISABLED_UNUSED_25       = (1 << 25),
     ARMING_DISABLED_ALTHOLD         = (1 << 26),
     ARMING_DISABLED_POSHOLD         = (1 << 27),
     ARMING_DISABLED_ARM_SWITCH      = (1 << 28) // Needs to be the last element, since it's always activated if one of the others is active when arming

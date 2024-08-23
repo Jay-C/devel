@@ -690,7 +690,6 @@ typedef enum {
     WARNING_ARMING_DISABLED,
     WARNING_LOW_BATTERY,
     WARNING_FAILSAFE,
-    WARNING_CRASHFLIP_ACTIVE,
 } warningFlags_e;
 
 static void applyLedWarningLayer(bool updateNow, timeUs_t *timer)
@@ -714,9 +713,6 @@ static void applyLedWarningLayer(bool updateNow, timeUs_t *timer)
             if (!ARMING_FLAG(ARMED) && isArmingDisabled()) {
                 warningFlags |= 1 << WARNING_ARMING_DISABLED;
             }
-            if (isCrashFlipModeActive()) {
-                warningFlags |= 1 << WARNING_CRASHFLIP_ACTIVE;
-            }
         }
         *timer += HZ_TO_US(LED_OVERLAY_WARNING_RATE_HZ);
     }
@@ -730,9 +726,6 @@ static void applyLedWarningLayer(bool updateNow, timeUs_t *timer)
             switch (warningId) {
                 case WARNING_ARMING_DISABLED:
                     warningColor = colorOn ? &HSV(GREEN) : &HSV(BLACK);
-                    break;
-                case WARNING_CRASHFLIP_ACTIVE:
-                    warningColor = colorOn ? &HSV(MAGENTA) : &HSV(BLACK);
                     break;
                 case WARNING_LOW_BATTERY:
                     warningColor = colorOn ? &HSV(RED) : &HSV(BLACK);
