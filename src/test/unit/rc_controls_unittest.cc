@@ -260,8 +260,6 @@ extern "C" {
 class RcControlsAdjustmentsTest : public ::testing::Test {
 protected:
     controlRateConfig_t controlRateConfig = {
-        .thrMid8 = 0,
-        .thrExpo8 = 0,
         .rates_type = RATES_TYPE_BETAFLIGHT,
         .rcRates = {[FD_ROLL] = 90, [FD_PITCH] = 90},
         .rcExpo = {[FD_ROLL] = 0, [FD_PITCH] = 0, [FD_YAW] = 0},
@@ -290,8 +288,6 @@ protected:
         controlRateConfig.rcRates[FD_PITCH] = 90;
         controlRateConfig.rcExpo[FD_ROLL] = 0;
         controlRateConfig.rcExpo[FD_PITCH] = 0;
-        controlRateConfig.thrMid8 = 0;
-        controlRateConfig.thrExpo8 = 0;
         controlRateConfig.rcExpo[FD_YAW] = 0;
         controlRateConfig.rates[0] = 0;
         controlRateConfig.rates[1] = 0;
@@ -365,8 +361,6 @@ TEST_F(RcControlsAdjustmentsTest, processRcAdjustmentsWithRcRateFunctionSwitchUp
 {
     // given
     controlRateConfig_t controlRateConfig = {
-        .thrMid8 = 0,
-        .thrExpo8 = 0,
         .rates_type = RATES_TYPE_BETAFLIGHT,
         .rcRates = {[FD_ROLL] = 90, [FD_PITCH] = 90},
         .rcExpo = {[FD_ROLL] = 0, [FD_PITCH] = 0, [FD_YAW] = 0},
@@ -572,7 +566,7 @@ TEST_F(RcControlsAdjustmentsTest, processPIDIncreasePidController0)
     const timedAdjustmentState_t *adjustmentState4 = configureStepwiseAdjustment(AUX1 - NON_AUX_CHANNEL_COUNT, ADJUSTMENT_YAW_P_INDEX);
     const timedAdjustmentState_t *adjustmentState5 = configureStepwiseAdjustment(AUX2 - NON_AUX_CHANNEL_COUNT, ADJUSTMENT_YAW_I_INDEX);
     const timedAdjustmentState_t *adjustmentState6 = configureStepwiseAdjustment(AUX3 - NON_AUX_CHANNEL_COUNT, ADJUSTMENT_YAW_D_INDEX);
- 
+
     // and
     for (int index = AUX1; index < MAX_SUPPORTED_RC_CHANNEL_COUNT; index++) {
         rcData[index] = PWM_RANGE_MIDDLE;
