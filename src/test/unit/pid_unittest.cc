@@ -66,7 +66,7 @@ extern "C" {
     #include "flight/pid.h"
     #include "flight/pid_init.h"
     #include "flight/position.h"
-    
+
     #include "io/gps.h"
 
     #include "pg/pg.h"
@@ -87,9 +87,6 @@ extern "C" {
     PG_REGISTER(accelerometerConfig_t, accelerometerConfig, PG_ACCELEROMETER_CONFIG, 0);
     PG_REGISTER(systemConfig_t, systemConfig, PG_SYSTEM_CONFIG, 2);
     PG_REGISTER(positionConfig_t, positionConfig, PG_SYSTEM_CONFIG, 4);
-
-    bool unitLaunchControlActive = false;
-    launchControlMode_e unitLaunchControlMode = LAUNCH_CONTROL_MODE_NORMAL;
 
     float getMotorMixRange(void) { return simulatedMotorMixRange; }
     float getSetpointRate(int axis) { return simulatedSetpointRate[axis]; }
@@ -112,7 +109,6 @@ extern "C" {
         return simulatedSetpointRate[axis] - simulatedPrevSetpointRate[axis];
     }
     void beeperConfirmationBeeps(uint8_t) { }
-    bool isLaunchControlActive(void) {return unitLaunchControlActive; }
     void disarm(flightLogDisarmReason_e) { }
     float getMaxRcRate(int axis)
     {
@@ -174,8 +170,6 @@ void setDefaultTestSettings(void)
     pidProfile->iterm_relax_cutoff = 11,
     pidProfile->iterm_relax_type = ITERM_RELAX_SETPOINT,
     pidProfile->abs_control_gain = 0,
-    pidProfile->launchControlMode = LAUNCH_CONTROL_MODE_NORMAL,
-    pidProfile->launchControlGain = 40,
     pidProfile->level_race_mode = false,
 
     gyro.targetLooptime = 8000;
@@ -213,8 +207,6 @@ void resetTest(void)
     attitude.values.yaw = 0;
 
     flightModeFlags = 0;
-    unitLaunchControlActive = false;
-    pidProfile->launchControlMode = unitLaunchControlMode;
     pidInit(pidProfile);
     loadControlRateProfile();
 
@@ -339,12 +331,12 @@ TEST(pidControllerTest, testPidLoop)
     EXPECT_NEAR(-31.3, pidData[FD_ROLL].I, calculateTolerance(-31.3));
     EXPECT_NEAR(29.3, pidData[FD_PITCH].I, calculateTolerance(29.3));
     EXPECT_NEAR(-1.76, pidData[FD_YAW].I, calculateTolerance(-1.76));
-        EXPECT_NEAR(-24.2, pidData[FD_YAW].Sum, calculateTolerance(-24.2)); 
+        EXPECT_NEAR(-24.2, pidData[FD_YAW].Sum, calculateTolerance(-24.2));
 
     // Match the stick to gyro to stop error
     simulatedSetpointRate[FD_ROLL] = 100;
     simulatedSetpointRate[FD_PITCH] = -100;
-    simulatedSetpointRate[FD_YAW] = 10; // error 
+    simulatedSetpointRate[FD_YAW] = 10; // error
 
     pidController(pidProfile, currentTestTime());
     // Iterm is stalled as it is not accumulating anymore
@@ -353,7 +345,7 @@ TEST(pidControllerTest, testPidLoop)
     EXPECT_FLOAT_EQ(0, pidData[FD_YAW].P);
     EXPECT_NEAR(-31.3, pidData[FD_ROLL].I, calculateTolerance(-31.3));
     EXPECT_NEAR(29.3, pidData[FD_PITCH].I, calculateTolerance(29.3));
-    EXPECT_NEAR(-1.76, pidData[FD_YAW].I, calculateTolerance(-1.76)); 
+    EXPECT_NEAR(-1.76, pidData[FD_YAW].I, calculateTolerance(-1.76));
     EXPECT_FLOAT_EQ(0, pidData[FD_ROLL].D);
     EXPECT_FLOAT_EQ(0, pidData[FD_PITCH].D);
     EXPECT_FLOAT_EQ(0, pidData[FD_YAW].D);
@@ -368,7 +360,7 @@ TEST(pidControllerTest, testPidLoop)
     EXPECT_FLOAT_EQ(0, pidData[FD_YAW].P);
     EXPECT_NEAR(-31.3, pidData[FD_ROLL].I, calculateTolerance(-31.3));
     EXPECT_NEAR(29.3, pidData[FD_PITCH].I, calculateTolerance(29.3));
-    EXPECT_NEAR(-1.76, pidData[FD_YAW].I, calculateTolerance(-1.76)); 
+    EXPECT_NEAR(-1.76, pidData[FD_YAW].I, calculateTolerance(-1.76));
     EXPECT_FLOAT_EQ(0, pidData[FD_ROLL].D);
     EXPECT_FLOAT_EQ(0, pidData[FD_PITCH].D);
     EXPECT_FLOAT_EQ(0, pidData[FD_YAW].D);
@@ -566,7 +558,7 @@ TEST(pidControllerTest, testMixerSaturation)
     EXPECT_NEAR(21.1f, pidData[FD_YAW].I, calculateTolerance(21.1));
 
     // Expect iterm  roll + pitch to stop at limit of 400
-    // yaw is still growing, 
+    // yaw is still growing,
     pidController(pidProfile, currentTestTime());
     EXPECT_NEAR(400.0f, pidData[FD_ROLL].I, calculateTolerance(400.0f));
     EXPECT_NEAR(-400.0f, pidData[FD_PITCH].I, calculateTolerance(-400.0f));
@@ -937,122 +929,6 @@ TEST(pidControllerTest, testItermRotationHandling)
     EXPECT_FLOAT_EQ(pidData[FD_ROLL].I, 10);
     EXPECT_NEAR(860.37, pidData[FD_PITCH].I, calculateTolerance(860.37));
     EXPECT_NEAR(1139.6, pidData[FD_YAW].I, calculateTolerance(1139.6));
-}
-
-TEST(pidControllerTest, testLaunchControl)
-{
-    // The launchControlGain is indirectly tested since when launch control is active the
-    // the gain overrides the PID settings. If the logic to use launchControlGain wasn't
-    // working then any I calculations would be incorrect.
-
-    resetTest();
-    unitLaunchControlActive = true;
-    ENABLE_ARMING_FLAG(ARMED);
-    pidStabilisationState(PID_STABILISATION_ON);
-
-    // test that feedforward and D are disabled (always zero) when launch control is active
-    // set initial state
-    pidController(pidProfile, currentTestTime());
-
-    EXPECT_FLOAT_EQ(0, pidData[FD_ROLL].F);
-    EXPECT_FLOAT_EQ(0, pidData[FD_PITCH].F);
-    EXPECT_FLOAT_EQ(0, pidData[FD_YAW].F);
-    EXPECT_FLOAT_EQ(0, pidData[FD_ROLL].D);
-    EXPECT_FLOAT_EQ(0, pidData[FD_PITCH].D);
-    EXPECT_FLOAT_EQ(0, pidData[FD_YAW].D);
-
-    // Move the sticks to induce feedforward
-    setStickPosition(FD_ROLL, 0.5f);
-    setStickPosition(FD_PITCH, -0.5f);
-    setStickPosition(FD_YAW, -0.5f);
-
-    // add gyro activity to induce D
-    gyro.gyroADCf[FD_ROLL] = -1000;
-    gyro.gyroADCf[FD_PITCH] = 1000;
-    gyro.gyroADCf[FD_YAW] = -1000;
-
-    pidController(pidProfile, currentTestTime());
-
-    // validate that feedforwad is still 0
-    EXPECT_FLOAT_EQ(0, pidData[FD_ROLL].F);
-    EXPECT_FLOAT_EQ(0, pidData[FD_PITCH].F);
-    EXPECT_FLOAT_EQ(0, pidData[FD_YAW].F);
-
-    // validate that D is still 0
-    EXPECT_FLOAT_EQ(0, pidData[FD_ROLL].D);
-    EXPECT_FLOAT_EQ(0, pidData[FD_PITCH].D);
-    EXPECT_FLOAT_EQ(0, pidData[FD_YAW].D);
-
-    // test NORMAL mode - expect P/I on roll and pitch, P on yaw but I == 0
-    unitLaunchControlMode = LAUNCH_CONTROL_MODE_NORMAL;
-    resetTest();
-    unitLaunchControlActive = true;
-    ENABLE_ARMING_FLAG(ARMED);
-    pidStabilisationState(PID_STABILISATION_ON);
-
-    pidController(pidProfile, currentTestTime());
-
-    gyro.gyroADCf[FD_ROLL] = -20;
-    gyro.gyroADCf[FD_PITCH] = 20;
-    gyro.gyroADCf[FD_YAW] = -20;
-    pidController(pidProfile, currentTestTime());
-
-    EXPECT_NEAR(25.62,  pidData[FD_ROLL].P,  calculateTolerance(25.62));
-    EXPECT_NEAR(1.56,   pidData[FD_ROLL].I,  calculateTolerance(1.56));
-    EXPECT_NEAR(-37.15, pidData[FD_PITCH].P, calculateTolerance(-37.15));
-    EXPECT_NEAR(-1.56,  pidData[FD_PITCH].I, calculateTolerance(-1.56));
-    EXPECT_NEAR(44.84,  pidData[FD_YAW].P,   calculateTolerance(44.84));
-    EXPECT_FLOAT_EQ(0, pidData[FD_YAW].I);
-
-    // test PITCHONLY mode - expect P/I only on pitch; I cannot go negative
-    unitLaunchControlMode = LAUNCH_CONTROL_MODE_PITCHONLY;
-    resetTest();
-    unitLaunchControlActive = true;
-    ENABLE_ARMING_FLAG(ARMED);
-    pidStabilisationState(PID_STABILISATION_ON);
-
-    pidController(pidProfile, currentTestTime());
-
-    // first test that pitch I is prevented from going negative
-    gyro.gyroADCf[FD_ROLL] = 0;
-    gyro.gyroADCf[FD_PITCH] = 20;
-    gyro.gyroADCf[FD_YAW] = 0;
-    pidController(pidProfile, currentTestTime());
-
-    EXPECT_FLOAT_EQ(0, pidData[FD_PITCH].I);
-
-    gyro.gyroADCf[FD_ROLL] = 20;
-    gyro.gyroADCf[FD_PITCH] = -20;
-    gyro.gyroADCf[FD_YAW] = 20;
-    pidController(pidProfile, currentTestTime());
-
-    EXPECT_FLOAT_EQ(0, pidData[FD_ROLL].P);
-    EXPECT_FLOAT_EQ(0, pidData[FD_ROLL].I);
-    EXPECT_NEAR(37.15, pidData[FD_PITCH].P, calculateTolerance(37.15));
-    EXPECT_NEAR(1.56,  pidData[FD_PITCH].I, calculateTolerance(1.56));
-    EXPECT_FLOAT_EQ(0, pidData[FD_YAW].P);
-    EXPECT_FLOAT_EQ(0, pidData[FD_YAW].I);
-
-    // test FULL mode - expect P/I on all axes
-    unitLaunchControlMode = LAUNCH_CONTROL_MODE_FULL;
-    resetTest();
-    unitLaunchControlActive = true;
-    ENABLE_ARMING_FLAG(ARMED);
-    pidStabilisationState(PID_STABILISATION_ON);
-
-    pidController(pidProfile, currentTestTime());
-
-    gyro.gyroADCf[FD_ROLL] = -20;
-    gyro.gyroADCf[FD_PITCH] = 20;
-    gyro.gyroADCf[FD_YAW] = -20;
-    pidController(pidProfile, currentTestTime());
-
-    EXPECT_NEAR(25.62,  pidData[FD_ROLL].P,  calculateTolerance(25.62));
-    EXPECT_NEAR(1.56,   pidData[FD_ROLL].I,  calculateTolerance(1.56));
-    EXPECT_NEAR(-37.15, pidData[FD_PITCH].P, calculateTolerance(-37.15));
-    EXPECT_NEAR(-1.56,  pidData[FD_PITCH].I, calculateTolerance(-1.56));
-    EXPECT_NEAR(44.84,  pidData[FD_YAW].P,   calculateTolerance(44.84));
-    EXPECT_NEAR(1.56,   pidData[FD_YAW].I,  calculateTolerance(1.56));
 }
 
 TEST(pidControllerTest, testTpaClassic)
