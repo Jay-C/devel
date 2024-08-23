@@ -137,8 +137,6 @@ float pow_approx(float a, float b);
 #define pow_approx(a, b)    powf(b, a)
 #endif
 
-void arraySubInt32(int32_t *dest, const int32_t *array1, const int32_t *array2, int count);
-
 int16_t qPercent(fix12_t q);
 int16_t qMultiply(fix12_t q, int16_t input);
 fix12_t qConstruct(int16_t num, int16_t den);

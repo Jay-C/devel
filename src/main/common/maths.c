@@ -307,13 +307,6 @@ float quickMedianFilter9f(const float * v)
     return p[4];
 }
 
-void arraySubInt32(int32_t *dest, const int32_t *array1, const int32_t *array2, int count)
-{
-    for (int i = 0; i < count; i++) {
-        dest[i] = array1[i] - array2[i];
-    }
-}
-
 int16_t qPercent(fix12_t q)
 {
     return (100 * q) >> 12;
