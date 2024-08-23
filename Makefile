@@ -48,6 +48,10 @@ SERIAL_DEVICE   ?= $(firstword $(wildcard /dev/ttyACM*) $(firstword $(wildcard /
 # Flash size (KB).  Some low-end chips actually have more flash than advertised, use this to override.
 FLASH_SIZE ?=
 
+# Make parallelism
+JFLAG ?= 4
+
+
 ###############################################################################
 # Things that need to be maintained as the source changes
 #
@@ -515,11 +519,11 @@ test_clean:
 
 ## <TARGET>_clean    : clean up one specific target (alias for above)
 $(TARGETS_CLEAN):
-	$(V0) $(MAKE) -j TARGET=$(subst _clean,,$@) clean
+	$(V0) $(MAKE) -j $(JFLAG) TARGET=$(subst _clean,,$@) clean
 
 ## <CONFIG>_clean    : clean up one specific target (alias for above)
 $(CONFIGS_CLEAN):
-	$(V0) $(MAKE) -j CONFIG=$(subst _clean,,$@) clean
+	$(V0) $(MAKE) -j $(JFLAG) CONFIG=$(subst _clean,,$@) clean
 
 ## clean_all         : clean all targets
 clean_all: $(TARGETS_CLEAN) test_clean
@@ -576,10 +580,10 @@ zip:
 	$(V0) zip $(TARGET_ZIP) $(TARGET_HEX)
 
 binary:
-	$(V0) $(MAKE) -j $(TARGET_BIN)
+	$(V0) $(MAKE) -j $(JFLAG) $(TARGET_BIN)
 
 hex:
-	$(V0) $(MAKE) -j $(TARGET_HEX)
+	$(V0) $(MAKE) -j $(JFLAG) $(TARGET_HEX)
 
 TARGETS_REVISION = $(addsuffix _rev,$(BASE_TARGETS))
 ## <TARGET>_rev    : build target and add revision to filename
