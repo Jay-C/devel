@@ -32,7 +32,6 @@
 
 #include "cms/cms.h"
 #include "cms/cms_types.h"
-#include "cms/cms_menu_gps_lap_timer.h"
 #include "cms/cms_menu_ledstrip.h"
 
 #include "common/utils.h"
@@ -147,9 +146,6 @@ static const OSD_Entry menuMiscEntries[]=
     { "-- MISC --", OME_Label, NULL, NULL },
 
     { "RC PREV",       OME_Submenu, cmsMenuChange, &cmsx_menuRcPreview},
-#ifdef USE_GPS_LAP_TIMER
-    { "GPS LAP TIMER",  OME_Submenu, cmsMenuChange, &cms_menuGpsLapTimer },
-#endif // USE_GPS_LAP_TIMER
 
     { "BACK", OME_Back, NULL, NULL},
     { NULL, OME_END, NULL, NULL}
