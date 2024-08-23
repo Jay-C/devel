@@ -154,8 +154,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .dterm_lpf2_type = FILTER_PT1,
         .dterm_lpf1_dyn_min_hz = DTERM_LPF1_DYN_MIN_HZ_DEFAULT,
         .dterm_lpf1_dyn_max_hz = DTERM_LPF1_DYN_MAX_HZ_DEFAULT,
-        .use_integrated_yaw = false,
-        .integrated_yaw_relax = 200,
         .thrustLinearization = 0,
         .d_min = D_MIN_DEFAULT,
         .d_min_gain = 37,
@@ -912,16 +910,7 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
         }
 
         // calculating the PID sum
-        const float pidSum = pidData[axis].P + pidData[axis].I + pidData[axis].D + pidData[axis].F;
-#ifdef USE_INTEGRATED_YAW_CONTROL
-        if (axis == FD_YAW && pidRuntime.useIntegratedYaw) {
-            pidData[axis].Sum += pidSum * pidRuntime.dT * 100.0f;
-            pidData[axis].Sum -= pidData[axis].Sum * pidRuntime.integratedYawRelax / 100000.0f * pidRuntime.dT / 0.000125f;
-        } else
-#endif
-        {
-            pidData[axis].Sum = pidSum;
-        }
+        pidData[axis].Sum = pidData[axis].P + pidData[axis].I + pidData[axis].D + pidData[axis].F;
     }
 
     // Disable PID control if at zero throttle or if gyro overflow detected
