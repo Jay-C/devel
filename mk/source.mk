@@ -29,6 +29,7 @@ PG_SRC = \
             pg/pos_hold.c \
             pg/rates.c \
             pg/rcdevice.c \
+            pg/rc_controls.c \
             pg/rx.c \
             pg/rx_pwm.c \
             pg/rx_spi.c \
