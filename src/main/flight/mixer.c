@@ -51,7 +51,6 @@
 #include "flight/gps_rescue.h"
 #include "flight/imu.h"
 #include "flight/mixer_init.h"
-#include "flight/mixer_tricopter.h"
 #include "flight/pid.h"
 
 #include "io/gps.h"
@@ -134,11 +133,6 @@ static void applyMixToMotors(const float motorMix[MAX_SUPPORTED_MOTORS], motorMi
         float motorOutput = motorOutputMixSign * motorMix[i] + throttle * activeMixer[i].throttle;
         motorOutput = motorOutputMin + motorOutputRange * motorOutput;
 
-#ifdef USE_SERVOS
-        if (mixerIsTricopter()) {
-            motorOutput += mixerTricopterMotorCorrection(i);
-        }
-#endif
         if (failsafeIsActive()) {
 #ifdef USE_DSHOT
             if (isMotorProtocolDshot()) {
