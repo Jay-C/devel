@@ -20,24 +20,7 @@
 
 #pragma once
 
-#include "pg/pg.h"
-
-#ifndef DEFAULT_FEATURES
-#define DEFAULT_FEATURES 0
-#endif
-
-#ifndef DEFAULT_RX_FEATURE
-
-#if defined(USE_SERIALRX)
-#define DEFAULT_RX_FEATURE FEATURE_RX_SERIAL
-#elif defined(USE_RX_MSP)
-#define DEFAULT_RX_FEATURE FEATURE_RX_MSP
-#elif defined(USE_RX_SPI)
-// need to test with FEATURE_RX_EXPRESSLRS
-#define DEFAULT_RX_FEATURE FEATURE_RX_SPI
-#endif
-
-#endif // DEFAULT_RX_FEATURE
+#include "pg/feature.h"
 
 // features must be listed in
 //  config/feature.c:featuresSupportedByBuild
@@ -62,12 +45,6 @@ typedef enum {
     FEATURE_ESC_SENSOR = 1 << 27,
     //FEATURE_DYNAMIC_FILTER = 1 << 29, (removed)
 } features_e;
-
-typedef struct featureConfig_s {
-    uint32_t enabledFeatures;
-} featureConfig_t;
-
-PG_DECLARE(featureConfig_t, featureConfig);
 
 // Mask of features that have code compiled in with current config.
 //  Other restrictions on available features may apply.
