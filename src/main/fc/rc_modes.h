@@ -32,7 +32,6 @@ typedef enum {
     // FLIGHT_MODE
     BOXANGLE,
     BOXHORIZON,
-    BOXMAG,
     BOXALTHOLD,
     BOXFAILSAFE,
     BOXPOSHOLD,
