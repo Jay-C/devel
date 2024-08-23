@@ -194,7 +194,6 @@ MCU_COMMON_SRC = \
             drivers/mcu/stm32/system_stm32f4xx.c \
             drivers/mcu/stm32/timer_stdperiph.c \
             drivers/mcu/stm32/timer_stm32f4xx.c \
-            drivers/mcu/stm32/transponder_ir_io_stdperiph.c \
             drivers/mcu/stm32/usbd_msc_desc.c \
             drivers/mcu/stm32/camera_control.c \
             startup/stm32/system_stm32f4xx.c
