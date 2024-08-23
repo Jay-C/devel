@@ -167,7 +167,7 @@ static void ltm_sframe(void)
 {
     uint8_t lt_flightmode;
     uint8_t lt_statemode;
-    se if (FLIGHT_MODE(ANGLE_MODE))
+    if (FLIGHT_MODE(ANGLE_MODE))
         lt_flightmode = 2;
     else if (FLIGHT_MODE(HORIZON_MODE))
         lt_flightmode = 3;
