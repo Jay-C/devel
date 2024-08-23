@@ -103,7 +103,6 @@ typedef struct pidProfile_s {
     pidf_t  pid[PID_ITEM_COUNT];
 
     uint8_t dterm_lpf1_type;                // Filter type for dterm lowpass 1
-    uint8_t itermWindup;                    // iterm windup threshold, percentage of pidSumLimit within which to limit iTerm
     uint16_t pidSumLimit;                   // pidSum limit value for pitch and roll
     uint16_t pidSumLimitYaw;                // pidSum limit value for yaw
     uint8_t angle_limit;                    // Max angle in degrees in Angle mode
