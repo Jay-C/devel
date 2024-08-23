@@ -755,7 +755,7 @@ FAST_CODE_NOINLINE void updateRcCommands(void)
             rcDeadband = rcControlsConfig()->deadband;
         } else {
             rcDeadband  = rcControlsConfig()->yaw_deadband;
-            rc *= -GET_DIRECTION(rcControlsConfig()->yaw_control_reversed);
+            rc = -rc;  // Yaw direction reversed
         }
         rcCommand[axis] = fapplyDeadband(rc, rcDeadband);
     }

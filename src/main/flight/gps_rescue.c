@@ -245,12 +245,10 @@ static void rescueAttainPosition(bool newGpsData)
     // if rollMix = 100, the roll:yaw ratio is 1:1 at small angles, reducing linearly to zero when the yaw rate is 100 deg/s
     // when gpsRescueConfig()->rollMix is zero, there is no roll adjustment
     // rollAdjustment is degrees * 100
-    // note that the roll element has the opposite sign to the yaw element *before* GET_DIRECTION
     const float rollLimit = 100.0f * rescueState.intent.rollAngleLimitDeg;
     gpsRescueAngle[AI_ROLL] = constrainf(rollAdjustment, -rollLimit, rollLimit);
     // gpsRescueAngle is added to the normal roll Angle Mode corrections in pid.c
 
-    rescueYaw *= GET_DIRECTION(rcControlsConfig()->yaw_control_reversed);
     // rescueYaw is the yaw rate in deg/s to correct the heading error
 
     DEBUG_SET(DEBUG_GPS_RESCUE_HEADING, 5, rollMixAttenuator);          // 0-1 to suppress roll adjustments at higher yaw rates
