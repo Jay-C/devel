@@ -25,7 +25,7 @@
 
 #if defined(USE_RANGEFINDER_HCSR04)
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "drivers/exti.h"
 #include "drivers/io.h"

@@ -25,7 +25,7 @@
 
 #ifdef USE_DSHOT
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "drivers/io.h"
 #include "drivers/motor.h"

@@ -25,7 +25,7 @@
 #include <stdint.h>
 
 #include "platform.h"
-#include "common/time.h"
+#include "common/rtc.h"
 #include "common/streambuf.h"
 
 #define VTX_SETTINGS_MIN_FREQUENCY_MHZ 5000          //min freq (in MHz) for 'vtx_freq' setting

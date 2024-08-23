@@ -76,7 +76,7 @@ COMMON_SRC = \
             common/streambuf.c \
             common/string_light.c \
             common/strtol.c \
-            common/time.c \
+            common/rtc.c \
             common/typeconversion.c \
             common/uvarint.c \
             common/vector.c \
