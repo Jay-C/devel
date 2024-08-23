@@ -97,9 +97,6 @@ typedef enum {
 #if defined(USE_VIDEO_SYSTEM)
     TABLE_VIDEO_SYSTEM,
 #endif
-#ifdef USE_ACRO_TRAINER
-    TABLE_ACRO_TRAINER_DEBUG,
-#endif // USE_ACRO_TRAINER
 #ifdef USE_VTX_COMMON
     TABLE_VTX_LOW_POWER_DISARM,
 #endif
