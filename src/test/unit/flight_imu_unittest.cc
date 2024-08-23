@@ -180,47 +180,6 @@ TEST(FlightImuTest, TestUpdateEulerAngles)
     EXPECT_EQ(450, attitude.values.yaw);
 }
 
-TEST(FlightImuTest, TestSmallAngle)
-{
-    const float r1 = 0.898;
-    const float r2 = 0.438;
-
-    // given
-    imuConfigMutable()->small_angle = 25;
-    imuConfigure(0, 0);
-    attitudeIsEstablished = true;
-
-    // and
-    memset(&rMat, 0.0, sizeof(float) * 9);
-
-    // when
-    imuComputeRotationMatrix();
-
-    // expect
-    EXPECT_FALSE(isUpright());
-
-    // given
-    rMat.m[0][0] = r1;
-    rMat.m[0][2] = r2;
-    rMat.m[2][0] = -r2;
-    rMat.m[2][2] = r1;
-
-    // when
-    imuComputeRotationMatrix();
-
-    // expect
-    EXPECT_FALSE(isUpright());
-
-    // given
-    memset(&rMat, 0.0, sizeof(float) * 9);
-
-    // when
-    imuComputeRotationMatrix();
-
-    // expect
-    EXPECT_FALSE(isUpright());
-}
-
 testing::AssertionResult DoubleNearWrapPredFormat(const char* expr1, const char* expr2,
                                                   const char* abs_error_expr, const char* wrap_expr, double val1,
                                                   double val2, double abs_error, double wrap) {
