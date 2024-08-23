@@ -57,7 +57,6 @@ typedef enum {
     FEATURE_LED_STRIP = 1 << 16,
     FEATURE_DASHBOARD = 1 << 17,
     FEATURE_OSD = 1 << 18,
-    FEATURE_CHANNEL_FORWARDING = 1 << 20,
     FEATURE_RX_SPI = 1 << 25,
     //FEATURE_SOFTSPI = 1 << 26, (removed)
     FEATURE_ESC_SENSOR = 1 << 27,
