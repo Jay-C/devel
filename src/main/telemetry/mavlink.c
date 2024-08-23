@@ -440,9 +440,6 @@ void mavlinkSendHUDAndHeartbeat(void)
     uint8_t mavSystemType;
     switch (mixerConfig()->mixerMode)
     {
-        case MIXER_TRI:
-            mavSystemType = MAV_TYPE_TRICOPTER;
-            break;
         case MIXER_QUADP:
         case MIXER_QUADX:
         case MIXER_Y4:
