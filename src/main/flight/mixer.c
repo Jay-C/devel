@@ -653,8 +653,7 @@ static void applyMixerAdjustment(float *motorMix, const float motorMixMin, const
 
 FAST_CODE_NOINLINE void mixTable(timeUs_t currentTimeUs)
 {
-    const bool launchControlActive = isLaunchControlActive();
-    const bool airmodeEnabled = isAirmodeEnabled() || launchControlActive;
+    const bool airmodeEnabled = isAirmodeEnabled();
 
     // Find min and max throttle based on conditions. Throttle has to be known before mixing
     calculateThrottleAndCurrentMotorEndpoints(currentTimeUs);
@@ -664,11 +663,6 @@ FAST_CODE_NOINLINE void mixTable(timeUs_t currentTimeUs)
     }
 
     motorMixer_t * activeMixer = &mixerRuntime.currentMixer[0];
-#ifdef USE_LAUNCH_CONTROL
-    if (launchControlActive && (currentPidProfile->launchControlMode == LAUNCH_CONTROL_MODE_PITCHONLY)) {
-        activeMixer = &mixerRuntime.launchControlMixer[0];
-    }
-#endif
 
     // Calculate and Limit the PID sum
     const float scaledAxisPidRoll =
@@ -764,14 +758,6 @@ FAST_CODE_NOINLINE void mixTable(timeUs_t currentTimeUs)
     }
 #endif // USE_YAW_SPIN_RECOVERY
 
-#ifdef USE_LAUNCH_CONTROL
-    // While launch control is active keep the throttle at minimum.
-    // Once the pilot triggers the launch throttle control will be reactivated.
-    if (launchControlActive) {
-        throttle = 0.0f;
-    }
-#endif
-
 #ifdef USE_ALTITUDE_HOLD
     // Throttle value to be used during altitude hold mode (and failsafe landing mode)
     if (FLIGHT_MODE(ALT_HOLD_MODE)) {
@@ -789,7 +775,6 @@ FAST_CODE_NOINLINE void mixTable(timeUs_t currentTimeUs)
 
     motorMixRange = motorMixMax - motorMixMin;
 
-    // note that here airmodeEnabled is true also when Launch Control is active
     switch (mixerConfig()->mixer_type) {
     case MIXER_LEGACY:
         applyMixerAdjustment(motorMix, motorMixMin, motorMixMax, airmodeEnabled);
