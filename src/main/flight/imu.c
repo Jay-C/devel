@@ -276,8 +276,6 @@ STATIC_UNIT_TESTED void imuMahonyAHRSupdate(float dt,
 
 STATIC_UNIT_TESTED void imuUpdateEulerAngles(void)
 {
-    quaternionProducts buffer;
-
     attitude.values.roll = lrintf(atan2_approx(rMat.m[2][1], rMat.m[2][2]) * (1800.0f / M_PIf));
     attitude.values.pitch = lrintf(((0.5f * M_PIf) - acos_approx(-rMat.m[2][0])) * (1800.0f / M_PIf));
     attitude.values.yaw = lrintf((-atan2_approx(rMat.m[1][0], rMat.m[0][0]) * (1800.0f / M_PIf)));
