@@ -251,9 +251,6 @@ static uint8_t cmsx_simplified_roll_pitch_ratio;
 static uint8_t cmsx_simplified_i_gain;
 static uint8_t cmsx_simplified_d_gain;
 static uint8_t cmsx_simplified_pi_gain;
-#ifdef USE_D_MIN
-static uint8_t cmsx_simplified_dmin_ratio;
-#endif
 static uint8_t cmsx_simplified_feedforward_gain;
 static uint8_t cmsx_simplified_pitch_pi_gain;
 
@@ -279,9 +276,6 @@ static const void *cmsx_simplifiedTuningOnEnter(displayPort_t *pDisp)
     cmsx_simplified_i_gain = pidProfile->simplified_i_gain;
     cmsx_simplified_d_gain = pidProfile->simplified_d_gain;
     cmsx_simplified_pi_gain = pidProfile->simplified_pi_gain;
-#ifdef USE_D_MIN
-    cmsx_simplified_dmin_ratio = pidProfile->simplified_dmin_ratio;
-#endif
     cmsx_simplified_feedforward_gain = pidProfile->simplified_feedforward_gain;
     cmsx_simplified_pitch_pi_gain = pidProfile->simplified_pitch_pi_gain;
 
@@ -306,9 +300,6 @@ static const void *cmsx_simplifiedTuningOnExit(displayPort_t *pDisp, const OSD_E
         || pidProfile->simplified_i_gain != cmsx_simplified_i_gain
         || pidProfile->simplified_d_gain != cmsx_simplified_d_gain
         || pidProfile->simplified_pi_gain != cmsx_simplified_pi_gain
-#ifdef USE_D_MIN
-        || pidProfile->simplified_dmin_ratio != cmsx_simplified_dmin_ratio
-#endif
         || pidProfile->simplified_feedforward_gain != cmsx_simplified_feedforward_gain
         || pidProfile->simplified_pitch_pi_gain != cmsx_simplified_pitch_pi_gain
         || pidProfile->simplified_dterm_filter != cmsx_simplified_dterm_filter
@@ -323,9 +314,6 @@ static const void *cmsx_simplifiedTuningOnExit(displayPort_t *pDisp, const OSD_E
         pidProfile->simplified_i_gain = cmsx_simplified_i_gain;
         pidProfile->simplified_d_gain = cmsx_simplified_d_gain;
         pidProfile->simplified_pi_gain = cmsx_simplified_pi_gain;
-#ifdef USE_D_MIN
-        pidProfile->simplified_dmin_ratio = cmsx_simplified_dmin_ratio;
-#endif
         pidProfile->simplified_feedforward_gain = cmsx_simplified_feedforward_gain;
         pidProfile->simplified_pitch_pi_gain = cmsx_simplified_pitch_pi_gain;
 
@@ -351,9 +339,6 @@ static const OSD_Entry cmsx_menuSimplifiedTuningEntries[] =
     { "FF GAINS",          OME_FLOAT, NULL, &(OSD_FLOAT_t) { &cmsx_simplified_feedforward_gain,  SIMPLIFIED_TUNING_PIDS_MIN, SIMPLIFIED_TUNING_MAX, 5, 10 } },
 
     { "-- EXPERT --",      OME_Label, NULL, NULL},
-#ifdef USE_D_MIN
-    { "D MAX",             OME_FLOAT, NULL, &(OSD_FLOAT_t) { &cmsx_simplified_dmin_ratio,        SIMPLIFIED_TUNING_PIDS_MIN, SIMPLIFIED_TUNING_MAX, 5, 10 } },
-#endif
     { "I GAINS",           OME_FLOAT, NULL, &(OSD_FLOAT_t) { &cmsx_simplified_i_gain,            SIMPLIFIED_TUNING_PIDS_MIN, SIMPLIFIED_TUNING_MAX, 5, 10 } },
 
     { "PITCH:ROLL D",      OME_FLOAT, NULL, &(OSD_FLOAT_t) { &cmsx_simplified_roll_pitch_ratio,  SIMPLIFIED_TUNING_PIDS_MIN, SIMPLIFIED_TUNING_MAX, 5, 10 } },
@@ -454,11 +439,6 @@ static uint8_t  cmsx_horizonLimitDegrees;
 
 static uint8_t  cmsx_antiGravityGain;
 static int8_t   cmsx_autoProfileCellCount;
-#ifdef USE_D_MIN
-static uint8_t  cmsx_d_min[XYZ_AXIS_COUNT];
-static uint8_t  cmsx_d_min_gain;
-static uint8_t  cmsx_d_min_advance;
-#endif
 
 #ifdef USE_ITERM_RELAX
 static uint8_t cmsx_iterm_relax;
@@ -500,14 +480,6 @@ static const void *cmsx_profileOtherOnEnter(displayPort_t *pDisp)
     cmsx_antiGravityGain   = pidProfile->anti_gravity_gain;
 
     cmsx_autoProfileCellCount = pidProfile->auto_profile_cell_count;
-
-#ifdef USE_D_MIN
-    for (unsigned i = 0; i < XYZ_AXIS_COUNT; i++) {
-        cmsx_d_min[i]  = pidProfile->d_min[i];
-    }
-    cmsx_d_min_gain = pidProfile->d_min_gain;
-    cmsx_d_min_advance = pidProfile->d_min_advance;
-#endif
 
 #ifdef USE_ITERM_RELAX
     cmsx_iterm_relax = pidProfile->iterm_relax;
@@ -551,14 +523,6 @@ static const void *cmsx_profileOtherOnExit(displayPort_t *pDisp, const OSD_Entry
     pidProfile->anti_gravity_gain   = cmsx_antiGravityGain;
 
     pidProfile->auto_profile_cell_count = cmsx_autoProfileCellCount;
-
-#ifdef USE_D_MIN
-    for (unsigned i = 0; i < XYZ_AXIS_COUNT; i++) {
-        pidProfile->d_min[i] = cmsx_d_min[i];
-    }
-    pidProfile->d_min_gain = cmsx_d_min_gain;
-    pidProfile->d_min_advance = cmsx_d_min_advance;
-#endif
 
 #ifdef USE_ITERM_RELAX
     pidProfile->iterm_relax = cmsx_iterm_relax;
@@ -610,14 +574,6 @@ static const OSD_Entry cmsx_menuProfileOtherEntries[] = {
     { "I_RELAX CUTOFF",  OME_UINT8,  NULL, &(OSD_UINT8_t)   { &cmsx_iterm_relax_cutoff, 1, 50, 1 } },
 #endif
     { "AUTO CELL CNT", OME_INT8, NULL, &(OSD_INT8_t) { &cmsx_autoProfileCellCount, AUTO_PROFILE_CELL_COUNT_CHANGE, MAX_AUTO_DETECT_CELL_COUNT, 1} },
-
-#ifdef USE_D_MIN
-    { "D_MIN ROLL",  OME_UINT8 | SLIDER_RP,  NULL, &(OSD_UINT8_t) { &cmsx_d_min[FD_ROLL],      0, 100, 1 } },
-    { "D_MIN PITCH", OME_UINT8 | SLIDER_RP,  NULL, &(OSD_UINT8_t) { &cmsx_d_min[FD_PITCH],     0, 100, 1 } },
-    { "D_MIN YAW",   OME_UINT8 | SLIDER_RPY,  NULL, &(OSD_UINT8_t) { &cmsx_d_min[FD_YAW],       0, 100, 1 } },
-    { "D_MIN GAIN",  OME_UINT8,  NULL, &(OSD_UINT8_t) { &cmsx_d_min_gain,          0, 100, 1 } },
-    { "D_MIN ADV",   OME_UINT8,  NULL, &(OSD_UINT8_t) { &cmsx_d_min_advance,       0, 200, 1 } },
-#endif
 
     { "TPA RATE",      OME_FLOAT,  NULL, &(OSD_FLOAT_t) { &cmsx_tpa_rate, 0, 100, 1, 10} },
     { "TPA BRKPT",     OME_UINT16, NULL, &(OSD_UINT16_t){ &cmsx_tpa_breakpoint, 1000, 2000, 10} },
