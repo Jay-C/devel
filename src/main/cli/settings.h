@@ -45,9 +45,6 @@ typedef enum {
 #endif
     TABLE_CURRENT_METER,
     TABLE_VOLTAGE_METER,
-#ifdef USE_SERVOS
-    TABLE_GIMBAL_MODE,
-#endif
 #ifdef USE_SERIALRX
     TABLE_SERIAL_RX,
 #endif
