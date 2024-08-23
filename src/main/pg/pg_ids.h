@@ -79,7 +79,7 @@
 #define PG_GPS_RESCUE 55 // struct OK
 #define PG_POSITION 56
 #define PG_VTX_IO_CONFIG 57
-#define PG_GPS_LAP_TIMER 58
+//#define PG_GPS_LAP_TIMER 58
 #define PG_ALTHOLD_CONFIG 59
 #define PG_AUTOPILOT 60
 #define PG_POSHOLD_CONFIG 61

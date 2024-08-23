@@ -13,7 +13,6 @@ PG_SRC = \
             pg/dyn_notch.c \
             pg/flash.c \
             pg/gps.c \
-            pg/gps_lap_timer.c \
             pg/gps_rescue.c \
             pg/gyrodev.c \
             pg/max7456.c \
@@ -143,7 +142,6 @@ COMMON_SRC = \
             drivers/rx/rx_pwm.c \
             drivers/serial_softserial.c \
             fc/core.c \
-            fc/gps_lap_timer.c \
             fc/rc.c \
             fc/rc_adjustments.c \
             fc/rc_controls.c \
@@ -205,7 +203,6 @@ COMMON_SRC = \
             cms/cms_menu_failsafe.c \
             cms/cms_menu_firmware.c \
             cms/cms_menu_gps_rescue.c \
-            cms/cms_menu_gps_lap_timer.c \
             cms/cms_menu_imu.c \
             cms/cms_menu_ledstrip.c \
             cms/cms_menu_main.c \
@@ -483,7 +480,6 @@ SIZE_OPTIMISED_SRC += \
             cms/cms_menu_failsafe.c \
             cms/cms_menu_firmware.c \
             cms/cms_menu_gps_rescue.c \
-            cms/cms_menu_gps_lap_timer.c \
             cms/cms_menu_imu.c \
             cms/cms_menu_ledstrip.c \
             cms/cms_menu_main.c \
