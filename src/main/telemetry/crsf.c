@@ -41,7 +41,7 @@
 #include "common/maths.h"
 #include "common/printf.h"
 #include "common/streambuf.h"
-#include "common/time.h"
+#include "common/rtc.h"
 #include "common/utils.h"
 
 #include "drivers/nvic.h"
