@@ -114,13 +114,6 @@ typedef enum {
     PID_STABILISATION_ON
 } pidStabilisationState_e;
 
-typedef enum {
-    PID_CRASH_RECOVERY_OFF = 0,
-    PID_CRASH_RECOVERY_ON,
-    PID_CRASH_RECOVERY_BEEP,
-    PID_CRASH_RECOVERY_DISARM,
-} pidCrashRecovery_e;
-
 typedef struct pidf_s {
     uint8_t P;
     uint8_t I;
@@ -189,17 +182,8 @@ typedef struct pidProfile_s {
     uint8_t anti_gravity_gain;              // AntiGravity Gain (was itermAcceleratorGain)
     uint16_t yawRateAccelLimit;             // yaw accel limiter for deg/sec/ms
     uint16_t rateAccelLimit;                // accel limiter roll/pitch deg/sec/ms
-    uint16_t crash_dthreshold;              // dterm crash value
-    uint16_t crash_gthreshold;              // gyro crash value
-    uint16_t crash_setpoint_threshold;      // setpoint must be below this value to detect crash, so flips and rolls are not interpreted as crashes
-    uint16_t crash_time;                    // ms
-    uint16_t crash_delay;                   // ms
-    uint8_t crash_recovery_angle;           // degrees
-    uint8_t crash_recovery_rate;            // degree/second
-    uint16_t crash_limit_yaw;               // limits yaw errorRate, so crashes don't cause huge throttle increase
     uint16_t itermLimit;
     uint16_t dterm_lpf2_static_hz;          // Static Dterm lowpass 2 filter cutoff value in hz
-    uint8_t crash_recovery;                 // off, on, on and beeps when it is in crash recovery mode
     uint8_t throttle_boost;                 // how much should throttle be boosted during transient changes 0-100, 100 adds 10x hpf filtered throttle
     uint8_t throttle_boost_cutoff;          // Which cutoff frequency to use for throttle boost. higher cutoffs keep the boost on for shorter. Specified in hz.
     uint8_t iterm_rotation;                 // rotates iterm to translate world errors to local coordinate system
@@ -368,16 +352,6 @@ typedef struct pidRuntime_s {
     float horizonLimitDegreesInv;
     float horizonIgnoreSticks;
     float maxVelocity[XYZ_AXIS_COUNT];
-    bool inCrashRecoveryMode;
-    timeUs_t crashDetectedAtUs;
-    timeDelta_t crashTimeLimitUs;
-    timeDelta_t crashTimeDelayUs;
-    int32_t crashRecoveryAngleDeciDegrees;
-    float crashRecoveryRate;
-    float crashGyroThreshold;
-    float crashDtermThreshold;
-    float crashSetpointThreshold;
-    float crashLimitYaw;
     float itermLimit;
     float itermLimitYaw;
     bool itermRotation;
@@ -500,7 +474,6 @@ void resetPidProfile(pidProfile_t *profile);
 void pidResetIterm(void);
 void pidStabilisationState(pidStabilisationState_e pidControllerState);
 void pidSetItermAccelerator(float newItermAccelerator);
-bool crashRecoveryModeActive(void);
 void pidAcroTrainerInit(void);
 void pidSetAcroTrainerState(bool newState);
 void pidUpdateTpaFactor(float throttle);

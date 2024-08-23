@@ -1199,7 +1199,7 @@ TEST_F(OsdTest, TestGpsElements)
 
     sensorsSet(SENSOR_GPS);
     osdAnalyzeActiveElements();
-    
+
     // when
     simulationGpsHealthy = false;
     gpsSol.numSat = 0;
@@ -1396,8 +1396,6 @@ extern "C" {
     uint16_t rxGetLinkQuality(void) { return LINK_QUALITY_MAX_VALUE; }
 
     uint16_t getCoreTemperatureCelsius(void) { return simulationCoreTemperature; }
-
-    bool isCrashFlipModeActive(void) { return false; }
 
     float pidItermAccelerator(void) { return 1.0; }
     uint8_t getMotorCount(void){ return 4; }
