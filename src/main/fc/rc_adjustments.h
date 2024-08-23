@@ -88,8 +88,7 @@ typedef struct continuosAdjustmentState_s {
     int16_t lastRcData;
 } continuosAdjustmentState_t;
 
-struct controlRateConfig_s;
-void processRcAdjustments(struct controlRateConfig_s *controlRateConfig);
+void processRcAdjustments(controlRateConfig_t *controlRateConfig);
 const char *getAdjustmentsRangeName(void);
 int getAdjustmentsRangeValue(void);
 void activeAdjustmentRangeReset(void);
