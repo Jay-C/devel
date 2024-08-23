@@ -31,7 +31,7 @@
 PG_REGISTER_WITH_RESET_TEMPLATE(featureConfig_t, featureConfig, PG_FEATURE_CONFIG, 1);
 
 PG_RESET_TEMPLATE(featureConfig_t, featureConfig,
-    .enabledFeatures = DEFAULT_FEATURES | DEFAULT_RX_FEATURE | FEATURE_ANTI_GRAVITY | FEATURE_AIRMODE,
+    .enabledFeatures = DEFAULT_FEATURES | DEFAULT_RX_FEATURE | FEATURE_ANTI_GRAVITY,
 );
 
 // bitmask of features that are supported in current build configuration
@@ -83,7 +83,6 @@ uint32_t featuresSupportedByBuild =
 #ifdef USE_SERVOS
     | FEATURE_CHANNEL_FORWARDING
 #endif
-    | FEATURE_AIRMODE // always available
 #ifdef USE_RX_SPI
     | FEATURE_RX_SPI
 #endif
