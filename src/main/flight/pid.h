@@ -63,7 +63,6 @@
 #define PID_ROLL_DEFAULT  { 45, 80, 30, 120 }
 #define PID_PITCH_DEFAULT { 47, 84, 34, 125 }
 #define PID_YAW_DEFAULT   { 45, 80,  0, 120 }
-#define D_MAX_DEFAULT     { 40, 46, 0 }
 
 #define DTERM_LPF1_DYN_MIN_HZ_DEFAULT 75
 #define DTERM_LPF1_DYN_MAX_HZ_DEFAULT 150
@@ -198,9 +197,6 @@ typedef struct pidProfile_s {
     uint8_t dterm_lpf2_type;                // Filter type for 2nd dterm lowpass
     uint16_t dterm_lpf1_dyn_min_hz;         // Dterm lowpass filter 1 min hz when in dynamic mode
     uint16_t dterm_lpf1_dyn_max_hz;         // Dterm lowpass filter 1 max hz when in dynamic mode
-    uint8_t d_max[XYZ_AXIS_COUNT];          // Maximum D value on each axis
-    uint8_t d_max_gain;                     // Gain factor for amount of gyro / setpoint activity required to boost D
-    uint8_t d_max_advance;                  // Percentage multiplier for setpoint input to boost algorithm
     int8_t auto_profile_cell_count;         // Cell count for this profile to be used with if auto PID profile switching is used
     uint8_t transient_throttle_limit;       // Maximum DC component of throttle change to mix into throttle to prevent airmode mirroring noise
     char profileName[MAX_PROFILE_NAME_LENGTH + 1]; // Descriptive name for profile
@@ -368,15 +364,6 @@ typedef struct pidRuntime_s {
     float acErrorLimit;
     pt1Filter_t acLpf[XYZ_AXIS_COUNT];
     float oldSetpointCorrection[XYZ_AXIS_COUNT];
-#endif
-
-#ifdef USE_D_MAX
-    pt2Filter_t dMaxRange[XYZ_AXIS_COUNT];
-    pt2Filter_t dMaxLowpass[XYZ_AXIS_COUNT];
-    float dMaxPercent[XYZ_AXIS_COUNT];
-    uint8_t dMax[XYZ_AXIS_COUNT];
-    float dMaxGyroGain;
-    float dMaxSetpointGain;
 #endif
 
 #ifdef USE_AIRMODE_LPF

@@ -36,9 +36,6 @@ static void calculateNewPidValues(pidProfile_t *pidProfile)
             [PID_YAW] = PID_YAW_DEFAULT,
         };
 
-#ifdef USE_D_MAX
-    const int dMaxDefaults[FLIGHT_DYNAMICS_INDEX_COUNT] = D_MAX_DEFAULT;
-#endif
     const float masterMultiplier = pidProfile->simplified_master_multiplier / 100.0f;
     const float piGain = pidProfile->simplified_pi_gain / 100.0f;
     const float dGain = pidProfile->simplified_d_gain / 100.0f;
