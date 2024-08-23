@@ -317,9 +317,6 @@ void initEscEndpoints(void)
 
 void mixerInitProfile(void)
 {
-    mixerRuntime.ezLandingThreshold = 2.0f * currentPidProfile->ez_landing_threshold / 100.0f;
-    mixerRuntime.ezLandingLimit = currentPidProfile->ez_landing_limit / 100.0f;
-    mixerRuntime.ezLandingSpeed = 2.0f * currentPidProfile->ez_landing_speed / 10.0f;
 }
 
 #ifndef USE_QUAD_MIXER_ONLY
