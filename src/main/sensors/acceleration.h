@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 #include "pg/pg.h"
 #include "drivers/accgyro/accgyro.h"
 #include "sensors/sensors.h"
