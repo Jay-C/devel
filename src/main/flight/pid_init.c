@@ -349,14 +349,6 @@ void pidInitConfig(const pidProfile_t *pidProfile)
     pidRuntime.maxVelocity[FD_ROLL] = pidRuntime.maxVelocity[FD_PITCH] = pidProfile->rateAccelLimit * 100 * pidRuntime.dT;
     pidRuntime.maxVelocity[FD_YAW] = pidProfile->yawRateAccelLimit * 100 * pidRuntime.dT;
     pidRuntime.antiGravityGain = pidProfile->anti_gravity_gain;
-    pidRuntime.crashTimeLimitUs = pidProfile->crash_time * 1000;
-    pidRuntime.crashTimeDelayUs = pidProfile->crash_delay * 1000;
-    pidRuntime.crashRecoveryAngleDeciDegrees = pidProfile->crash_recovery_angle * 10;
-    pidRuntime.crashRecoveryRate = pidProfile->crash_recovery_rate;
-    pidRuntime.crashGyroThreshold = pidProfile->crash_gthreshold; // error in deg/s
-    pidRuntime.crashDtermThreshold = pidProfile->crash_dthreshold * 1000.0f; // gyro delta in deg/s/s * 1000 to match original 2017 intent
-    pidRuntime.crashSetpointThreshold = pidProfile->crash_setpoint_threshold;
-    pidRuntime.crashLimitYaw = pidProfile->crash_limit_yaw;
 
     pidRuntime.itermLimit = 0.01f * pidProfile->itermWindup * pidProfile->pidSumLimit;
     pidRuntime.itermLimitYaw = 0.01f * pidProfile->itermWindup * pidProfile->pidSumLimitYaw;
