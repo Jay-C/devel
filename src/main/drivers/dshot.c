@@ -47,8 +47,6 @@
 
 #include "flight/mixer.h"
 
-#include "pg/rpm_filter.h"
-
 #include "rx/rx.h"
 
 #include "dshot.h"
@@ -134,7 +132,7 @@ void initDshotTelemetry(const timeUs_t looptimeUs)
     if (motorConfig()->dev.useDshotTelemetry) {
         // init LPFs for RPM data
         for (int i = 0; i < getMotorCount(); i++) {
-            pt1FilterInit(&motorFreqLpf[i], pt1FilterGain(rpmFilterConfig()->rpm_filter_lpf_hz, looptimeUs * 1e-6f));
+            pt1FilterInit(&motorFreqLpf[i], pt1FilterGain(20, looptimeUs * 1e-6f));
         }
     }
 }
