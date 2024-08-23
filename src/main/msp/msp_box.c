@@ -74,7 +74,6 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
     { .boxId = BOXSERVO3, .boxName = "SERVO3", .permanentId = 25 },
     { .boxId = BOXBLACKBOX, .boxName = "BLACKBOX", .permanentId = 26 },
     { .boxId = BOXFAILSAFE, .boxName = "FAILSAFE", .permanentId = 27 },
-    { .boxId = BOXAIRMODE, .boxName = "AIR MODE", .permanentId = 28 },
     { .boxId = BOXFPVANGLEMIX, .boxName = "FPV ANGLE MIX", .permanentId = 30},
     { .boxId = BOXBLACKBOXERASE, .boxName = "BLACKBOX ERASE", .permanentId = 31 },
     { .boxId = BOXCAMERA1, .boxName = "CAMERA CONTROL 1", .permanentId = 32},
@@ -200,9 +199,6 @@ void initActiveBoxIds(void)
 #define BME(boxId) do { bitArraySet(&ena, boxId); } while (0)
     BME(BOXARM);
     BME(BOXPREARM);
-    if (!featureIsEnabled(FEATURE_AIRMODE)) {
-        BME(BOXAIRMODE);
-    }
 
     bool acceleratorGainsEnabled = false;
     for (unsigned i = 0; i < PID_PROFILE_COUNT; i++) {
