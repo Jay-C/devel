@@ -94,22 +94,9 @@ typedef struct mixer_s {
 typedef struct mixerConfig_s {
     uint8_t mixerMode;
     uint8_t mixer_type;
-#ifdef USE_RPM_LIMIT
-    bool rpm_limit;
-    uint16_t rpm_limit_p;
-    uint16_t rpm_limit_i;
-    uint16_t rpm_limit_d;
-    uint16_t rpm_limit_value;
-#endif
 } mixerConfig_t;
 
 PG_DECLARE(mixerConfig_t, mixerConfig);
-
-#ifdef USE_RPM_LIMIT
-#define RPM_LIMIT_ACTIVE mixerConfig()->rpm_limit
-#else
-#define RPM_LIMIT_ACTIVE false
-#endif
 
 extern const mixer_t mixers[];
 extern float motor[MAX_SUPPORTED_MOTORS];
@@ -126,7 +113,6 @@ void mixerLoadMix(int index, motorMixer_t *customMixers);
 void initEscEndpoints(void);
 void mixerInit(mixerMode_e mixerMode);
 void mixerInitProfile(void);
-void mixerResetRpmLimiter(void);
 void mixerResetDisarmedMotors(void);
 void mixTable(timeUs_t currentTimeUs);
 void stopMotors(void);
