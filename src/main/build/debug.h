@@ -1,32 +1,46 @@
 /*
- * This file is part of Cleanflight and Betaflight.
+ * This file is part of Rotorflight.
  *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * Rotorflight is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * Rotorflight is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
+ * along with this software. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #pragma once
 
-#include <stdint.h>
+#include "platform.h"
+#include "types.h"
 
-#define DEBUG16_VALUE_COUNT 8
-extern int16_t debug[DEBUG16_VALUE_COUNT];
+#define DEBUG_VALUE_COUNT 8
+#define DEBUG16_VALUE_COUNT 8  // compat
+
 extern uint8_t debugMode;
+extern uint8_t debugAxis;
 
-#define DEBUG_SET(mode, index, value) do { if (debugMode == (mode)) { debug[(index)] = (value); } } while (0)
+extern int32_t debug[DEBUG_VALUE_COUNT];
+
+extern uint32_t __timing[DEBUG_VALUE_COUNT];
+
+#define DEBUG_SET(mode, index, value)             do { if (debugMode == (mode)) { debug[(index)] = (value); } } while (0)
+#define DEBUG_AXIS_SET(mode, axis, index, value)  do { if (debugAxis == (axis) && debugMode == (mode)) { debug[(index)] = (value); } } while (0)
+#define DEBUG_COND_SET(mode, cond, index, value)  do { if ((cond) && debugMode == (mode)) { debug[(index)] = (value); } } while (0)
+
+#define DEBUG_VAL(mode, index, value)             DEBUG_SET(DEBUG_ ## mode, index, value)
+#define DEBUG_AXIS(mode, axis, index, value)      DEBUG_AXIS_SET(DEBUG_ ## mode, axis, index, value)
+#define DEBUG_COND(mode, cond, index, value)      DEBUG_COND_SET(DEBUG_ ## mode, cond, index, value)
+
+#define DEBUG_TIME_START(mode, index)             do { if (debugMode == (DEBUG_ ## mode)) { __timing[(index)] = micros(); } } while (0)
+#define DEBUG_TIME_END(mode, index)               do { if (debugMode == (DEBUG_ ## mode)) { debug[(index)] = micros() - __timing[(index)]; } } while (0)
+
 
 typedef enum {
     DEBUG_NONE,
