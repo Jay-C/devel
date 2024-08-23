@@ -52,7 +52,6 @@ typedef enum {
     FEATURE_OPTICALFLOW = 1 << 8,
     FEATURE_RANGEFINDER = 1 << 9,
     FEATURE_TELEMETRY = 1 << 10,
-    FEATURE_3D = 1 << 12,
     FEATURE_RX_PARALLEL_PWM = 1 << 13,
     FEATURE_RX_MSP = 1 << 14,
     FEATURE_RSSI_ADC = 1 << 15,
