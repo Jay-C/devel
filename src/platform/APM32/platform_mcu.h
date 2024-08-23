@@ -113,7 +113,6 @@
 #endif
 
 #define USE_DYN_IDLE
-#define USE_DYN_NOTCH_FILTER
 #define USE_ADC_INTERNAL
 #define USE_USB_MSC
 #define USE_PERSISTENT_MSC_RTC
