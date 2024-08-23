@@ -86,15 +86,7 @@ static batteryState_e consumptionState;
 static float wattHoursDrawn;
 
 #ifndef DEFAULT_CURRENT_METER_SOURCE
-#ifdef USE_VIRTUAL_CURRENT_METER
-#define DEFAULT_CURRENT_METER_SOURCE CURRENT_METER_VIRTUAL
-#else
-#ifdef USE_MSP_CURRENT_METER
-#define DEFAULT_CURRENT_METER_SOURCE CURRENT_METER_MSP
-#else
 #define DEFAULT_CURRENT_METER_SOURCE CURRENT_METER_NONE
-#endif
-#endif
 #endif
 
 #ifndef DEFAULT_VOLTAGE_METER_SOURCE
@@ -419,12 +411,6 @@ void batteryInit(void)
             currentMeterADCInit();
             break;
 
-        case CURRENT_METER_VIRTUAL:
-#ifdef USE_VIRTUAL_CURRENT_METER
-            currentMeterVirtualInit();
-#endif
-            break;
-
         case CURRENT_METER_ESC:
 #ifdef ESC_SENSOR
             currentMeterESCInit();
@@ -457,18 +443,6 @@ void batteryUpdateCurrentMeter(timeUs_t currentTimeUs)
             currentMeterADCRefresh(lastUpdateAt);
             currentMeterADCRead(&currentMeter);
             break;
-
-        case CURRENT_METER_VIRTUAL: {
-#ifdef USE_VIRTUAL_CURRENT_METER
-            throttleStatus_e throttleStatus = calculateThrottleStatus();
-            bool throttleLowAndMotorStop = (throttleStatus == THROTTLE_LOW);
-            const int32_t throttleOffset = lrintf(mixerGetThrottle() * 1000);
-
-            currentMeterVirtualRefresh(lastUpdateAt, ARMING_FLAG(ARMED), throttleLowAndMotorStop, throttleOffset);
-            currentMeterVirtualRead(&currentMeter);
-#endif
-            break;
-        }
 
         case CURRENT_METER_ESC:
 #ifdef USE_ESC_SENSOR
