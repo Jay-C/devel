@@ -1015,8 +1015,6 @@ static void osdElementFlymode(osdElementParms_t *element)
         strcpy(element->buff, "RESC");
     } else if (FLIGHT_MODE(HEADFREE_MODE)) {
         strcpy(element->buff, "HEAD");
-    } else if (FLIGHT_MODE(PASSTHRU_MODE)) {
-        strcpy(element->buff, "PASS");
     } else if (FLIGHT_MODE(ALT_HOLD_MODE)) {
         strcpy(element->buff, "ALTH");
     } else if (FLIGHT_MODE(POS_HOLD_MODE)) {
