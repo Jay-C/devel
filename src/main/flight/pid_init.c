@@ -49,13 +49,6 @@
 
 #include "pid_init.h"
 
-#ifdef USE_D_MAX
-#define D_MAX_RANGE_HZ 85    // PT2 lowpass input cutoff to peak D around propwash frequencies
-#define D_MAX_LOWPASS_HZ 35  // PT2 lowpass cutoff to smooth the boost effect
-#define D_MAX_GAIN_FACTOR 0.00008f
-#define D_MAX_SETPOINT_GAIN_FACTOR 0.00008f
-#endif
-
 #define ATTITUDE_CUTOFF_HZ 50
 
 static void pidSetTargetLooptime(uint32_t pidLooptime)
@@ -207,17 +200,6 @@ void pidInitFilters(const pidProfile_t *pidProfile)
             pt1FilterInit(&pidRuntime.acLpf[i], pt1FilterGain(pidRuntime.acCutoff, pidRuntime.dT));
         }
     }
-#endif
-
-#ifdef USE_D_MAX
-    // Initialize the filters for all axis even if the d_max[axis] value is 0
-    // Otherwise if the pidProfile->d_max_xxx parameters are ever added to
-    // in-flight adjustments and transition from 0 to > 0 in flight the feature
-    // won't work because the filter wasn't initialized.
-    for (int axis = FD_ROLL; axis <= FD_YAW; axis++) {
-        pt2FilterInit(&pidRuntime.dMaxRange[axis], pt2FilterGain(D_MAX_RANGE_HZ, pidRuntime.dT));
-        pt2FilterInit(&pidRuntime.dMaxLowpass[axis], pt2FilterGain(D_MAX_LOWPASS_HZ, pidRuntime.dT));
-     }
 #endif
 
 #if defined(USE_AIRMODE_LPF)
@@ -392,21 +374,6 @@ void pidInitConfig(const pidProfile_t *pidProfile)
     pidRuntime.dynLpfMin = pidProfile->dterm_lpf1_dyn_min_hz;
     pidRuntime.dynLpfMax = pidProfile->dterm_lpf1_dyn_max_hz;
     pidRuntime.dynLpfCurveExpo = pidProfile->dterm_lpf1_dyn_expo;
-#endif
-
-#ifdef USE_D_MAX
-    for (int axis = FD_ROLL; axis <= FD_YAW; ++axis) {
-        const uint8_t dMax = pidProfile->d_max[axis];
-        if ((pidProfile->pid[axis].D > 0) && dMax > pidProfile->pid[axis].D) {
-            pidRuntime.dMaxPercent[axis] = (float) dMax / pidProfile->pid[axis].D;
-            // fraction that Dmax is higher than D, eg if D is 8 and Dmax is 10, Dmax is 1.25 times bigger
-        } else {
-            pidRuntime.dMaxPercent[axis] = 1.0f;
-        }
-    }
-    pidRuntime.dMaxGyroGain = D_MAX_GAIN_FACTOR * pidProfile->d_max_gain / D_MAX_LOWPASS_HZ;
-    pidRuntime.dMaxSetpointGain = D_MAX_SETPOINT_GAIN_FACTOR * pidProfile->d_max_gain * pidProfile->d_max_advance / 100.0f / D_MAX_LOWPASS_HZ;
-    // lowpass included inversely in gain since stronger lowpass decreases peak effect
 #endif
 
 #if defined(USE_AIRMODE_LPF)
