@@ -621,23 +621,18 @@ bool processRx(timeUs_t currentTimeUs)
 
     const bool throttleActive = calculateThrottleStatus() != THROTTLE_LOW;
     const uint8_t throttlePercent = calculateThrottlePercentAbs();
-    static bool isAirmodeActive;
 
     if (ARMING_FLAG(ARMED)) {
-        if (throttlePercent >= rxConfig()->airModeActivateThreshold) {
+        if (throttlePercent >= 10) { // was rxConfig()->airModeActivateThreshold
             throttleRaised = true; // Latch true until disarm
-        }
-        if (isAirmodeEnabled()) {
-            isAirmodeActive = throttleRaised;
         }
     } else {
         throttleRaised = false;
-        isAirmodeActive = false;
     }
 
-    // Note: If Airmode is enabled, on arming, iTerm and PIDs will be off until throttle exceeds the threshold (OFF while disarmed)
+    // Note: If on arming, iTerm and PIDs will be off until throttle exceeds the threshold (OFF while disarmed)
     // If not, iTerm will be off at low throttle, with pidStabilisationState determining whether PIDs will be active
-    if (ARMING_FLAG(ARMED) && (isAirmodeActive || throttleActive || isFixedWing())) {
+    if (ARMING_FLAG(ARMED) && (throttleActive || isFixedWing())) {
         pidSetItermReset(false);
         pidStabilisationState(PID_STABILISATION_ON);
     } else {
@@ -662,7 +657,6 @@ void processRxModes(timeUs_t currentTimeUs)
     const timeUs_t autoDisarmDelayUs = armingConfig()->auto_disarm_delay * 1e6;
     if (ARMING_FLAG(ARMED)
         && !isFixedWing()
-        && !isAirmodeEnabled()
         && !FLIGHT_MODE(GPS_RESCUE_MODE)  // disable auto-disarm when GPS Rescue is active
     ) {
         if (isUsingSticksForArming()) {
