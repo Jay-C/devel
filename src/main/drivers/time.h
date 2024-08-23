@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 void delayMicroseconds(timeUs_t us);
 void delay(timeMs_t ms);

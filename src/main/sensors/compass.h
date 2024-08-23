@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 #include "common/sensor_alignment.h"
 #include "common/vector.h"
 

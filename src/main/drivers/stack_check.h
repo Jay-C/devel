@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 void taskStackCheck(timeUs_t currentTimeUs);
 uint32_t stackUsedSize(void);
