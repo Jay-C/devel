@@ -143,13 +143,6 @@
 #define PARAM_NAME_GPS_RESCUE_USE_MAG "gps_rescue_use_mag"
 #endif
 #endif
-
-#ifdef USE_GPS_LAP_TIMER
-#define PARAM_NAME_GPS_LAP_TIMER_GATE_LAT "gps_lap_timer_gate_lat"
-#define PARAM_NAME_GPS_LAP_TIMER_GATE_LON "gps_lap_timer_gate_lon"
-#define PARAM_NAME_GPS_LAP_TIMER_MIN_LAP_TIME "gps_lap_timer_min_lap_time_s"
-#define PARAM_NAME_GPS_LAP_TIMER_GATE_TOLERANCE "gps_lap_timer_gate_tolerance_m"
-#endif // USE_GPS_LAP_TIMER
 #endif
 
 #define PARAM_NAME_IMU_DCM_KP "imu_dcm_kp"
