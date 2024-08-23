@@ -77,9 +77,6 @@ uint32_t featuresSupportedByBuild =
 #ifdef USE_OSD
     | FEATURE_OSD
 #endif
-#ifdef USE_SERVOS
-    | FEATURE_CHANNEL_FORWARDING
-#endif
 #ifdef USE_RX_SPI
     | FEATURE_RX_SPI
 #endif
