@@ -127,13 +127,9 @@ CMS_Menu cmsx_menuRcPreview = {
     .entries = cmsx_menuRcEntries
 };
 
-static uint8_t rxConfig_fpvCamAngleDegrees;
-
 static const void *cmsx_menuMiscOnEnter(displayPort_t *pDisp)
 {
     UNUSED(pDisp);
-
-    rxConfig_fpvCamAngleDegrees = rxConfig()->fpvCamAngleDegrees;
 
     return NULL;
 }
@@ -143,8 +139,6 @@ static const void *cmsx_menuMiscOnExit(displayPort_t *pDisp, const OSD_Entry *se
     UNUSED(pDisp);
     UNUSED(self);
 
-    rxConfigMutable()->fpvCamAngleDegrees = rxConfig_fpvCamAngleDegrees;
-
     return NULL;
 }
 
@@ -152,7 +146,6 @@ static const OSD_Entry menuMiscEntries[]=
 {
     { "-- MISC --", OME_Label, NULL, NULL },
 
-    { "FPV CAM ANGLE", OME_UINT8,                   NULL, &(OSD_UINT8_t) { &rxConfig_fpvCamAngleDegrees, 0,   90, 1 } },
     { "RC PREV",       OME_Submenu, cmsMenuChange, &cmsx_menuRcPreview},
 #ifdef USE_GPS_LAP_TIMER
     { "GPS LAP TIMER",  OME_Submenu, cmsMenuChange, &cms_menuGpsLapTimer },
