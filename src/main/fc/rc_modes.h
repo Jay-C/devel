@@ -34,7 +34,6 @@ typedef enum {
     BOXHORIZON,
     BOXMAG,
     BOXALTHOLD,
-    BOXHEADFREE,
     BOXFAILSAFE,
     BOXPOSHOLD,
     BOXGPSRESCUE,
@@ -43,7 +42,6 @@ typedef enum {
 // When new flight modes are added, the parameter group version for 'modeActivationConditions' in src/main/fc/rc_modes.c has to be incremented to ensure that the RC modes configuration is reset.
 
     // RCMODE flags
-    BOXHEADADJ,
     BOXBEEPERON,
     BOXLEDLOW,
     BOXCALIB,
