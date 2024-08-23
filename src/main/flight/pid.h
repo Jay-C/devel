@@ -171,7 +171,6 @@ typedef struct pidProfile_s {
     uint8_t dterm_lpf2_type;                // Filter type for 2nd dterm lowpass
     uint16_t dterm_lpf1_dyn_min_hz;         // Dterm lowpass filter 1 min hz when in dynamic mode
     uint16_t dterm_lpf1_dyn_max_hz;         // Dterm lowpass filter 1 max hz when in dynamic mode
-    int8_t auto_profile_cell_count;         // Cell count for this profile to be used with if auto PID profile switching is used
     uint8_t transient_throttle_limit;       // Maximum DC component of throttle change to mix into throttle to prevent airmode mirroring noise
     char profileName[MAX_PROFILE_NAME_LENGTH + 1]; // Descriptive name for profile
 
