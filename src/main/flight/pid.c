@@ -236,7 +236,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .spa_center = { 0, 0, 0 },
         .spa_width = { 0, 0, 0 },
         .spa_mode = { 0, 0, 0 },
-        .landing_disarm_threshold = 0, // relatively safe values are around 100
     );
 
 #ifndef USE_D_MIN
@@ -775,20 +774,6 @@ float pidGetAirmodeThrottleOffset(void)
 }
 #endif
 
-static FAST_CODE_NOINLINE void disarmOnImpact(void)
-{
-    // if all sticks are within 5% of center, and throttle low, check accDelta for impacts
-    // threshold should be high enough to avoid unwanted disarms in the air on throttle chops
-    if (isAirmodeActivated() && getMaxRcDeflectionAbs() < 0.05f && mixerGetRcThrottle() < 0.05f &&
-        fabsf(acc.accDelta) > pidRuntime.landingDisarmThreshold) {
-        // disarm on accDelta transients
-        setArmingDisabled(ARMING_DISABLED_ARM_SWITCH);
-        disarm(DISARM_REASON_LANDING);
-    }
-    DEBUG_SET(DEBUG_EZLANDING, 6, lrintf(getMaxRcDeflectionAbs() * 100.0f));
-    DEBUG_SET(DEBUG_EZLANDING, 7, lrintf(acc.accDelta));
-}
-
 #ifdef USE_LAUNCH_CONTROL
 #define LAUNCH_CONTROL_MAX_RATE 100.0f
 #define LAUNCH_CONTROL_MIN_RATE 5.0f
@@ -856,7 +841,7 @@ NOINLINE static void calculateSpaValues(const pidProfile_t *pidProfile)
         pidRuntime.spa[axis] = 1.0f - smoothStepUpTransition(
             fabsf(currentRate), pidProfile->spa_center[axis], pidProfile->spa_width[axis]);
         DEBUG_SET(DEBUG_SPA, axis, lrintf(pidRuntime.spa[axis] * 1000));
-    }    
+    }
 #else
     UNUSED(pidProfile);
 #endif // #ifdef USE_WING ... #else
@@ -988,10 +973,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
 #ifdef USE_RPM_FILTER
     rpmFilterUpdate();
 #endif
-
-    if (pidRuntime.useEzDisarm) {
-        disarmOnImpact();
-    }
 
     // ----------PID controller----------
     for (int axis = FD_ROLL; axis <= FD_YAW; ++axis) {
