@@ -361,7 +361,7 @@ void pgResetFn_osdConfig(osdConfig_t *osdConfig)
 #ifdef USE_RC_STATS
     osdStatSetState(OSD_STAT_FULL_THROTTLE_TIME, true);
     osdStatSetState(OSD_STAT_FULL_THROTTLE_COUNTER, true);
-    osdStatSetState(OSD_STAT_AVG_THROTTLE, true);    
+    osdStatSetState(OSD_STAT_AVG_THROTTLE, true);
 #endif
 
     osdConfig->timers[OSD_TIMER_1] = osdTimerDefault[OSD_TIMER_1];
@@ -1229,8 +1229,8 @@ STATIC_UNIT_TESTED bool osdProcessStats1(timeUs_t currentTimeUs)
         } else if (isSomeStatEnabled()
                    && !suppressStatsDisplay
                    && !failsafeIsActive()
-                   && (!(getArmingDisableFlags() & (ARMING_DISABLED_RUNAWAY_TAKEOFF | ARMING_DISABLED_CRASH_DETECTED))
-                       || !VISIBLE(osdElementConfig()->item_pos[OSD_WARNINGS]))) { // suppress stats if runaway takeoff triggered disarm and WARNINGS element is visible
+                   && (!(getArmingDisableFlags() & ARMING_DISABLED_CRASH_DETECTED)
+                       || !VISIBLE(osdElementConfig()->item_pos[OSD_WARNINGS]))) {
             osdStatsEnabled = true;
             resumeRefreshAt = currentTimeUs + (60 * REFRESH_1S);
             stats.end_voltage = getStatsVoltage();

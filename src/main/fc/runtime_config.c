@@ -39,7 +39,7 @@ const char *armingDisableFlagNames[]= {
     "RXLOSS",
     "NOT_DISARMED",
     "BOXFAILSAFE",
-    "RUNAWAY",
+    "UNUSED_5"
     "CRASH",
     "THROTTLE",
     "ANGLE",
