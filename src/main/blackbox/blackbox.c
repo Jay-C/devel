@@ -233,14 +233,6 @@ static const blackboxDeltaFieldDefinition_t blackboxMainFields[] = {
     {"imuQuaternion",    1, SIGNED,   .Ipredict = PREDICT(0),  .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), CONDITION(ATTITUDE)},
     {"imuQuaternion",    2, SIGNED,   .Ipredict = PREDICT(0),  .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), CONDITION(ATTITUDE)},
 #endif
-    {"debug",       0, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
-    {"debug",       1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
-    {"debug",       2, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
-    {"debug",       3, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
-    {"debug",       4, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
-    {"debug",       5, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
-    {"debug",       6, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
-    {"debug",       7, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
     /* Motors only rarely drops under minthrottle (when stick falls below mincommand), so predict minthrottle for it and use *unsigned* encoding (which is large for negative numbers but more compact for positive ones): */
     {"motor",       0, UNSIGNED, .Ipredict = PREDICT(MINMOTOR), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(SIGNED_VB), CONDITION(AT_LEAST_MOTORS_1)},
     /* Subsequent motors base their I-frame values on the first one, P-frame values on the average of last two frames: */
@@ -275,6 +267,15 @@ static const blackboxDeltaFieldDefinition_t blackboxMainFields[] = {
     {"eRPM",  6, UNSIGNED, .Ipredict = PREDICT(0),       .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MOTOR_7_HAS_RPM)},
     {"eRPM",  7, UNSIGNED, .Ipredict = PREDICT(0),       .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MOTOR_8_HAS_RPM)},
 #endif /* USE_DSHOT_TELEMETRY */
+
+    {"debug",       0, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
+    {"debug",       1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
+    {"debug",       2, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
+    {"debug",       3, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
+    {"debug",       4, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
+    {"debug",       5, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
+    {"debug",       6, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
+    {"debug",       7, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),     .Pencode = ENCODING(SIGNED_VB), CONDITION(DEBUG_LOG)},
 };
 
 #ifdef USE_GPS
@@ -343,7 +344,6 @@ typedef struct blackboxMainState_s {
     int16_t accADC[XYZ_AXIS_COUNT];
     int16_t imuAttitudeQuaternion[XYZ_AXIS_COUNT];
 #endif
-    int16_t debug[DEBUG16_VALUE_COUNT];
     int16_t motor[MAX_SUPPORTED_MOTORS];
     int16_t servo[MAX_SUPPORTED_SERVOS];
 #ifdef USE_DSHOT_TELEMETRY
@@ -363,6 +363,9 @@ typedef struct blackboxMainState_s {
     int32_t surfaceRaw;
 #endif
     uint16_t rssi;
+
+    int32_t debug[DEBUG_VALUE_COUNT];
+
 } blackboxMainState_t;
 
 typedef struct blackboxGpsState_s {
@@ -712,10 +715,6 @@ static void writeIntraframe(void)
     }
 #endif
 
-    if (testBlackboxCondition(CONDITION(DEBUG_LOG))) {
-        blackboxWriteSigned16VBArray(blackboxCurrent->debug, DEBUG16_VALUE_COUNT);
-    }
-
     if (isFieldEnabled(FIELD_SELECT(MOTOR))) {
         //Motors can be below minimum output when disarmed, but that doesn't happen much
         blackboxWriteUnsignedVB(blackboxCurrent->motor[0] - getMotorOutputLow());
@@ -749,6 +748,10 @@ static void writeIntraframe(void)
     }
 #endif
 
+    if (testBlackboxCondition(CONDITION(DEBUG_LOG))) {
+        blackboxWriteSignedVBArray(blackboxCurrent->debug, DEBUG_VALUE_COUNT);
+    }
+
     //Rotate our history buffers:
 
     //The current state becomes the new "before" state
@@ -772,6 +775,13 @@ static void blackboxWriteMainStateArrayUsingAveragePredictor(int arrOffsetInHist
         int32_t predictor = (prev1[i] + prev2[i]) / 2;
 
         blackboxWriteSignedVB(curr[i] - predictor);
+    }
+}
+
+static void arraySubInt32(int32_t *dest, const int32_t *array1, const int32_t *array2, int count)
+{
+    for (int i = 0; i < count; i++) {
+        dest[i] = array1[i] - array2[i];
     }
 }
 
@@ -889,10 +899,6 @@ static void writeInterframe(void)
     }
 #endif
 
-    if (testBlackboxCondition(CONDITION(DEBUG_LOG))) {
-        blackboxWriteMainStateArrayUsingAveragePredictor(offsetof(blackboxMainState_t, debug), DEBUG16_VALUE_COUNT);
-    }
-
     if (isFieldEnabled(FIELD_SELECT(MOTOR))) {
         blackboxWriteMainStateArrayUsingAveragePredictor(offsetof(blackboxMainState_t, motor),     getMotorCount());
     }
@@ -919,6 +925,11 @@ static void writeInterframe(void)
         }
     }
 #endif
+
+    if (testBlackboxCondition(CONDITION(DEBUG_LOG))) {
+        arraySubInt32(deltas, blackboxCurrent->debug, blackboxLast->debug, DEBUG_VALUE_COUNT);
+        blackboxWriteSignedVBArray(deltas, DEBUG_VALUE_COUNT);
+    }
 
     //Rotate our history buffers
     blackboxHistory[2] = blackboxHistory[1];
@@ -1169,10 +1180,6 @@ static void loadMainState(timeUs_t currentTimeUs)
     // log the final throttle value used in the mixer
     blackboxCurrent->setpoint[3] = lrintf(mixerGetThrottle() * 1000);
 
-    for (int i = 0; i < DEBUG16_VALUE_COUNT; i++) {
-        blackboxCurrent->debug[i] = debug[i];
-    }
-
     const int motorCount = getMotorCount();
     for (int i = 0; i < motorCount; i++) {
         blackboxCurrent->motor[i] = lrintf(motor[i]);
@@ -1203,6 +1210,11 @@ static void loadMainState(timeUs_t currentTimeUs)
         blackboxCurrent->servo[i] = servo[i];
     }
 #endif
+
+    for (int i = 0; i < DEBUG_VALUE_COUNT; i++) {
+        blackboxCurrent->debug[i] = debug[i];
+    }
+
 #else
     UNUSED(currentTimeUs);
 #endif // UNIT_TEST
