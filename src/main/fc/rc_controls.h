@@ -23,7 +23,9 @@
 #include <stdbool.h>
 
 #include "common/filter.h"
+
 #include "pg/pg.h"
+#include "pg/rc_controls.h"
 
 typedef enum rc_alias {
     ROLL = 0,
@@ -81,15 +83,6 @@ typedef enum {
 #define CONTROL_RATE_CONFIG_RATE_MAX  255
 
 extern float rcCommand[4];
-
-typedef struct rcControlsConfig_s {
-    uint8_t deadband;                       // introduce a deadband around the stick center for pitch and roll axis. Must be greater than zero.
-    uint8_t yaw_deadband;                   // introduce a deadband around the stick center for yaw axis. Must be greater than zero.
-    uint8_t alt_hold_deadband;              // defines the neutral zone of throttle stick during altitude hold, default setting is +/-40
-    uint8_t alt_hold_fast_change;           // when disabled, turn off the althold when throttle stick is out of deadband defined with alt_hold_deadband; when enabled, altitude changes slowly proportional to stick movement
-} rcControlsConfig_t;
-
-PG_DECLARE(rcControlsConfig_t, rcControlsConfig);
 
 typedef struct armingConfig_s {
     uint8_t gyro_cal_on_first_arm;          // calibrate the gyro right before the first arm
