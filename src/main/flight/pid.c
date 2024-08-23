@@ -140,9 +140,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .anti_gravity_p_gain = 100,
         .angle_earth_ref = 100,
         .horizon_delay_ms = 500, // 500ms time constant on any increase in horizon strength
-        .ez_landing_threshold = 25,
-        .ez_landing_limit = 15,
-        .ez_landing_speed = 50,
         .landing_disarm_threshold = 0, // relatively safe values are around 100
         .yaw_type = YAW_TYPE_RUDDER,
         .angle_pitch_offset = 0,
@@ -375,8 +372,6 @@ static FAST_CODE_NOINLINE void disarmOnImpact(void)
             // note: threshold should be high enough to avoid unwanted disarms in the air on throttle chops, eg around 10
         }
     }
-    DEBUG_SET(DEBUG_EZLANDING, 6, lrintf(getMaxRcDeflectionAbs() * 100.0f));
-    DEBUG_SET(DEBUG_EZLANDING, 7, lrintf(acc.jerkMagnitude * 1e3f));
 }
 
 // Betaflight pid controller, which will be maintained in the future with additional features specialised for current (mini) multirotor usage.
