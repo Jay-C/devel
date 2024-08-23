@@ -64,7 +64,6 @@ const char * const debugModeNames[DEBUG_COUNT] = {
     "SMARTAUDIO",
     "RTH",
     "RX_SIGNAL_LOSS",
-    "DYN_LPF",
     "RX_SPEKTRUM_SPI",
     "DSHOT_RPM_TELEMETRY",
     "RPM_FILTER",
