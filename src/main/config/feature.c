@@ -62,7 +62,6 @@ uint32_t featuresSupportedByBuild =
 #ifdef USE_TELEMETRY
     | FEATURE_TELEMETRY
 #endif
-    | FEATURE_3D // always available
 #ifdef USE_PWM
     | FEATURE_RX_PARALLEL_PWM
 #endif
