@@ -85,9 +85,6 @@ uint32_t featuresSupportedByBuild =
 #ifdef USE_SERVOS
     | FEATURE_CHANNEL_FORWARDING
 #endif
-#ifdef USE_TRANSPONDER
-    | FEATURE_TRANSPONDER
-#endif
     | FEATURE_AIRMODE // always available
 #ifdef USE_RX_SPI
     | FEATURE_RX_SPI
