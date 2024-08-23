@@ -25,9 +25,6 @@
 #include "platform.h"
 
 #include "config/feature.h"
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
-
 
 #define ENTRY(_FEA)  [FEATURE_BIT_ ## _FEA] = #_FEA
 const char * const featureNames[FEATURE_BIT_COUNT] = {
@@ -48,12 +45,6 @@ const char * const featureNames[FEATURE_BIT_COUNT] = {
     ENTRY(ESC_SENSOR),
 };
 #undef ENTRY
-
-PG_REGISTER_WITH_RESET_TEMPLATE(featureConfig_t, featureConfig, PG_FEATURE_CONFIG, 1);
-
-PG_RESET_TEMPLATE(featureConfig_t, featureConfig,
-    .enabledFeatures = DEFAULT_FEATURES | DEFAULT_RX_FEATURE,
-);
 
 // bitmask of features that are supported in current build configuration
 uint32_t featuresSupportedByBuild = 0

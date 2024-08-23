@@ -20,15 +20,7 @@
 
 #pragma once
 
-#include "pg/pg.h"
-
-#ifndef DEFAULT_FEATURES
-#define DEFAULT_FEATURES 0
-#endif
-
-#ifndef DEFAULT_RX_FEATURE
-#define DEFAULT_RX_FEATURE 0
-#endif
+#include "pg/feature.h"
 
 typedef enum {
     FEATURE_BIT_RX_PPM              = 0,
@@ -68,12 +60,6 @@ typedef enum {
     ENTRY(ESC_SENSOR),
 } features_e;
 #undef ENTRY
-
-typedef struct featureConfig_s {
-    uint32_t enabledFeatures;
-} featureConfig_t;
-
-PG_DECLARE(featureConfig_t, featureConfig);
 
 // Mask of features that have code compiled in with current config.
 //  Other restrictions on available features may apply.
