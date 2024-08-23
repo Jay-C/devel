@@ -172,7 +172,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .feedforward_jitter_factor = 7,
         .feedforward_boost = 15,
         .dterm_lpf1_dyn_expo = 5,
-        .vbat_sag_compensation = 0,
         .simplified_pids_mode = PID_SIMPLIFIED_TUNING_RPY,
         .simplified_master_multiplier = SIMPLIFIED_TUNING_DEFAULT,
         .simplified_roll_pitch_ratio = SIMPLIFIED_TUNING_DEFAULT,
