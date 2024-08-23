@@ -201,8 +201,6 @@ typedef struct pidProfile_s {
     uint8_t dterm_lpf2_type;                // Filter type for 2nd dterm lowpass
     uint16_t dterm_lpf1_dyn_min_hz;         // Dterm lowpass filter 1 min hz when in dynamic mode
     uint16_t dterm_lpf1_dyn_max_hz;         // Dterm lowpass filter 1 max hz when in dynamic mode
-    uint8_t use_integrated_yaw;             // Selects whether the yaw pidsum should integrated
-    uint8_t integrated_yaw_relax;           // Specifies how much integrated yaw should be reduced to offset the drag based yaw component
     uint8_t thrustLinearization;            // Compensation factor for pid linearization
     uint8_t d_max[XYZ_AXIS_COUNT];          // Maximum D value on each axis
     uint8_t d_max_gain;                     // Gain factor for amount of gyro / setpoint activity required to boost D
@@ -410,11 +408,6 @@ typedef struct pidRuntime_s {
     uint16_t dynLpfMin;
     uint16_t dynLpfMax;
     uint8_t dynLpfCurveExpo;
-#endif
-
-#ifdef USE_INTEGRATED_YAW_CONTROL
-    bool useIntegratedYaw;
-    uint8_t integratedYawRelax;
 #endif
 
 #ifdef USE_THRUST_LINEARIZATION
