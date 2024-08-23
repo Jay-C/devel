@@ -200,8 +200,6 @@ void pidInitFilters(const pidProfile_t *pidProfile)
     }
     pidRuntime.angleYawSetpoint = 0.0f;
 #endif
-
-    pt2FilterInit(&pidRuntime.antiGravityLpf, pt2FilterGain(pidProfile->anti_gravity_cutoff_hz, pidRuntime.dT));
 }
 
 void pidInit(const pidProfile_t *pidProfile)
@@ -240,17 +238,11 @@ void pidInitConfig(const pidProfile_t *pidProfile)
 
     pidRuntime.maxVelocity[FD_ROLL] = pidRuntime.maxVelocity[FD_PITCH] = pidProfile->rateAccelLimit * 100 * pidRuntime.dT;
     pidRuntime.maxVelocity[FD_YAW] = pidProfile->yawRateAccelLimit * 100 * pidRuntime.dT;
-    pidRuntime.antiGravityGain = pidProfile->anti_gravity_gain;
 
     pidRuntime.itermLimit = 0.01f * pidProfile->itermWindup * pidProfile->pidSumLimit;
     pidRuntime.itermLimitYaw = 0.01f * pidProfile->itermWindup * pidProfile->pidSumLimitYaw;
 
     pidRuntime.itermRotation = pidProfile->iterm_rotation;
-
-    // Calculate the anti-gravity value that will trigger the OSD display when its strength exceeds 25% of max.
-    // This gives a useful indication of AG activity without excessive display.
-    pidRuntime.antiGravityOsdCutoff = (pidRuntime.antiGravityGain / 10.0f) * 0.25f;
-    pidRuntime.antiGravityPGain = ((float)(pidProfile->anti_gravity_p_gain) / 100.0f) * ANTIGRAVITY_KP;
 
 #ifdef USE_DYN_LPF
     if (pidProfile->dterm_lpf1_dyn_min_hz > 0) {
