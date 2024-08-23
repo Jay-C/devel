@@ -186,14 +186,6 @@ void pidInitFilters(const pidProfile_t *pidProfile)
         pidRuntime.dtermLowpass2ApplyFn = nullFilterApply;
     }
 
-#if defined(USE_ITERM_RELAX)
-    if (pidRuntime.itermRelax) {
-        for (int i = 0; i < XYZ_AXIS_COUNT; i++) {
-            pt1FilterInit(&pidRuntime.windupLpf[i], pt1FilterGain(pidRuntime.itermRelaxCutoff, pidRuntime.dT));
-        }
-    }
-#endif
-
 #ifdef USE_ACC
     const float k = pt3FilterGain(ATTITUDE_CUTOFF_HZ, pidRuntime.dT);
     pidRuntime.horizonDelayMs = pidProfile->horizon_delay_ms;
@@ -259,12 +251,6 @@ void pidInitConfig(const pidProfile_t *pidProfile)
     // This gives a useful indication of AG activity without excessive display.
     pidRuntime.antiGravityOsdCutoff = (pidRuntime.antiGravityGain / 10.0f) * 0.25f;
     pidRuntime.antiGravityPGain = ((float)(pidProfile->anti_gravity_p_gain) / 100.0f) * ANTIGRAVITY_KP;
-
-#if defined(USE_ITERM_RELAX)
-    pidRuntime.itermRelax = pidProfile->iterm_relax;
-    pidRuntime.itermRelaxType = pidProfile->iterm_relax_type;
-    pidRuntime.itermRelaxCutoff = pidProfile->iterm_relax_cutoff;
-#endif
 
 #ifdef USE_ACRO_TRAINER
     pidRuntime.acroTrainerAngleLimit = pidProfile->acro_trainer_angle_limit;
