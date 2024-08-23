@@ -118,7 +118,5 @@ const char * const debugModeNames[DEBUG_COUNT] = {
     "MAG_TASK_RATE",
     "EZLANDING",
     "TPA",
-    "S_TERM",
-    "SPA",
     "TASK",
 };
