@@ -445,10 +445,6 @@ static const char * const lookupTableOsdLogoOnArming[] = {
 };
 #endif
 
-const char* const lookupTableMixerType[] = {
-    "LEGACY", "LINEAR", "DYNAMIC",
-};
-
 #ifdef USE_OSD
 const char * const lookupTableCMSMenuBackgroundType[] = {
     "TRANSPARENT", "BLACK", "GRAY", "LIGHT_GRAY"
@@ -562,9 +558,6 @@ const lookupTableEntry_t lookupTables[] = {
 
 #ifdef USE_OSD
     LOOKUP_TABLE_ENTRY(lookupTableOsdLogoOnArming),
-#endif
-    LOOKUP_TABLE_ENTRY(lookupTableMixerType),
-#ifdef USE_OSD
     LOOKUP_TABLE_ENTRY(lookupTableCMSMenuBackgroundType),
 #endif
 #ifdef USE_RX_EXPRESSLRS
@@ -815,15 +808,10 @@ const clivalue_t valueTable[] = {
 #endif
 #endif // USE_BEEPER
 
-// PG_MIXER_CONFIG
-    { PARAM_NAME_MIXER_TYPE,        VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_MIXER_TYPE }, PG_MIXER_CONFIG, offsetof(mixerConfig_t, mixer_type) },
-
 // PG_SERVO_CONFIG
 #ifdef USE_SERVOS
     { "servo_center_pulse",         VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { PWM_PULSE_MIN, PWM_PULSE_MAX }, PG_SERVO_CONFIG, offsetof(servoConfig_t, dev.servoCenterPulse) },
     { "servo_pwm_rate",             VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { 50, 498 }, PG_SERVO_CONFIG, offsetof(servoConfig_t, dev.servoPwmRate) },
-    { "servo_lowpass_hz",           VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { 0, 400}, PG_SERVO_CONFIG, offsetof(servoConfig_t, servo_lowpass_freq) },
-    { "tri_unarmed_servo",          VAR_INT8   | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_OFF_ON }, PG_SERVO_CONFIG, offsetof(servoConfig_t, tri_unarmed_servo) },
 #endif
 
 // PG_CONTROLRATE_PROFILES
