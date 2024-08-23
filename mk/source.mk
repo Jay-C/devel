@@ -2,6 +2,7 @@ PG_SRC = \
             pg/adc.c \
             pg/beeper.c \
             pg/beeper_dev.c \
+            pg/blackbox.c \
             pg/board.c \
             pg/bus_i2c.c \
             pg/bus_quadspi.c \
