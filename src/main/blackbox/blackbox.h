@@ -23,26 +23,7 @@
 #include "platform.h"
 #include "build/build_config.h"
 #include "common/rtc.h"
-#include "pg/pg.h"
-
-typedef enum BlackboxDevice {
-    BLACKBOX_DEVICE_NONE = 0,
-    BLACKBOX_DEVICE_FLASH = 1,
-    BLACKBOX_DEVICE_SDCARD = 2,
-    BLACKBOX_DEVICE_SERIAL = 3
-} BlackboxDevice_e;
-
-typedef enum BlackboxMode {
-    BLACKBOX_MODE_NORMAL = 0,
-} BlackboxMode;
-
-typedef enum BlackboxSampleRate { // Sample rate is 1/(2^BlackboxSampleRate)
-    BLACKBOX_RATE_ONE = 0,
-    BLACKBOX_RATE_HALF,
-    BLACKBOX_RATE_QUARTER,
-    BLACKBOX_RATE_8TH,
-    BLACKBOX_RATE_16TH
-} BlackboxSampleRate_e;
+#include "pg/blackbox.h"
 
 typedef enum FlightLogEvent {
     FLIGHT_LOG_EVENT_SYNC_BEEP = 0,
@@ -55,16 +36,6 @@ typedef enum FlightLogEvent {
     FLIGHT_LOG_EVENT_FLIGHTMODE = 30, // Add new event type for flight mode status.
     FLIGHT_LOG_EVENT_LOG_END = 255
 } FlightLogEvent;
-
-typedef struct blackboxConfig_s {
-    uint32_t fields_disabled_mask;
-    uint8_t sample_rate; // sample rate
-    uint8_t device;
-    uint8_t mode;
-    uint8_t high_resolution;
-} blackboxConfig_t;
-
-PG_DECLARE(blackboxConfig_t, blackboxConfig);
 
 union flightLogEventData_u;
 void blackboxLogEvent(FlightLogEvent event, union flightLogEventData_u *data);

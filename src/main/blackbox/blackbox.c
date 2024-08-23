@@ -74,9 +74,7 @@
 #include "io/gps.h"
 #include "io/serial.h"
 
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
-
+#include "pg/blackbox.h"
 #include "pg/alt_hold.h"
 #include "pg/autopilot.h"
 #include "pg/motor.h"
@@ -98,22 +96,6 @@
 void checkFlashStart(void);
 void checkFlashStop(void);
 #endif
-
-#if !defined(DEFAULT_BLACKBOX_DEVICE)
-#define DEFAULT_BLACKBOX_DEVICE     BLACKBOX_DEVICE_NONE
-#endif
-
-PG_REGISTER_WITH_RESET_TEMPLATE(blackboxConfig_t, blackboxConfig, PG_BLACKBOX_CONFIG, 4);
-
-PG_RESET_TEMPLATE(blackboxConfig_t, blackboxConfig,
-    .fields_disabled_mask = 0, // default log all fields
-    .sample_rate = BLACKBOX_RATE_QUARTER,
-    .device = DEFAULT_BLACKBOX_DEVICE,
-    .mode = BLACKBOX_MODE_NORMAL,
-    .high_resolution = false
-);
-
-STATIC_ASSERT((sizeof(blackboxConfig()->fields_disabled_mask) * 8) >= FLIGHT_LOG_FIELD_SELECT_COUNT, too_many_flight_log_fields_selections);
 
 #define BLACKBOX_SHUTDOWN_TIMEOUT_MILLIS 200
 
