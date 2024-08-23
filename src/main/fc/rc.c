@@ -330,24 +330,6 @@ FAST_CODE_NOINLINE void updateRcCommands(void)
     }
 
     rcCommand[THROTTLE] = rcLookupThrottle(tmp);
-
-    if (FLIGHT_MODE(HEADFREE_MODE)) {
-        static vector3_t rcCommandBuff;
-
-        rcCommandBuff.x = rcCommand[ROLL];
-        rcCommandBuff.y = rcCommand[PITCH];
-        if (!FLIGHT_MODE(ANGLE_MODE | ALT_HOLD_MODE | POS_HOLD_MODE | HORIZON_MODE | GPS_RESCUE_MODE)) {
-            rcCommandBuff.z = rcCommand[YAW];
-        } else {
-            rcCommandBuff.z = 0;
-        }
-        imuQuaternionHeadfreeTransformVectorEarthToBody(&rcCommandBuff);
-        rcCommand[ROLL] = rcCommandBuff.x;
-        rcCommand[PITCH] = rcCommandBuff.y;
-        if (!FLIGHT_MODE(ANGLE_MODE | ALT_HOLD_MODE | POS_HOLD_MODE | HORIZON_MODE | GPS_RESCUE_MODE)) {
-            rcCommand[YAW] = rcCommandBuff.z;
-        }
-    }
 }
 
 void resetYawAxis(void)
