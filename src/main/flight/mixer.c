@@ -51,7 +51,6 @@
 #include "flight/mixer_init.h"
 #include "flight/mixer_tricopter.h"
 #include "flight/pid.h"
-#include "flight/rpm_filter.h"
 
 #include "io/gps.h"
 

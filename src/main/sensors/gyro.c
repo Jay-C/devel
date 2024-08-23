@@ -47,7 +47,6 @@
 #ifdef USE_DYN_NOTCH_FILTER
 #include "flight/dyn_notch_filter.h"
 #endif
-#include "flight/rpm_filter.h"
 
 #include "io/beeper.h"
 #include "io/statusindicator.h"
