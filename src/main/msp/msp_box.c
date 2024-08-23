@@ -74,7 +74,6 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
     { .boxId = BOXSERVO3, .boxName = "SERVO3", .permanentId = 25 },
     { .boxId = BOXBLACKBOX, .boxName = "BLACKBOX", .permanentId = 26 },
     { .boxId = BOXFAILSAFE, .boxName = "FAILSAFE", .permanentId = 27 },
-    { .boxId = BOXFPVANGLEMIX, .boxName = "FPV ANGLE MIX", .permanentId = 30},
     { .boxId = BOXBLACKBOXERASE, .boxName = "BLACKBOX ERASE", .permanentId = 31 },
     { .boxId = BOXCAMERA1, .boxName = "CAMERA CONTROL 1", .permanentId = 32},
     { .boxId = BOXCAMERA2, .boxName = "CAMERA CONTROL 2", .permanentId = 33},
@@ -221,7 +220,6 @@ void initActiveBoxIds(void)
 #endif
         BME(BOXHEADFREE);
         BME(BOXHEADADJ);
-        BME(BOXFPVANGLEMIX);
         if (featureIsEnabled(FEATURE_INFLIGHT_ACC_CAL)) {
             BME(BOXCALIB);
         }
