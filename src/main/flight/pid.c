@@ -118,7 +118,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .angle_limit = 60,
         .yawRateAccelLimit = 0,
         .rateAccelLimit = 0,
-        .anti_gravity_gain = 80,
         .horizon_limit_degrees = 135,
         .horizon_ignore_sticks = false,
         .itermLimit = 400,
@@ -136,8 +135,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .transient_throttle_limit = 0,
         .profileName = { 0 },
         .dterm_lpf1_dyn_expo = 5,
-        .anti_gravity_cutoff_hz = 5,
-        .anti_gravity_p_gain = 100,
         .angle_earth_ref = 100,
         .horizon_delay_ms = 500, // 500ms time constant on any increase in horizon strength
         .landing_disarm_threshold = 0, // relatively safe values are around 100
@@ -156,16 +153,6 @@ void pgResetFn_pidProfiles(pidProfile_t *pidProfiles)
 // Scale factors to make best use of range with D_LPF debugging, aiming for max +/-16K as debug values are 16 bit
 #define D_LPF_RAW_SCALE 25
 
-void pidSetItermAccelerator(float newItermAccelerator)
-{
-    pidRuntime.itermAccelerator = newItermAccelerator;
-}
-
-bool pidOsdAntiGravityActive(void)
-{
-    return (pidRuntime.itermAccelerator > pidRuntime.antiGravityOsdCutoff);
-}
-
 void pidStabilisationState(pidStabilisationState_e pidControllerState)
 {
     pidRuntime.pidStabilisationEnabled = (pidControllerState == PID_STABILISATION_ON) ? true : false;
@@ -178,27 +165,6 @@ void pidResetIterm(void)
     for (int axis = 0; axis < 3; axis++) {
         pidData[axis].I = 0.0f;
     }
-}
-
-void pidUpdateAntiGravityThrottleFilter(float throttle)
-{
-    static float previousThrottle = 0.0f;
-    const float throttleInv = 1.0f - throttle;
-    float throttleDerivative = fabsf(throttle - previousThrottle) * pidRuntime.pidFrequency;
-    DEBUG_SET(DEBUG_ANTI_GRAVITY, 0, lrintf(throttleDerivative * 100));
-    throttleDerivative *= throttleInv * throttleInv;
-    // generally focus on the low throttle period
-    if (throttle > previousThrottle) {
-        throttleDerivative *= throttleInv * 0.5f;
-        // when increasing throttle, focus even more on the low throttle range
-    }
-    previousThrottle = throttle;
-    throttleDerivative = pt2FilterApply(&pidRuntime.antiGravityLpf, throttleDerivative);
-    // lower cutoff suppresses peaks relative to troughs and prolongs the effects
-    // PT2 smoothing of throttle derivative.
-    // 6 is a typical value for the peak boost factor with default cutoff of 6Hz
-    DEBUG_SET(DEBUG_ANTI_GRAVITY, 1, lrintf(throttleDerivative * 100));
-    pidRuntime.antiGravityThrottleD = throttleDerivative;
 }
 
 #if defined(USE_ACC)
@@ -421,19 +387,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
     UNUSED(currentTimeUs);
 #endif
 
-    // Anti Gravity
-    if (pidRuntime.antiGravityEnabled) {
-        pidRuntime.antiGravityThrottleD *= pidRuntime.antiGravityGain;
-        // used later to increase pTerm
-        pidRuntime.itermAccelerator = pidRuntime.antiGravityThrottleD * ANTIGRAVITY_KI;
-    } else {
-        pidRuntime.antiGravityThrottleD = 0.0f;
-        pidRuntime.itermAccelerator = 0.0f;
-    }
-    DEBUG_SET(DEBUG_ANTI_GRAVITY, 2, lrintf((1 + (pidRuntime.itermAccelerator / pidRuntime.pidCoefficient[FD_PITCH].Ki)) * 1000));
-    // amount of antigravity added relative to user's pitch iTerm coefficient
-    // used later to increase iTerm
-
     // Precalculate gyro delta for D-term here, this allows loop unrolling
     float gyroRateDterm[XYZ_AXIS_COUNT];
     for (int axis = FD_ROLL; axis <= FD_YAW; ++axis) {
@@ -508,19 +461,8 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
 
         // -----calculate I component
         float Ki = pidRuntime.pidCoefficient[axis].Ki;
-        float itermLimit = pidRuntime.itermLimit; // windup fraction of pidSumLimit
-
-        {
-            // yaw iTerm has it's own limit based on pidSumLimitYaw
-            if (axis == FD_YAW) {
-                itermLimit = pidRuntime.itermLimitYaw; // windup fraction of pidSumLimitYaw
-                // note that this is a stronger limit than previously
-                pidRuntime.itermAccelerator = 0.0f; // no antigravity on yaw iTerm
-            }
-        }
-
-        float iTermChange = (Ki + pidRuntime.itermAccelerator) * pidRuntime.dT * itermErrorRate;
-        pidData[axis].I = constrainf(previousIterm + iTermChange, -itermLimit, itermLimit);
+        float iTermChange = Ki * pidRuntime.dT * itermErrorRate;
+        pidData[axis].I = constrainf(previousIterm + iTermChange, -pidRuntime.itermLimit, pidRuntime.itermLimit);
 
         // -----calculate D component
 
@@ -547,18 +489,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
 
         // -----calculate feedforward component
         pidData[axis].F = pidRuntime.pidCoefficient[axis].Kf * pidSetpointDelta;
-
-        // Add P boost from antiGravity when sticks are close to zero
-        if (axis != FD_YAW) {
-            float agSetpointAttenuator = fabsf(currentPidSetpoint) / 50.0f;
-            agSetpointAttenuator = MAX(agSetpointAttenuator, 1.0f);
-            // attenuate effect if turning more than 50 deg/s, half at 100 deg/s
-            const float antiGravityPBoost = 1.0f + (pidRuntime.antiGravityThrottleD / agSetpointAttenuator) * pidRuntime.antiGravityPGain;
-            pidData[axis].P *= antiGravityPBoost;
-            if (axis == FD_PITCH) {
-                DEBUG_SET(DEBUG_ANTI_GRAVITY, 3, lrintf(antiGravityPBoost * 1000));
-            }
-        }
 
         // calculating the PID sum
         pidData[axis].Sum = pidData[axis].P + pidData[axis].I + pidData[axis].D + pidData[axis].F;
@@ -587,20 +517,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
     } else if (pidRuntime.zeroThrottleItermReset) {
         pidResetIterm();
     }
-}
-
-void pidSetAntiGravityState(bool newState)
-{
-    if (newState != pidRuntime.antiGravityEnabled) {
-        // reset the accelerator on state changes
-        pidRuntime.itermAccelerator = 0.0f;
-    }
-    pidRuntime.antiGravityEnabled = newState;
-}
-
-bool pidAntiGravityEnabled(void)
-{
-    return pidRuntime.antiGravityEnabled;
 }
 
 #ifdef USE_DYN_LPF
