@@ -185,9 +185,6 @@ typedef enum {
 #ifdef USE_RC_STATS
     TASK_RC_STATS,
 #endif
-#ifdef USE_GIMBAL
-    TASK_GIMBAL,
-#endif
 
     /* Count of real tasks */
     TASK_COUNT,
