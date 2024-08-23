@@ -25,7 +25,7 @@
 
 #include "platform.h"
 
-#include "pg/pg.h"
+#include "pg/time.h"
 
 // time difference, 32 bits always sufficient
 typedef int32_t timeDelta_t;
@@ -51,12 +51,6 @@ static inline int32_t cmpTimeCycles(uint32_t a, uint32_t b) { return (int32_t)(a
 #define FORMATTED_DATE_TIME_BUFSIZE 30
 
 #ifdef USE_RTC_TIME
-
-typedef struct timeConfig_s {
-    int16_t tz_offsetMinutes; // Offset from UTC in minutes, might be positive or negative
-} timeConfig_t;
-
-PG_DECLARE(timeConfig_t, timeConfig);
 
 // Milliseconds since Jan 1 1970
 typedef int64_t rtcTime_t;
