@@ -81,7 +81,6 @@ COMMON_SRC = \
             build/main.c \
             build/build_config.c \
             build/debug.c \
-            build/debug_pin.c \
             build/version.c \
             $(PG_SRC) \
             common/bitarray.c \
@@ -114,6 +113,7 @@ COMMON_SRC = \
             cli/cli.c \
             cli/settings.c \
             config/config.c \
+            debug/debug_pin.c \
             debug/dprintf.c \
             drivers/dshot.c \
             drivers/dshot_dpwm.c \
