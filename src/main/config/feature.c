@@ -44,7 +44,6 @@ uint32_t featuresSupportedByBuild =
 #ifdef USE_SERIALRX
     | FEATURE_RX_SERIAL
 #endif
-    | FEATURE_MOTOR_STOP // always available
 #ifdef USE_SERVOS
     | FEATURE_SERVO_TILT
 #endif
