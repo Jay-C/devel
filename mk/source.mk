@@ -1,5 +1,6 @@
 PG_SRC = \
             pg/adc.c \
+            pg/adjustments.c \
             pg/alt_hold.c \
             pg/autopilot.c \
             pg/beeper.c \
