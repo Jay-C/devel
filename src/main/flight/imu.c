@@ -276,21 +276,10 @@ STATIC_UNIT_TESTED void imuMahonyAHRSupdate(float dt,
 
 STATIC_UNIT_TESTED void imuUpdateEulerAngles(void)
 {
-    quaternionProducts buffer;
-
-    if (FLIGHT_MODE(HEADFREE_MODE)) {
-       imuQuaternionComputeProducts(&headfree, &buffer);
-
-       attitude.values.roll = lrintf(atan2_approx((+2.0f * (buffer.wx + buffer.yz)), (+1.0f - 2.0f * (buffer.xx + buffer.yy))) * (1800.0f / M_PIf));
-       attitude.values.pitch = lrintf(((0.5f * M_PIf) - acos_approx(+2.0f * (buffer.wy - buffer.xz))) * (1800.0f / M_PIf));
-       attitude.values.yaw = lrintf((-atan2_approx((+2.0f * (buffer.wz + buffer.xy)), (+1.0f - 2.0f * (buffer.yy + buffer.zz))) * (1800.0f / M_PIf)));
-       imuAttitudeQuaternion = headfree;
-    } else {
-       attitude.values.roll = lrintf(atan2_approx(rMat.m[2][1], rMat.m[2][2]) * (1800.0f / M_PIf));
-       attitude.values.pitch = lrintf(((0.5f * M_PIf) - acos_approx(-rMat.m[2][0])) * (1800.0f / M_PIf));
-       attitude.values.yaw = lrintf((-atan2_approx(rMat.m[1][0], rMat.m[0][0]) * (1800.0f / M_PIf)));
-       imuAttitudeQuaternion = q; //using current q quaternion  for blackbox log
-    }
+    attitude.values.roll = lrintf(atan2_approx(rMat.m[2][1], rMat.m[2][2]) * (1800.0f / M_PIf));
+    attitude.values.pitch = lrintf(((0.5f * M_PIf) - acos_approx(-rMat.m[2][0])) * (1800.0f / M_PIf));
+    attitude.values.yaw = lrintf((-atan2_approx(rMat.m[1][0], rMat.m[0][0]) * (1800.0f / M_PIf)));
+    imuAttitudeQuaternion = q; //using current q quaternion  for blackbox log
 
     if (attitude.values.yaw < 0) {
         attitude.values.yaw += 3600;
