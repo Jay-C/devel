@@ -131,9 +131,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .anti_gravity_p_gain = 100,
         .angle_earth_ref = 100,
         .horizon_delay_ms = 500, // 500ms time constant on any increase in horizon strength
-        .ez_landing_threshold = 25,
-        .ez_landing_limit = 15,
-        .ez_landing_speed = 50,
     );
 }
 
