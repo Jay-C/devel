@@ -26,41 +26,17 @@
 
 #include "common/axis.h"
 
-#include "config/config_reset.h"
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
-
 #include "config/config.h"
+#include "config/config_reset.h"
+
+#include "pg/pg.h"
+#include "pg/rates.h"
+
 #include "fc/controlrate_profile.h"
 #include "fc/rc.h"
 #include "fc/rc_controls.h"
 
 controlRateConfig_t *currentControlRateProfile;
-
-PG_REGISTER_ARRAY_WITH_RESET_FN(controlRateConfig_t, CONTROL_RATE_PROFILE_COUNT, controlRateProfiles, PG_CONTROL_RATE_PROFILES, 6);
-
-void pgResetFn_controlRateProfiles(controlRateConfig_t *controlRateConfig)
-{
-    for (int i = 0; i < CONTROL_RATE_PROFILE_COUNT; i++) {
-        RESET_CONFIG(controlRateConfig_t, &controlRateConfig[i],
-            .rates_type = RATES_TYPE_ACTUAL,
-            .rcRates[FD_ROLL] = 7,
-            .rcRates[FD_PITCH] = 7,
-            .rcRates[FD_YAW] = 7,
-            .rcExpo[FD_ROLL] = 0,
-            .rcExpo[FD_PITCH] = 0,
-            .rcExpo[FD_YAW] = 0,
-            .rates[FD_ROLL] = 67,
-            .rates[FD_PITCH] = 67,
-            .rates[FD_YAW] = 67,
-            .rate_limit[FD_ROLL] = CONTROL_RATE_CONFIG_RATE_LIMIT_MAX,
-            .rate_limit[FD_PITCH] = CONTROL_RATE_CONFIG_RATE_LIMIT_MAX,
-            .rate_limit[FD_YAW] = CONTROL_RATE_CONFIG_RATE_LIMIT_MAX,
-            .profileName = { 0 },
-            .quickRatesRcExpo = 0,
-        );
-    }
-}
 
 const ratesSettingsLimits_t ratesSettingLimits[RATES_TYPE_COUNT] = {
     [RATES_TYPE_BETAFLIGHT] = { 255, 100, 100 },
