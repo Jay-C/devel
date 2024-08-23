@@ -526,10 +526,6 @@ FAST_CODE_NOINLINE void mixTable(timeUs_t currentTimeUs)
     float scaledAxisPidYaw =
         constrainf(pidData[FD_YAW].Sum, -yawPidSumLimit, yawPidSumLimit) / PID_MIXER_SCALING;
 
-    if (!mixerConfig()->yaw_motors_reversed) {
-        scaledAxisPidYaw = -scaledAxisPidYaw;
-    }
-
     // use scaled throttle, without dynamic idle throttle offset, as the input to antigravity
     pidUpdateAntiGravityThrottleFilter(throttle);
 
