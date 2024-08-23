@@ -180,7 +180,6 @@ extern "C" {
     void processRcCommand(void) {}
     void updateGpsStateForHomeAndHoldMode(void) {}
     void blackboxUpdate(timeUs_t) {}
-    void transponderUpdate(timeUs_t) {}
     void GPS_reset_home_position(void) {}
     void accStartCalibration(void) {}
     void baroSetGroundLevel(void) {}
