@@ -786,9 +786,7 @@ _TIM_IRQ_HANDLER(TIM5_IRQHandler, 5);
 #endif
 
 #if USED_TIMERS & TIM_N(6)
-#  if !(defined(USE_PID_AUDIO) && (defined(STM32H7) || defined(STM32F7)))
 _TIM_IRQ_HANDLER_UPDATE_ONLY(TIM6_IRQHandler, 6);
-#  endif
 #endif
 #if USED_TIMERS & TIM_N(7)
 // The USB VCP_HAL driver conflicts with TIM7, see TIMx_IRQHandler in usbd_cdc_interface.h
