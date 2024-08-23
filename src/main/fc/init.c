@@ -29,7 +29,7 @@
 
 #include "build/build_config.h"
 #include "build/debug.h"
-#include "build/debug_pin.h"
+#include "debug/debug_pin.h"
 
 #include "cms/cms.h"
 #include "cms/cms_types.h"
