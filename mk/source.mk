@@ -20,6 +20,7 @@ PG_SRC = \
             pg/gyrodev.c \
             pg/max7456.c \
             pg/mco.c \
+            pg/modes.c \
             pg/motor.c \
             pg/msp.c \
             pg/pg.c \
