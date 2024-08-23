@@ -50,7 +50,7 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
     { .boxId = BOXANGLE, .boxName = "ANGLE", .permanentId = 1 },
     { .boxId = BOXHORIZON, .boxName = "HORIZON", .permanentId = 2 },
     { .boxId = BOXALTHOLD, .boxName = "ALTHOLD", .permanentId = 3 },
-    { .boxId = BOXANTIGRAVITY, .boxName = "ANTI GRAVITY", .permanentId = 4 },
+//    { .boxId = BOXANTIGRAVITY, .boxName = "ANTI GRAVITY", .permanentId = 4 }, (removed)
     { .boxId = BOXMAG, .boxName = "MAG", .permanentId = 5 },
     { .boxId = BOXHEADFREE, .boxName = "HEADFREE", .permanentId = 6 },
     { .boxId = BOXHEADADJ, .boxName = "HEADADJ", .permanentId = 7 },
@@ -195,16 +195,6 @@ void initActiveBoxIds(void)
 #define BME(boxId) do { bitArraySet(&ena, boxId); } while (0)
     BME(BOXARM);
     BME(BOXPREARM);
-
-    bool acceleratorGainsEnabled = false;
-    for (unsigned i = 0; i < PID_PROFILE_COUNT; i++) {
-        if (pidProfiles(i)->anti_gravity_gain != ITERM_ACCELERATOR_GAIN_OFF) {
-            acceleratorGainsEnabled = true;
-        }
-    }
-    if (acceleratorGainsEnabled && !featureIsEnabled(FEATURE_ANTI_GRAVITY)) {
-        BME(BOXANTIGRAVITY);
-    }
 
     if (sensors(SENSOR_ACC)) {
         BME(BOXANGLE);

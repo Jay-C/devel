@@ -23,5 +23,4 @@
 void pidInit(const pidProfile_t *pidProfile);
 void pidInitFilters(const pidProfile_t *pidProfile);
 void pidInitConfig(const pidProfile_t *pidProfile);
-void pidSetItermAccelerator(float newItermAccelerator);
 void pidCopyProfile(uint8_t dstPidProfileIndex, uint8_t srcPidProfileIndex);
