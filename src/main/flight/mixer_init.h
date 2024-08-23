@@ -30,17 +30,6 @@ typedef struct mixerRuntime_s {
     float motorOutputLow;
     float motorOutputHigh;
     float disarmMotorOutput;
-#ifdef USE_DYN_IDLE
-    float dynIdleMaxIncrease;
-    float dynIdleStartIncrease;
-    float dynIdleMinRps;
-    float dynIdlePGain;
-    float prevMinRps;
-    float dynIdleIGain;
-    float dynIdleDGain;
-    float dynIdleI;
-    float minRpsDelayK;
-#endif
     float ezLandingThreshold;
     float ezLandingLimit;
     float ezLandingSpeed;
