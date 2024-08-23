@@ -1,5 +1,6 @@
 PG_SRC = \
             pg/adc.c \
+            pg/adjustments.c \
             pg/beeper.c \
             pg/beeper_dev.c \
             pg/blackbox.c \
