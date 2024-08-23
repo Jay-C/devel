@@ -168,7 +168,6 @@ MCU_COMMON_SRC = \
         APM32/rcm_apm32.c \
         APM32/serial_uart_apm32.c \
         APM32/timer_apm32.c \
-        APM32/transponder_ir_io_apm32.c \
         APM32/timer_apm32f4xx.c \
         APM32/adc_apm32f4xx.c \
         APM32/dma_apm32f4xx.c \
