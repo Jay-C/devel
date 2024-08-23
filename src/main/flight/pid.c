@@ -82,10 +82,6 @@ FAST_DATA_ZERO_INIT uint32_t targetPidLooptime;
 FAST_DATA_ZERO_INIT pidAxisData_t pidData[XYZ_AXIS_COUNT];
 FAST_DATA_ZERO_INIT pidRuntime_t pidRuntime;
 
-#if defined(USE_ABSOLUTE_CONTROL)
-STATIC_UNIT_TESTED FAST_DATA_ZERO_INIT float axisError[XYZ_AXIS_COUNT];
-#endif
-
 PG_REGISTER_WITH_RESET_TEMPLATE(pidConfig_t, pidConfig, PG_PID_CONFIG, 4);
 
 #ifndef DEFAULT_PID_PROCESS_DENOM
@@ -140,10 +136,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .acro_trainer_lookahead_ms = 50,
         .acro_trainer_debug_axis = FD_ROLL,
         .acro_trainer_gain = 75,
-        .abs_control_gain = 0,
-        .abs_control_limit = 90,
-        .abs_control_error_limit = 20,
-        .abs_control_cutoff = 11,
         .dterm_lpf1_static_hz = DTERM_LPF1_DYN_MIN_HZ_DEFAULT,
             // NOTE: dynamic lpf is enabled by default so this setting is actually
             // overridden and the static lowpass 1 is disabled. We can't set this
@@ -217,9 +209,6 @@ void pidResetIterm(void)
 {
     for (int axis = 0; axis < 3; axis++) {
         pidData[axis].I = 0.0f;
-#if defined(USE_ABSOLUTE_CONTROL)
-        axisError[axis] = 0.0f;
-#endif
     }
 }
 
@@ -453,20 +442,12 @@ static void rotateVector(float v[XYZ_AXIS_COUNT], const float rotation[XYZ_AXIS_
 STATIC_UNIT_TESTED void rotateItermAndAxisError(void)
 {
     if (pidRuntime.itermRotation
-#if defined(USE_ABSOLUTE_CONTROL)
-        || pidRuntime.acGain > 0 || debugMode == DEBUG_AC_ERROR
-#endif
         ) {
         const float gyroToAngle = pidRuntime.dT * RAD;
         float rotationRads[XYZ_AXIS_COUNT];
         for (int i = FD_ROLL; i <= FD_YAW; i++) {
             rotationRads[i] = gyro.gyroADCf[i] * gyroToAngle;
         }
-#if defined(USE_ABSOLUTE_CONTROL)
-        if (pidRuntime.acGain > 0 || debugMode == DEBUG_AC_ERROR) {
-            rotateVector(axisError, rotationRads);
-        }
-#endif
         if (pidRuntime.itermRotation) {
             float v[XYZ_AXIS_COUNT];
             for (int i = 0; i < XYZ_AXIS_COUNT; i++) {
@@ -481,48 +462,6 @@ STATIC_UNIT_TESTED void rotateItermAndAxisError(void)
 }
 
 #if defined(USE_ITERM_RELAX)
-#if defined(USE_ABSOLUTE_CONTROL)
-STATIC_UNIT_TESTED void applyAbsoluteControl(const int axis, const float gyroRate, float *currentPidSetpoint, float *itermErrorRate)
-{
-    UNUSED(itermErrorRate);
-
-    if (pidRuntime.acGain > 0 || debugMode == DEBUG_AC_ERROR) {
-        const float setpointLpf = pt1FilterApply(&pidRuntime.acLpf[axis], *currentPidSetpoint);
-        const float setpointHpf = fabsf(*currentPidSetpoint - setpointLpf);
-        float acErrorRate = 0;
-        const float gmaxac = setpointLpf + 2 * setpointHpf;
-        const float gminac = setpointLpf - 2 * setpointHpf;
-        if (gyroRate >= gminac && gyroRate <= gmaxac) {
-            const float acErrorRate1 = gmaxac - gyroRate;
-            const float acErrorRate2 = gminac - gyroRate;
-            if (acErrorRate1 * axisError[axis] < 0) {
-                acErrorRate = acErrorRate1;
-            } else {
-                acErrorRate = acErrorRate2;
-            }
-            if (fabsf(acErrorRate * pidRuntime.dT) > fabsf(axisError[axis]) ) {
-                acErrorRate = -axisError[axis] * pidRuntime.pidFrequency;
-            }
-        } else {
-            acErrorRate = (gyroRate > gmaxac ? gmaxac : gminac ) - gyroRate;
-        }
-
-        if (wasThrottleRaised()) {
-            axisError[axis] = constrainf(axisError[axis] + acErrorRate * pidRuntime.dT,
-                -pidRuntime.acErrorLimit, pidRuntime.acErrorLimit);
-            const float acCorrection = constrainf(axisError[axis] * pidRuntime.acGain, -pidRuntime.acLimit, pidRuntime.acLimit);
-            *currentPidSetpoint += acCorrection;
-            *itermErrorRate += acCorrection;
-            DEBUG_SET(DEBUG_AC_CORRECTION, axis, lrintf(acCorrection * 10));
-            if (axis == FD_ROLL) {
-                DEBUG_SET(DEBUG_ITERM_RELAX, 3, lrintf(acCorrection * 10));
-            }
-        }
-        DEBUG_SET(DEBUG_AC_ERROR, axis, lrintf(axisError[axis] * 10));
-    }
-}
-#endif
-
 STATIC_UNIT_TESTED void applyItermRelax(const int axis, const float iterm,
     const float gyroRate, float *itermErrorRate, float *currentPidSetpoint)
 {
@@ -554,10 +493,6 @@ STATIC_UNIT_TESTED void applyItermRelax(const int axis, const float iterm,
                 DEBUG_SET(DEBUG_ITERM_RELAX, 2, lrintf(*itermErrorRate));
             }
         }
-
-#if defined(USE_ABSOLUTE_CONTROL)
-        applyAbsoluteControl(axis, gyroRate, currentPidSetpoint, itermErrorRate);
-#endif
     }
 }
 #endif
@@ -724,18 +659,10 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
         const float previousIterm = pidData[axis].I;
         float itermErrorRate = errorRate;
 
-#ifdef USE_ABSOLUTE_CONTROL
-        const float uncorrectedSetpoint = currentPidSetpoint;
-#endif
-
 #if defined(USE_ITERM_RELAX)
         applyItermRelax(axis, previousIterm, gyroRate, &itermErrorRate, &currentPidSetpoint);
         errorRate = currentPidSetpoint - gyroRate;
 #endif
-#ifdef USE_ABSOLUTE_CONTROL
-        const float setpointCorrection = currentPidSetpoint - uncorrectedSetpoint;
-#endif
-
         // --------low-level gyro-based PID based on 2DOF PID controller. ----------
 
         // -----calculate P component
@@ -781,12 +708,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
         previousGyroRateDterm[axis] = gyroRateDterm[axis];
 
         // -----calculate feedforward component
-
-#ifdef USE_ABSOLUTE_CONTROL
-        // include abs control correction in feedforward
-        pidSetpointDelta += setpointCorrection - pidRuntime.oldSetpointCorrection[axis];
-        pidRuntime.oldSetpointCorrection[axis] = setpointCorrection;
-#endif
         pidData[axis].F = pidRuntime.pidCoefficient[axis].Kf * pidSetpointDelta;
 
         // Add P boost from antiGravity when sticks are close to zero
