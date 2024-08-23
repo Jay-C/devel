@@ -317,25 +317,6 @@ void initEscEndpoints(void)
 
 void mixerInitProfile(void)
 {
-#ifdef USE_DYN_IDLE
-    if (useDshotTelemetry) {
-        mixerRuntime.dynIdleMinRps = currentPidProfile->dyn_idle_min_rpm * 100.0f / 60.0f;
-    } else {
-        mixerRuntime.dynIdleMinRps = 0.0f;
-    }
-    mixerRuntime.dynIdlePGain = currentPidProfile->dyn_idle_p_gain * 0.00015f;
-    mixerRuntime.dynIdleIGain = currentPidProfile->dyn_idle_i_gain * 0.01f * pidGetDT();
-    mixerRuntime.dynIdleDGain = currentPidProfile->dyn_idle_d_gain * 0.0000003f * pidGetPidFrequency();
-    mixerRuntime.dynIdleMaxIncrease = currentPidProfile->dyn_idle_max_increase * 0.001f;
-    // before takeoff, use the static idle value as the dynamic idle limit.
-    // whoop users should first adjust static idle to ensure reliable motor start before enabling dynamic idle
-    mixerRuntime.dynIdleStartIncrease = 0.0001f;
-    mixerRuntime.minRpsDelayK = 800 * pidGetDT() / 20.0f; //approx 20ms D delay, arbitrarily suits many motors
-    if (mixerRuntime.dynIdleMinRps) {
-        mixerRuntime.motorOutputLow = DSHOT_MIN_THROTTLE; // Override value set by initEscEndpoints to allow zero motor drive
-    }
-#endif
-
     mixerRuntime.ezLandingThreshold = 2.0f * currentPidProfile->ez_landing_threshold / 100.0f;
     mixerRuntime.ezLandingLimit = currentPidProfile->ez_landing_limit / 100.0f;
     mixerRuntime.ezLandingSpeed = 2.0f * currentPidProfile->ez_landing_speed / 10.0f;
@@ -406,11 +387,6 @@ void mixerInit(mixerMode_e mixerMode)
     if (mixerIsTricopter()) {
         mixerTricopterInit();
     }
-#endif
-
-#ifdef USE_DYN_IDLE
-    mixerRuntime.dynIdleI = 0.0f;
-    mixerRuntime.prevMinRps = 0.0f;
 #endif
 
     mixerConfigureOutput();
