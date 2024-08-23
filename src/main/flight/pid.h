@@ -50,12 +50,6 @@
 // This value gives the same "feel" as the previous Kd default of 26 (26 * DTERM_SCALE)
 #define FEEDFORWARD_SCALE 0.013754f
 
-// Anti gravity I constant
-#define ANTIGRAVITY_KI 0.34f; // if AG gain is 6, about 6 times iTerm will be added
-#define ANTIGRAVITY_KP 0.0034f; // one fifth of the I gain on P by default
-#define ITERM_ACCELERATOR_GAIN_OFF 0
-#define ITERM_ACCELERATOR_GAIN_MAX 250
-
 #define PID_ROLL_DEFAULT  { 45, 80, 30, 120 }
 #define PID_PITCH_DEFAULT { 47, 84, 34, 125 }
 #define PID_YAW_DEFAULT   { 45, 80,  0, 120 }
@@ -125,7 +119,6 @@ typedef struct pidProfile_s {
     uint8_t horizon_ignore_sticks;          // 0 = default, meaning both stick and attitude attenuation; 1 = only attitude attenuation
 
     // Betaflight PID controller parameters
-    uint8_t anti_gravity_gain;              // AntiGravity Gain (was itermAcceleratorGain)
     uint16_t yawRateAccelLimit;             // yaw accel limiter for deg/sec/ms
     uint16_t rateAccelLimit;                // accel limiter roll/pitch deg/sec/ms
     uint16_t itermLimit;
@@ -139,8 +132,6 @@ typedef struct pidProfile_s {
 
     uint8_t dterm_lpf1_dyn_expo;            // set the curve for dynamic dterm lowpass filter
 
-    uint8_t anti_gravity_cutoff_hz;
-    uint8_t anti_gravity_p_gain;
     uint8_t angle_earth_ref;                // Control amount of "co-ordination" from yaw into roll while pitched forward in angle mode
     uint16_t horizon_delay_ms;              // delay when Horizon Strength increases, 50 = 500ms time constant
 
@@ -204,13 +195,6 @@ typedef struct pidRuntime_s {
     dtermLowpass_t dtermLowpass[XYZ_AXIS_COUNT];
     filterApplyFnPtr dtermLowpass2ApplyFn;
     dtermLowpass_t dtermLowpass2[XYZ_AXIS_COUNT];
-    bool antiGravityEnabled;
-    pt2Filter_t antiGravityLpf;
-    float antiGravityOsdCutoff;
-    float antiGravityThrottleD;
-    float itermAccelerator;
-    uint8_t antiGravityGain;
-    float antiGravityPGain;
     pidCoefficient_t pidCoefficient[XYZ_AXIS_COUNT];
     float angleGain;
     float horizonGain;
@@ -260,11 +244,6 @@ void resetPidProfile(pidProfile_t *profile);
 
 void pidResetIterm(void);
 void pidStabilisationState(pidStabilisationState_e pidControllerState);
-void pidSetItermAccelerator(float newItermAccelerator);
-void pidUpdateAntiGravityThrottleFilter(float throttle);
-bool pidOsdAntiGravityActive(void);
-void pidSetAntiGravityState(bool newState);
-bool pidAntiGravityEnabled(void);
 
 #ifdef UNIT_TEST
 #include "sensors/acceleration.h"
