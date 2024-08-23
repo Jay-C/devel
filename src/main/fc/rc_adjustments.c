@@ -52,7 +52,6 @@
 #include "osd/osd.h"
 
 #include "pg/pg.h"
-#include "pg/pg_ids.h"
 #include "pg/rx.h"
 
 #include "rx/rx.h"
@@ -62,8 +61,6 @@
 #include "scheduler/scheduler.h"
 
 #define ADJUSTMENT_RANGE_COUNT_INVALID -1
-
-PG_REGISTER_ARRAY(adjustmentRange_t, MAX_ADJUSTMENT_RANGE_COUNT, adjustmentRanges, PG_ADJUSTMENT_RANGE_CONFIG, 2);
 
 STATIC_UNIT_TESTED int stepwiseAdjustmentCount = ADJUSTMENT_RANGE_COUNT_INVALID;
 STATIC_UNIT_TESTED timedAdjustmentState_t stepwiseAdjustments[MAX_ADJUSTMENT_RANGE_COUNT];
