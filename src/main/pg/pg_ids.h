@@ -149,7 +149,6 @@
 #define PG_PULLUP_CONFIG            551
 #define PG_PULLDOWN_CONFIG          552
 #define PG_MODE_ACTIVATION_CONFIG   553
-#define PG_DYN_NOTCH_CONFIG         554
 #define PG_RX_EXPRESSLRS_SPI_CONFIG 555
 #define PG_SCHEDULER_CONFIG         556
 #define PG_MSP_CONFIG               557
