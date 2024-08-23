@@ -34,7 +34,6 @@
 
 #include "config/config.h"
 #include "config/config_reset.h"
-#include "config/simplified_tuning.h"
 
 #include "drivers/pwm_output.h"
 #include "drivers/sound_beeper.h"
@@ -137,17 +136,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .transient_throttle_limit = 0,
         .profileName = { 0 },
         .dterm_lpf1_dyn_expo = 5,
-        .simplified_pids_mode = PID_SIMPLIFIED_TUNING_RPY,
-        .simplified_master_multiplier = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_roll_pitch_ratio = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_i_gain = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_d_gain = SIMPLIFIED_TUNING_D_DEFAULT,
-        .simplified_pi_gain = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_d_max_gain = SIMPLIFIED_TUNING_D_DEFAULT,
-        .simplified_feedforward_gain = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_pitch_pi_gain = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_dterm_filter = true,
-        .simplified_dterm_filter_multiplier = SIMPLIFIED_TUNING_DEFAULT,
         .anti_gravity_cutoff_hz = 5,
         .anti_gravity_p_gain = 100,
         .angle_earth_ref = 100,
