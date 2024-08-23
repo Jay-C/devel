@@ -41,17 +41,6 @@ typedef struct mixerRuntime_s {
     float dynIdleI;
     float minRpsDelayK;
 #endif
-#if defined(USE_RPM_LIMIT)
-    float rpmLimiterRpmLimit;
-    float rpmLimiterThrottleScale;
-    float rpmLimiterInitialThrottleScale;
-    float rpmLimiterPGain;
-    float rpmLimiterIGain;
-    float rpmLimiterDGain;
-    float rpmLimiterI;
-    pt1Filter_t rpmLimiterAverageRpmFilter;
-    pt1Filter_t rpmLimiterThrottleScaleOffsetFilter;
-#endif
     float ezLandingThreshold;
     float ezLandingLimit;
     float ezLandingSpeed;

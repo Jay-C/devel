@@ -153,49 +153,6 @@ static void calculateThrottleAndCurrentMotorEndpoints(timeUs_t currentTimeUs)
     rcThrottle = throttle;
 }
 
-#ifdef USE_RPM_LIMIT
-#define STICK_HIGH_DEADBAND 5    // deadband to make sure throttle cap can raise, even with maxcheck set around 2000
-static void applyRpmLimiter(mixerRuntime_t *mixer)
-{
-    static float prevError = 0.0f;
-    const float unsmoothedAverageRpm = getDshotRpmAverage();
-    const float averageRpm = pt1FilterApply(&mixer->rpmLimiterAverageRpmFilter, unsmoothedAverageRpm);
-    const float error = averageRpm - mixer->rpmLimiterRpmLimit;
-
-    // PID
-    const float p = error * mixer->rpmLimiterPGain;
-    const float d = (error - prevError) * mixer->rpmLimiterDGain; // rpmLimiterDGain already adjusted for looprate (see mixer_init.c)
-    mixer->rpmLimiterI += error * mixer->rpmLimiterIGain;         // rpmLimiterIGain already adjusted for looprate (see mixer_init.c)
-    mixer->rpmLimiterI = MAX(0.0f, mixer->rpmLimiterI);
-    float pidOutput = p + mixer->rpmLimiterI + d;
-
-    // Throttle limit learning
-    if (error > 0.0f && rcCommand[THROTTLE] < rxConfig()->maxcheck) {
-        mixer->rpmLimiterThrottleScale *= 1.0f - 4.8f * pidGetDT();
-    } else if (pidOutput < -400.0f * pidGetDT() && lrintf(rcCommand[THROTTLE]) >= rxConfig()->maxcheck - STICK_HIGH_DEADBAND && !areMotorsSaturated()) { // Throttle accel corresponds with motor accel
-        mixer->rpmLimiterThrottleScale *= 1.0f + 3.2f * pidGetDT();
-    }
-    mixer->rpmLimiterThrottleScale = constrainf(mixer->rpmLimiterThrottleScale, 0.01f, 1.0f);
-
-    float rpmLimiterThrottleScaleOffset = pt1FilterApply(&mixer->rpmLimiterThrottleScaleOffsetFilter, constrainf(mixer->rpmLimiterRpmLimit / motorEstimateMaxRpm(), 0.0f, 1.0f) - mixer->rpmLimiterInitialThrottleScale);
-    throttle *= constrainf(mixer->rpmLimiterThrottleScale + rpmLimiterThrottleScaleOffset, 0.0f, 1.0f);
-
-    // Output
-    pidOutput = MAX(0.0f, pidOutput);
-    throttle = constrainf(throttle - pidOutput, 0.0f, 1.0f);
-    prevError = error;
-
-    DEBUG_SET(DEBUG_RPM_LIMIT, 0, lrintf(averageRpm));
-    DEBUG_SET(DEBUG_RPM_LIMIT, 1, lrintf(rpmLimiterThrottleScaleOffset * 100.0f));
-    DEBUG_SET(DEBUG_RPM_LIMIT, 2, lrintf(mixer->rpmLimiterThrottleScale * 100.0f));
-    DEBUG_SET(DEBUG_RPM_LIMIT, 3, lrintf(throttle * 100.0f));
-    DEBUG_SET(DEBUG_RPM_LIMIT, 4, lrintf(error));
-    DEBUG_SET(DEBUG_RPM_LIMIT, 5, lrintf(p * 100.0f));
-    DEBUG_SET(DEBUG_RPM_LIMIT, 6, lrintf(mixer->rpmLimiterI * 100.0f));
-    DEBUG_SET(DEBUG_RPM_LIMIT, 7, lrintf(d * 100.0f));
-}
-#endif // USE_RPM_LIMIT
-
 static void applyMixToMotors(const float motorMix[MAX_SUPPORTED_MOTORS], motorMixer_t *activeMixer)
 {
     // Now add in the desired throttle, but keep in a range that doesn't clip adjusted
@@ -405,12 +362,6 @@ FAST_CODE_NOINLINE void mixTable(timeUs_t currentTimeUs)
     // Set min throttle offset of 1% when stick is at zero and dynamic idle is active
     if (mixerRuntime.dynIdleMinRps > 0.0f) {
         throttle = MAX(throttle, 0.01f);
-    }
-#endif
-
-#ifdef USE_RPM_LIMIT
-    if (RPM_LIMIT_ACTIVE && useDshotTelemetry && ARMING_FLAG(ARMED)) {
-        applyRpmLimiter(&mixerRuntime);
     }
 #endif
 
