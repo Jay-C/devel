@@ -26,6 +26,7 @@
 #include "common/filter.h"
 
 #include "pg/pg.h"
+#include "pg/arming.h"
 #include "pg/rc_controls.h"
 
 typedef enum rc_alias {
@@ -84,14 +85,6 @@ typedef enum {
 #define CONTROL_RATE_CONFIG_RATE_MAX  255
 
 extern float rcCommand[4];
-
-typedef struct armingConfig_s {
-    uint8_t gyro_cal_on_first_arm;          // calibrate the gyro right before the first arm
-    uint8_t auto_disarm_delay;              // allow automatically disarming multicopters after auto_disarm_delay seconds of zero throttle. Disabled when 0
-    uint8_t prearm_allow_rearm;
-} armingConfig_t;
-
-PG_DECLARE(armingConfig_t, armingConfig);
 
 bool areUsingSticksToArm(void);
 
