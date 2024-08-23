@@ -31,7 +31,7 @@
 PG_REGISTER_WITH_RESET_TEMPLATE(featureConfig_t, featureConfig, PG_FEATURE_CONFIG, 1);
 
 PG_RESET_TEMPLATE(featureConfig_t, featureConfig,
-    .enabledFeatures = DEFAULT_FEATURES | DEFAULT_RX_FEATURE | FEATURE_ANTI_GRAVITY,
+    .enabledFeatures = DEFAULT_FEATURES | DEFAULT_RX_FEATURE,
 );
 
 // bitmask of features that are supported in current build configuration
@@ -83,7 +83,6 @@ uint32_t featuresSupportedByBuild =
 #ifdef USE_ESC_SENSOR
     | FEATURE_ESC_SENSOR
 #endif
-    | FEATURE_ANTI_GRAVITY // always available
     ;
 
 static uint32_t runtimeFeatureMask;
