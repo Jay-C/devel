@@ -68,8 +68,8 @@ LIB_MAIN_DIR    := $(ROOT)/lib/main
 OBJECT_DIR      := $(ROOT)/obj/main
 BIN_DIR         := $(ROOT)/obj
 CMSIS_DIR       := $(ROOT)/lib/main/CMSIS
-INCLUDE_DIRS    := $(SRC_DIR)
-
+INCLUDE_DIRS    := $(SRC_DIR) \
+                   $(SRC_DIR)/common
 MAKE_SCRIPT_DIR := $(ROOT)/mk
 
 ## V                 : Set verbosity level based on the V= parameter
