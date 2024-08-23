@@ -122,19 +122,12 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .horizon_ignore_sticks = false,
         .itermLimit = 400,
         .iterm_rotation = false,
-        .dterm_lpf1_static_hz = DTERM_LPF1_DYN_MIN_HZ_DEFAULT,
-            // NOTE: dynamic lpf is enabled by default so this setting is actually
-            // overridden and the static lowpass 1 is disabled. We can't set this
-            // value to 0 otherwise Configurator versions 10.4 and earlier will also
-            // reset the lowpass filter type to PT1 overriding the desired BIQUAD setting.
-        .dterm_lpf2_static_hz = DTERM_LPF2_HZ_DEFAULT,   // second Dterm LPF ON by default
+        .dterm_lpf1_static_hz = DTERM_LPF1_HZ_DEFAULT,
+        .dterm_lpf2_static_hz = DTERM_LPF2_HZ_DEFAULT,
         .dterm_lpf1_type = FILTER_PT1,
         .dterm_lpf2_type = FILTER_PT1,
-        .dterm_lpf1_dyn_min_hz = DTERM_LPF1_DYN_MIN_HZ_DEFAULT,
-        .dterm_lpf1_dyn_max_hz = DTERM_LPF1_DYN_MAX_HZ_DEFAULT,
         .transient_throttle_limit = 0,
         .profileName = { 0 },
-        .dterm_lpf1_dyn_expo = 5,
         .angle_earth_ref = 100,
         .horizon_delay_ms = 500, // 500ms time constant on any increase in horizon strength
         .landing_disarm_threshold = 0, // relatively safe values are around 100
@@ -508,43 +501,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
         pidResetIterm();
     }
 }
-
-#ifdef USE_DYN_LPF
-void dynLpfDTermUpdate(float throttle)
-{
-    if (pidRuntime.dynLpfFilter != DYN_LPF_NONE) {
-        float cutoffFreq;
-        if (pidRuntime.dynLpfCurveExpo > 0) {
-            cutoffFreq = dynLpfCutoffFreq(throttle, pidRuntime.dynLpfMin, pidRuntime.dynLpfMax, pidRuntime.dynLpfCurveExpo);
-        } else {
-            cutoffFreq = fmaxf(dynThrottle(throttle) * pidRuntime.dynLpfMax, pidRuntime.dynLpfMin);
-        }
-
-        switch (pidRuntime.dynLpfFilter) {
-        case DYN_LPF_PT1:
-            for (int axis = 0; axis < XYZ_AXIS_COUNT; axis++) {
-                pt1FilterUpdateCutoff(&pidRuntime.dtermLowpass[axis].pt1Filter, pt1FilterGain(cutoffFreq, pidRuntime.dT));
-            }
-            break;
-        case DYN_LPF_BIQUAD:
-            for (int axis = 0; axis < XYZ_AXIS_COUNT; axis++) {
-                biquadFilterUpdateLPF(&pidRuntime.dtermLowpass[axis].biquadFilter, cutoffFreq, targetPidLooptime);
-            }
-            break;
-        case DYN_LPF_PT2:
-            for (int axis = 0; axis < XYZ_AXIS_COUNT; axis++) {
-                pt2FilterUpdateCutoff(&pidRuntime.dtermLowpass[axis].pt2Filter, pt2FilterGain(cutoffFreq, pidRuntime.dT));
-            }
-            break;
-        case DYN_LPF_PT3:
-            for (int axis = 0; axis < XYZ_AXIS_COUNT; axis++) {
-                pt3FilterUpdateCutoff(&pidRuntime.dtermLowpass[axis].pt3Filter, pt3FilterGain(cutoffFreq, pidRuntime.dT));
-            }
-            break;
-        }
-    }
-}
-#endif
 
 float dynLpfCutoffFreq(float throttle, uint16_t dynLpfMin, uint16_t dynLpfMax, uint8_t expo)
 {
