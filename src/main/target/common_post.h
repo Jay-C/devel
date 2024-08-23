@@ -572,7 +572,6 @@
 
 #if !defined(USE_ACC)
 #undef USE_GPS_RESCUE
-#undef USE_ACRO_TRAINER
 #endif
 
 #if (!defined(USE_GPS_RESCUE) || !defined(USE_CMS_FAILSAFE_MENU))
