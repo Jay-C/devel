@@ -453,25 +453,12 @@ static CMS_Menu cmsx_menuFilterGlobal = {
     .entries = cmsx_menuFilterGlobalEntries,
 };
 
-#if defined(USE_DYN_NOTCH_FILTER) && defined(USE_EXTENDED_CMS_MENUS)
-
-#ifdef USE_DYN_NOTCH_FILTER
-static uint16_t dynFiltNotchMaxHz;
-static uint8_t  dynFiltNotchCount;
-static uint16_t dynFiltNotchQ;
-static uint16_t dynFiltNotchMinHz;
-#endif
+#if defined(USE_EXTENDED_CMS_MENUS)
 
 static const void *cmsx_menuDynFilt_onEnter(displayPort_t *pDisp)
 {
     UNUSED(pDisp);
 
-#ifdef USE_DYN_NOTCH_FILTER
-    dynFiltNotchMaxHz   = dynNotchConfig()->dyn_notch_max_hz;
-    dynFiltNotchCount   = dynNotchConfig()->dyn_notch_count;
-    dynFiltNotchQ       = dynNotchConfig()->dyn_notch_q;
-    dynFiltNotchMinHz   = dynNotchConfig()->dyn_notch_min_hz;
-#endif
     return NULL;
 }
 
@@ -480,26 +467,12 @@ static const void *cmsx_menuDynFilt_onExit(displayPort_t *pDisp, const OSD_Entry
     UNUSED(pDisp);
     UNUSED(self);
 
-#ifdef USE_DYN_NOTCH_FILTER
-    dynNotchConfigMutable()->dyn_notch_max_hz        = dynFiltNotchMaxHz;
-    dynNotchConfigMutable()->dyn_notch_count         = dynFiltNotchCount;
-    dynNotchConfigMutable()->dyn_notch_q             = dynFiltNotchQ;
-    dynNotchConfigMutable()->dyn_notch_min_hz        = dynFiltNotchMinHz;
-#endif
-
     return NULL;
 }
 
 static const OSD_Entry cmsx_menuDynFiltEntries[] =
 {
     { "-- DYN FILT --", OME_Label, NULL, NULL },
-
-#ifdef USE_DYN_NOTCH_FILTER
-    { "NOTCH COUNT",    OME_UINT8,  NULL, &(OSD_UINT8_t)  { &dynFiltNotchCount,   0, DYN_NOTCH_COUNT_MAX, 1 } },
-    { "NOTCH Q",        OME_UINT16, NULL, &(OSD_UINT16_t) { &dynFiltNotchQ,       1, 1000, 1 } },
-    { "NOTCH MIN HZ",   OME_UINT16, NULL, &(OSD_UINT16_t) { &dynFiltNotchMinHz,   20, 250, 1 } },
-    { "NOTCH MAX HZ",   OME_UINT16, NULL, &(OSD_UINT16_t) { &dynFiltNotchMaxHz,   200, 1000, 1 } },
-#endif
 
     { "BACK", OME_Back, NULL, NULL },
     { NULL, OME_END, NULL, NULL}
@@ -664,7 +637,7 @@ static const OSD_Entry cmsx_menuImuEntries[] =
     {"RATE",      OME_Submenu, cmsMenuChange,                 &cmsx_menuRateProfile},
 
     {"FILT GLB",  OME_Submenu, cmsMenuChange,                 &cmsx_menuFilterGlobal},
-#if defined(USE_DYN_NOTCH_FILTER) && defined(USE_EXTENDED_CMS_MENUS)
+#if defined(USE_EXTENDED_CMS_MENUS)
     {"DYN FILT",  OME_Submenu, cmsMenuChange,                 &cmsx_menuDynFilt},
 #endif
 
