@@ -210,9 +210,6 @@ void batteryUpdatePresence(void)
             }
             batteryCellCount = cells;
         }
-#ifdef USE_RPM_LIMIT
-        mixerResetRpmLimiter();
-#endif
         batteryWarningVoltage = batteryCellCount * batteryConfig()->vbatwarningcellvoltage;
         batteryCriticalVoltage = batteryCellCount * batteryConfig()->vbatmincellvoltage;
         batteryWarningHysteresisVoltage = (batteryWarningVoltage > batteryConfig()->vbathysteresis) ? batteryWarningVoltage - batteryConfig()->vbathysteresis : 0;

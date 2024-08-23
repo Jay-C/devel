@@ -31,7 +31,6 @@
 #include "cms/cms_types.h"
 #include "cms/cms_menu_main.h"
 #include "cms/cms_menu_vtx_common.h"
-#include "cms/cms_menu_rpm_limit.h"
 #include "common/printf.h"
 #include "config/config.h"
 
@@ -83,9 +82,6 @@ static const OSD_Entry menuMainEntries[] =
 {
     { "-- QUICK --",  OME_Label, NULL, NULL },
 
-#if defined(USE_RPM_LIMIT)
-    { "RPM LIM", OME_Submenu, cmsMenuChange, &cmsx_menuRpmLimit },
-#endif
     { "FORCE CELLS",   OME_UINT8,  NULL, &(OSD_UINT8_t) { &batteryProfile.forceBatteryCellCount, 0, 24, 1 } },
 #if defined(USE_VTX_CONTROL)
 #if defined(USE_VTX_RTC6705) || defined(USE_VTX_SMARTAUDIO) || defined(USE_VTX_TRAMP)
