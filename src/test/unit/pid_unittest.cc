@@ -151,17 +151,8 @@ void setDefaultTestSettings(void)
     pidProfile->yawRateAccelLimit = 100;
     pidProfile->rateAccelLimit = 0;
     pidProfile->anti_gravity_gain = 10;
-    pidProfile->crash_time = 500;
-    pidProfile->crash_delay = 0;
-    pidProfile->crash_recovery_angle = 10;
-    pidProfile->crash_recovery_rate = 100;
-    pidProfile->crash_dthreshold = 50;
-    pidProfile->crash_gthreshold = 400;
-    pidProfile->crash_setpoint_threshold = 350;
-    pidProfile->crash_recovery = PID_CRASH_RECOVERY_OFF;
     pidProfile->horizon_limit_degrees = 135;
     pidProfile->horizon_ignore_sticks = false;
-    pidProfile->crash_limit_yaw = 200;
     pidProfile->itermLimit = 150;
     pidProfile->throttle_boost = 0;
     pidProfile->throttle_boost_cutoff = 15;
@@ -671,33 +662,6 @@ TEST(pidControllerTest, testiTermWindup)
     EXPECT_NEAR(200, pidData[FD_ROLL].I, calculateTolerance(200));
     EXPECT_NEAR(200, pidData[FD_PITCH].I, calculateTolerance(200));
     EXPECT_NEAR(160, pidData[FD_YAW].I, calculateTolerance(320));
-}
-
-// TODO - Add more scenarios
-TEST(pidControllerTest, testCrashRecoveryMode)
-{
-    resetTest();
-    pidProfile->crash_recovery = PID_CRASH_RECOVERY_ON;
-    pidInit(pidProfile);
-    ENABLE_ARMING_FLAG(ARMED);
-    pidStabilisationState(PID_STABILISATION_ON);
-    sensorsSet(SENSOR_ACC);
-
-    EXPECT_FALSE(crashRecoveryModeActive());
-
-    int loopsToCrashTime = (int)((pidProfile->crash_time * 1000) / targetPidLooptime) + 1;
-
-    // generate crash detection for roll axis
-    gyro.gyroADCf[FD_ROLL]  = 800;
-    simulatedMotorMixRange = 1.2f;
-    for (int loop =0; loop <= loopsToCrashTime; loop++) {
-        gyro.gyroADCf[FD_ROLL] += gyro.gyroADCf[FD_ROLL];
-        // advance the time to avoid initialized state prevention of crash recovery
-        pidController(pidProfile, currentTestTime() + 2000000);
-    }
-
-    EXPECT_TRUE(crashRecoveryModeActive());
-    // Add additional verifications
 }
 
 TEST(pidControllerTest, testFeedForward)

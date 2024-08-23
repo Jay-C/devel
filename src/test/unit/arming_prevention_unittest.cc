@@ -1116,7 +1116,6 @@ extern "C" {
     void pidSetAntiGravityState(bool) {}
     void osdSuppressStats(bool) {}
     float scaleRangef(float, float, float, float, float) { return 0.0f; }
-    bool crashRecoveryModeActive(void) { return false; }
     int32_t getEstimatedAltitudeCm(void) { return 0; }
     bool gpsIsHealthy(void) { return false; }
     float getCosTiltAngle(void) { return 0.0f; }
@@ -1144,7 +1143,6 @@ extern "C" {
 
     void getRcDeflectionAbs(void) {}
     uint32_t getCpuPercentageLate(void) { return 0; }
-    bool crashFlipSuccessful(void) { return false; }
 
     void GPS_distance_cm_bearing(const gpsLocation_t *from, const gpsLocation_t *to, bool dist3d, uint32_t *dist, int32_t *bearing)
     {
