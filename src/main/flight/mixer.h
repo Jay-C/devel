@@ -117,8 +117,6 @@ void mixTable(timeUs_t currentTimeUs);
 void stopMotors(void);
 void writeMotors(void);
 
-bool mixerIsTricopter(void);
-
 float mixerGetThrottle(void);
 float mixerGetRcThrottle(void);
 mixerMode_e getMixerMode(void);
