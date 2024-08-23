@@ -378,7 +378,7 @@ static FAST_CODE_NOINLINE void dynNotchProcess(void)
                     // debug channel 0 is reserved for pre DN gyro
                     DEBUG_SET(DEBUG_FFT_FREQ, p + 1, lrintf(dynNotch.centerFreq[state.axis][p]));
                 }
-                DEBUG_SET(DEBUG_DYN_LPF, 1, lrintf(dynNotch.centerFreq[state.axis][0]));
+                //DEBUG_SET(DEBUG_DYN_LPF, 1, lrintf(dynNotch.centerFreq[state.axis][0]));
             }
 
             DEBUG_SET(DEBUG_FFT_TIME, 1, micros() - startTime);
