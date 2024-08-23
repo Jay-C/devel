@@ -257,9 +257,6 @@ static uint16_t getMode(void)
     if (FLIGHT_MODE(ANGLE_MODE)) {
          flightMode = 0; //Stab
     }
-    if (FLIGHT_MODE(MAG_MODE)) {
-        flightMode = 4; //Guided!
-    }
     if (FLIGHT_MODE(HORIZON_MODE)) {
         flightMode = 7; //Circle! (there in no horizon so use Circle)
     }
