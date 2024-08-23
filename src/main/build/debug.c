@@ -1,29 +1,30 @@
 /*
- * This file is part of Cleanflight and Betaflight.
+ * This file is part of Rotorflight.
  *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * Rotorflight is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * Rotorflight is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
+ * along with this software. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "platform.h"
 
 #include "debug.h"
 
-int16_t debug[DEBUG16_VALUE_COUNT];
-uint8_t debugMode;
+FAST_DATA_ZERO_INIT uint8_t debugMode;
+FAST_DATA_ZERO_INIT uint8_t debugAxis;
+
+FAST_DATA_ZERO_INIT int32_t debug[DEBUG_VALUE_COUNT];
+
+FAST_DATA_ZERO_INIT uint32_t __timing[DEBUG_VALUE_COUNT];
 
 #define DEBUG_NAME(x)  [DEBUG_ ## x] = #x
 
