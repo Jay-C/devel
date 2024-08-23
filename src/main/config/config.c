@@ -104,21 +104,6 @@ pidProfile_t *currentPidProfile;
 #define RX_SPI_DEFAULT_PROTOCOL 0
 #endif
 
-PG_REGISTER_WITH_RESET_TEMPLATE(systemConfig_t, systemConfig, PG_SYSTEM_CONFIG, 3);
-
-PG_RESET_TEMPLATE(systemConfig_t, systemConfig,
-    .pidProfileIndex = 0,
-    .activeRateProfile = 0,
-    .debug_mode = DEBUG_MODE,
-    .task_statistics = true,
-    .cpu_overclock = DEFAULT_CPU_OVERCLOCK,
-    .powerOnArmingGraceTime = 5,
-    .boardIdentifier = TARGET_BOARD_IDENTIFIER,
-    .hseMhz = SYSTEM_HSE_MHZ,  // Only used for F4 and G4 targets
-    .configurationState = CONFIGURATION_STATE_UNCONFIGURED,
-    .enableStickArming = false,
-);
-
 bool isEepromWriteInProgress(void)
 {
     return eepromWriteInProgress;
