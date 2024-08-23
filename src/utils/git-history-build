@@ -1,0 +1,77 @@
+#!/bin/bash
+
+set -e
+
+## Parameters
+
+HIST=${1:-3}
+FROM=${2:-0}
+
+HEAD=$(git rev-parse --abbrev-ref HEAD)
+BRANCH=${BRANCH:-${HEAD}}
+
+TARGETS='
+STM32H743
+STM32H750
+STM32H730
+STM32H725
+STM32H723
+STM32F745
+STM32F7X2
+STM32F411
+STM32F446
+STM32F405
+STM32G47X
+AT32F435G
+AT32F435M
+APM32F405
+APM32F407
+'
+
+OUTDIR=".git-history-build"
+
+
+## Functions
+
+cleanup()
+{
+    git checkout -f ${HEAD}
+}
+
+testbuild()
+{
+    echo "Building $1"
+    nice make TARGET=$1 JFLAG=1 2>&1 > ${RESULT}.$1.out
+    egrep -i '(warning:)|(error:)' ${RESULT}.$1.out || true
+}
+
+
+## Work starts here
+
+trap cleanup EXIT
+
+test -d ${OUTDIR} || mkdir ${OUTDIR}
+
+rm -f ${OUTDIR}/[0-9][0-9][0-9][0-9].*.out
+
+
+N=0
+
+while [[ $N -le ${HIST} ]]
+do
+    M=$(($N + $FROM))
+
+    RESULT=${OUTDIR}/$(printf '%04d' $M)
+
+    git checkout ${BRANCH}~$M --force --detach
+
+    rm -fr obj
+
+    for T in ${TARGETS}
+    do
+        testbuild $T &
+    done
+    wait
+
+    let N+=1
+done
