@@ -52,8 +52,8 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
     { .boxId = BOXALTHOLD, .boxName = "ALTHOLD", .permanentId = 3 },
 //    { .boxId = BOXANTIGRAVITY, .boxName = "ANTI GRAVITY", .permanentId = 4 }, (removed)
     { .boxId = BOXMAG, .boxName = "MAG", .permanentId = 5 },
-    { .boxId = BOXHEADFREE, .boxName = "HEADFREE", .permanentId = 6 },
-    { .boxId = BOXHEADADJ, .boxName = "HEADADJ", .permanentId = 7 },
+//    { .boxId = BOXHEADFREE, .boxName = "HEADFREE", .permanentId = 6 },
+//    { .boxId = BOXHEADADJ, .boxName = "HEADADJ", .permanentId = 7 },
 //    { .boxId = BOXGPSHOME, .boxName = "GPS HOME", .permanentId = 10 },
     { .boxId = BOXPOSHOLD, .boxName = "POS HOLD", .permanentId = 11 },
 //    { .boxId = BOXPASSTHRU, .boxName = "PASSTHRU", .permanentId = 12 }, (removed)
@@ -205,8 +205,6 @@ void initActiveBoxIds(void)
 #ifdef USE_POSITION_HOLD
         BME(BOXPOSHOLD);
 #endif
-        BME(BOXHEADFREE);
-        BME(BOXHEADADJ);
         if (featureIsEnabled(FEATURE_INFLIGHT_ACC_CAL)) {
             BME(BOXCALIB);
         }
