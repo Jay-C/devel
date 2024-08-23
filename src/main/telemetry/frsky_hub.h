@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 typedef enum {
     FRSKY_VFAS_PRECISION_LOW = 0,

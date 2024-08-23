@@ -23,7 +23,7 @@
 #include "pg/pg.h"
 
 #include "common/filter.h"
-#include "common/time.h"
+#include "common/rtc.h"
 #include "sensors/current.h"
 #include "sensors/voltage.h"
 
