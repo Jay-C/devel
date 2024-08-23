@@ -63,9 +63,6 @@ const uint8_t currentMeterIds[] = {
     CURRENT_METER_ID_ESC_MOTOR_11,
     CURRENT_METER_ID_ESC_MOTOR_12,
 #endif
-#ifdef USE_MSP_CURRENT_METER
-    CURRENT_METER_ID_MSP_1,
-#endif
 };
 
 const uint8_t supportedCurrentMeterCount = ARRAYLEN(currentMeterIds);
@@ -210,45 +207,6 @@ void currentMeterESCReadMotor(uint8_t motorNumber, currentMeter_t *meter)
 }
 #endif
 
-#ifdef USE_MSP_CURRENT_METER
-#include "common/streambuf.h"
-
-#include "msp/msp_protocol.h"
-#include "msp/msp_serial.h"
-
-currentMeterMSPState_t currentMeterMSPState;
-
-void currentMeterMSPSet(uint16_t amperage, uint16_t mAhDrawn)
-{
-    // We expect the FC's MSP_ANALOG response handler to call this function
-    currentMeterMSPState.amperage = amperage;
-    currentMeterMSPState.mAhDrawn = mAhDrawn;
-}
-
-void currentMeterMSPInit(void)
-{
-    memset(&currentMeterMSPState, 0, sizeof(currentMeterMSPState_t));
-}
-
-void currentMeterMSPRefresh(timeUs_t currentTimeUs)
-{
-    // periodically request MSP_ANALOG
-    static timeUs_t streamRequestAt = 0;
-    if (cmp32(currentTimeUs, streamRequestAt) > 0) {
-        streamRequestAt = currentTimeUs + ((1000 * 1000) / 10); // 10hz
-
-        mspSerialPush(SERIAL_PORT_ALL, MSP_ANALOG, NULL, 0, MSP_DIRECTION_REQUEST, MSP_V1);
-    }
-}
-
-void currentMeterMSPRead(currentMeter_t *meter)
-{
-    meter->amperageLatest = currentMeterMSPState.amperage;
-    meter->amperage = currentMeterMSPState.amperage;
-    meter->mAhDrawn = currentMeterMSPState.mAhDrawn;
-}
-#endif
-
 //
 // API for current meters using IDs
 //
@@ -260,11 +218,6 @@ void currentMeterRead(currentMeterId_e id, currentMeter_t *meter)
     if (id == CURRENT_METER_ID_BATTERY_1) {
         currentMeterADCRead(meter);
     }
-#ifdef USE_MSP_CURRENT_METER
-    else if (id == CURRENT_METER_ID_MSP_1) {
-        currentMeterMSPRead(meter);
-    }
-#endif
 #ifdef USE_ESC_SENSOR
     else if (id == CURRENT_METER_ID_ESC_COMBINED_1) {
         currentMeterESCReadCombined(meter);
