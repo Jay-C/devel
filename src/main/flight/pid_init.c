@@ -252,13 +252,6 @@ void pidInitConfig(const pidProfile_t *pidProfile)
     pidRuntime.antiGravityOsdCutoff = (pidRuntime.antiGravityGain / 10.0f) * 0.25f;
     pidRuntime.antiGravityPGain = ((float)(pidProfile->anti_gravity_p_gain) / 100.0f) * ANTIGRAVITY_KP;
 
-#ifdef USE_ACRO_TRAINER
-    pidRuntime.acroTrainerAngleLimit = pidProfile->acro_trainer_angle_limit;
-    pidRuntime.acroTrainerLookaheadTime = (float)pidProfile->acro_trainer_lookahead_ms / 1000.0f;
-    pidRuntime.acroTrainerDebugAxis = pidProfile->acro_trainer_debug_axis;
-    pidRuntime.acroTrainerGain = (float)pidProfile->acro_trainer_gain / 10.0f;
-#endif // USE_ACRO_TRAINER
-
 #ifdef USE_DYN_LPF
     if (pidProfile->dterm_lpf1_dyn_min_hz > 0) {
         switch (pidProfile->dterm_lpf1_type) {
