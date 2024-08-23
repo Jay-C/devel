@@ -25,7 +25,7 @@
 #include "common/axis.h"
 #include "common/maths.h"
 #include "common/sensor_alignment.h"
-#include "common/time.h"
+#include "common/rtc.h"
 #include "common/vector.h"
 
 #include "drivers/accgyro/accgyro_mpu.h"

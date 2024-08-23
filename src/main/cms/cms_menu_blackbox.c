@@ -43,7 +43,7 @@
 
 #include "common/printf.h"
 #include "common/utils.h"
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "config/feature.h"
 

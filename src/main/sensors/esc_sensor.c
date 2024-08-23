@@ -29,7 +29,7 @@
 
 #include "build/debug.h"
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "config/feature.h"
 #include "pg/pg.h"

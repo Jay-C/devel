@@ -28,7 +28,7 @@
 
 #include "common/printf.h"
 #include "common/strtol.h"
-#include "common/time.h"
+#include "common/rtc.h"
 #include "common/utils.h"
 
 #include "drivers/flash/flash.h"

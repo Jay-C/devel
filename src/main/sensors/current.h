@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 #include "current_ids.h"
 
 typedef enum {

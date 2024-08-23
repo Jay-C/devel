@@ -21,7 +21,7 @@
 #pragma once
 
 #include "pg/pg.h"
-#include "common/time.h"
+#include "common/rtc.h"
 
 typedef struct rcdeviceConfig_s {
     uint8_t initDeviceAttempts;
