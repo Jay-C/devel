@@ -34,9 +34,6 @@
 #include "common/rtc.h"
 
 #include "drivers/persistent.h"
-
-#include "pg/pg_ids.h"
-
 #include "drivers/time.h"
 
 #ifdef USE_RTC_TIME
@@ -59,12 +56,6 @@ static const uint16_t days[4][12] =
     { 731,  762,    790,    821,    851,    882,    912,    943,    974,    1004,   1035,   1065},
     {1096,  1127,   1155,   1186,   1216,   1247,   1277,   1308,   1339,   1369,   1400,   1430},
 };
-
-PG_REGISTER_WITH_RESET_TEMPLATE(timeConfig_t, timeConfig, PG_TIME_CONFIG, 0);
-
-PG_RESET_TEMPLATE(timeConfig_t, timeConfig,
-    .tz_offsetMinutes = 0,
-);
 
 static rtcTime_t dateTimeToRtcTime(dateTime_t *dt)
 {
