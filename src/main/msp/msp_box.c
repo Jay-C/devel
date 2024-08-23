@@ -75,7 +75,6 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
     { .boxId = BOXBLACKBOX, .boxName = "BLACKBOX", .permanentId = 26 },
     { .boxId = BOXFAILSAFE, .boxName = "FAILSAFE", .permanentId = 27 },
     { .boxId = BOXAIRMODE, .boxName = "AIR MODE", .permanentId = 28 },
-    { .boxId = BOX3D, .boxName = "3D DISABLE", .permanentId = 29},
     { .boxId = BOXFPVANGLEMIX, .boxName = "FPV ANGLE MIX", .permanentId = 30},
     { .boxId = BOXBLACKBOXERASE, .boxName = "BLACKBOX ERASE", .permanentId = 31 },
     { .boxId = BOXCAMERA1, .boxName = "CAMERA CONTROL 1", .permanentId = 32},
@@ -83,7 +82,6 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
     { .boxId = BOXCAMERA3, .boxName = "CAMERA CONTROL 3", .permanentId = 34 },
     { .boxId = BOXPREARM, .boxName = "PREARM", .permanentId = 36 },
     { .boxId = BOXBEEPGPSCOUNT, .boxName = "GPS BEEP SATELLITE COUNT", .permanentId = 37 },
-//    { .boxId = BOX3DONASWITCH, .boxName = "3D ON A SWITCH", .permanentId = 38 }, (removed)
     { .boxId = BOXVTXPITMODE, .boxName = "VTX PIT MODE", .permanentId = 39 },
     { .boxId = BOXUSER1, .boxName = BOX_USER1_NAME, .permanentId = 40 }, // may be overridden by modeActivationConfig
     { .boxId = BOXUSER2, .boxName = BOX_USER2_NAME, .permanentId = 41 },
@@ -245,7 +243,7 @@ void initActiveBoxIds(void)
 #ifdef USE_GPS
     if (featureIsEnabled(FEATURE_GPS)) {
 #ifdef USE_GPS_RESCUE
-        if (!featureIsEnabled(FEATURE_3D) && !isFixedWing()) {
+        if (!isFixedWing()) {
             BME(BOXGPSRESCUE);
         }
 #endif
@@ -274,10 +272,6 @@ void initActiveBoxIds(void)
     BME(BOXBLACKBOXERASE);
 #endif
 #endif
-
-    if (featureIsEnabled(FEATURE_3D)) {
-        BME(BOX3D);
-    }
 
 #ifdef USE_DSHOT
     bool configuredMotorProtocolDshot;
