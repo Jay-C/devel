@@ -1,155 +1,113 @@
-![Betaflight](images/bf_logo.png)
+# Rotorflight
 
-[![Latest version](https://img.shields.io/github/v/release/betaflight/betaflight)](https://github.com/betaflight/betaflight/releases) [![Build](https://img.shields.io/github/actions/workflow/status/betaflight/betaflight/nightly.yml?branch=master)](https://github.com/betaflight/betaflight/actions/workflows/nightly.yml) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Join us on Discord!](https://img.shields.io/discord/868013470023548938)](https://discord.gg/n4E6ak4u3c)
+[Rotorflight](https://github.com/rotorflight) is a Flight Control software suite designed for
+single-rotor helicopters. It consists of:
 
-Betaflight is flight controller software (firmware) used to fly multi-rotor craft and fixed wing craft.
+- Rotorflight Flight Controller Firmware (this repository)
+- Rotorflight Configurator, for flashing and configuring the flight controller
+- Rotorflight Blackbox Explorer, for analyzing blackbox flight logs
+- Rotorflight LUA Scripts, for configuring the flight controller using a transmitter
 
-This fork differs from Baseflight and Cleanflight in that it focuses on flight performance, leading-edge feature additions, and wide target support.
-
-## Events
-
-| Date  | Event |
-| - | - |
-| 28-04-2024 | Firmware 4.5 Release |
+Built on Betaflight, Rotorflight incorporates numerous advanced features specifically
+tailored for helicopters. It's important to note that Rotorflight does _not_ support multi-rotor
+crafts or airplanes; it's exclusively designed for RC helicopters.
 
 
-## News
+## Information
 
-### Requirements for the submission of new and updated targets
-
-The following new requirements for pull requests adding new targets or modifying existing targets are put in place from now on:
-
-1. Read the [hardware specification](https://betaflight.com/docs/development/manufacturer/manufacturer-design-guidelines)
-
-2. No new F3 based targets will be accepted;
-
-3. For any new target that is to be added, only a Unified Target config into https://github.com/betaflight/unified-targets/tree/master/configs/default needs to be submitted. See the [instructions](https://betaflight.com/docs/manufacturer/creating-an-unified-target) for how to create a Unified Target configuration. If there is no Unified Target for the MCU type of the new target (see instructions above), then a 'legacy' format target definition into `src/main/target/` has to be submitted as well;
-
-4. For changes to existing targets, the change needs to be applied to the Unified Target config in https://github.com/betaflight/unified-targets/tree/master/configs/default. If no Unified Target configuration for the target exists, a new Unified Target configuration will have to be created and submitted. If there is no Unified Target for the MCU type of the new target (see instructions above), then an update to the 'legacy' format target definition in `src/main/target/` has to be submitted alongside the update to the Unified Target configuration.
+Tutorials, documentation, and flight videos can be found on the [Rotorflight website](https://www.rotorflight.org/).
 
 
 ## Features
 
-Betaflight has the following features:
+Rotorflight has many features:
 
-* Multi-color RGB LED strip support (each LED can be a different color using variable length WS2811 Addressable RGB strips - use for Orientation Indicators, Low Battery Warning, Flight Mode Status, Initialization Troubleshooting, etc)
-* DShot (150, 300 and 600), Multishot, Oneshot (125 and 42) and Proshot1000 motor protocol support
-* Blackbox flight recorder logging (to onboard flash or external microSD card where equipped)
-* Support for targets that use the STM32 F4, G4, F7 and H7 processors
-* PWM, PPM, SPI, and Serial (SBus, SumH, SumD, Spektrum 1024/2048, XBus, etc) RX connection with failsafe detection
-* Multiple telemetry protocols (CRSF, FrSky, HoTT smart-port, MSP, etc)
-* RSSI via ADC - Uses ADC to read PWM RSSI signals, tested with FrSky D4R-II, X8R, X4R-SB, & XSR
-* OSD support & configuration without needing third-party OSD software/firmware/comm devices
-* OLED Displays - Display information on: Battery voltage/current/mAh, profile, rate profile, mode, version, sensors, etc
-* In-flight manual PID tuning and rate adjustment
-* PID and filter tuning using sliders
-* Rate profiles and in-flight selection of them
-* Configurable serial ports for Serial RX, Telemetry, ESC telemetry, MSP, GPS, OSD, Sonar, etc - Use most devices on any port, softserial included
-* VTX support for Unify Pro and IRC Tramp
-* and MUCH, MUCH more.
+* Many receiver protocols: CRSF, S.BUS, F.Port, DSM, IBUS, XBUS, EXBUS, GHOST, CPPM
+* Support for various telemetry protocols: CSRF, S.Port, HoTT, etc.
+* ESC telemetry protocols: BLHeli32, Hobbywing, Scorpion, Kontronik, OMP Hobby, ZTW, APD, YGE
+* Advanced PID control tuned for helicopters
+* Stabilisation modes (6D)
+* Rotor speed governor
+* Motorised tail support with Tail Torque Assist (TTA, also known as TALY)
+* Remote configuration and tuning with the transmitter
+  - With knobs / switches assigned to functions
+  - With LUA scripts on EdgeTX, OpenTX and Ethos
+* Extra servo/motor outputs for AUX functions
+* Fully customisable servo/motor mixer
+* Sensors for battery voltage, current, BEC, etc.
+* Advanced gyro filtering
+  - Dynamic RPM based notch filters
+  - Dynamic notch filters based on FFT
+  - Dynamic LPF
+* High-speed Blackbox logging
 
-## Installation & Documentation
+Plus lots of features inherited from Betaflight:
 
-See: https://betaflight.com/docs/wiki
+* Configuration profiles for changing various tuning parameters
+* Rates profiles for changing the stick feel and agility
+* Multiple ESC protocols: PWM, DSHOT, Multishot, etc.
+* Configurable buzzer sounds
+* Multi-color RGB LEDs
+* GPS support
 
-## Support and Developers Channel
+And many more...
 
-There's a dedicated Discord server here:
 
-https://discord.gg/n4E6ak4u3c
+## Hardware support
 
-We also have a Facebook Group. Join us to get a place to talk about Betaflight, ask configuration questions, or just hang out with fellow pilots.
+The best hardware for Rotorflight is any Flight Controller especially designed for it.
+See [What board is suitable?](https://www.rotorflight.org/docs/Tutorial-Quickstart/What-Board)
 
-https://www.facebook.com/groups/betaflightgroup/
+Otherwise, Rotorflight supports all flight controller boards that are supported by Betaflight 4.3,
+assuming that the board has enough suitable I/O pins for connecting all the servos and motors required.
 
-Etiquette: Don't ask to ask and please wait around long enough for a reply - sometimes people are out flying, asleep or at work and can't answer immediately.
+Also, the Betaflight boards are labeled for multi-rotor use - thus the user needs to understand how
+these functions can be used for a different purpose with helicopters. Usually this is just about using
+the motor outputs for servos, but in some cases a more advanced remapping may be needed.
 
-## Configuration Tool
+Rotorflight supports STM32G4, STM32F4, STM32F7 and STM32H7 MCUs from ST.
 
-To configure Betaflight you should use the Betaflight-configurator GUI tool (Windows/OSX/Linux) which can be found here:
+It's highly recommended to use an STM32F7 based flight controller for Rotorflight.
+It's the way to go since it can take full advantage of the latest control and filtering
+algorithms, plus other cool features that really put the CPU to work.
 
-https://github.com/betaflight/betaflight-configurator/releases/latest
+An absolute minimum is an STM32G4 based board, but it probably won't be able to run all
+the new features later on. The older STM32F411 should be avoided if possible.
+
+
+## Installation
+
+Download and flash the Rotorflight firmware with the
+[Rotorflight Configurator](https://github.com/rotorflight/rotorflight-configurator/releases).
+
+Flashing the Rotorflight firmware with any other flashing tools is not recommended.
+
+Visit the [website](https://www.rotorflight.org/) for more details on setting up and using Rotorflight.
+
 
 ## Contributing
 
-Contributions are welcome and encouraged. You can contribute in many ways:
+Rotorflight is an open-source community project. Anybody can join in and help to make it better by:
 
-* implement a new feature in the firmware or in configurator (see [below](#Developers));
-* documentation updates and corrections;
-* How-To guides - received help? Help others!
-* bug reporting & fixes;
-* new feature ideas & suggestions;
-* provide a new translation for configurator, or help us maintain the existing ones (see [below](#Translators)).
+* helping other users on Rotorflight Discord or other online forums
+* [reporting](https://github.com/rotorflight?tab=repositories) bugs and issues, and suggesting improvements
+* testing new software versions, new features and fixes; and providing feedback
+* participating in discussions on new features
+* create or update content on the [Website](https://www.rotorflight.org)
+* [contributing](https://www.rotorflight.org/docs/Contributing/intro) to the software development - fixing bugs, implementing new features and improvements
+* [translating](https://www.rotorflight.org/docs/Contributing/intro#translations) Rotorflight Configurator into a new language, or helping to maintain an existing translation
 
-The best place to start is the Betaflight Discord (registration [here](https://discord.gg/n4E6ak4u3c)). Next place is the github issue tracker:
 
-https://github.com/betaflight/betaflight/issues
-https://github.com/betaflight/betaflight-configurator/issues
+## Origins
 
-Before creating new issues please check to see if there is an existing one, search first otherwise you waste people's time when they could be coding instead!
+Rotorflight is software that is **open source** and is available free of charge without warranty.
 
-If you want to contribute to our efforts financially, please consider making a donation to us through [PayPal](https://paypal.me/betaflight).
+Rotorflight is forked from [Betaflight](https://github.com/betaflight), which in turn is forked from [Cleanflight](https://github.com/cleanflight).
+Rotorflight borrows ideas and code also from [HeliFlight3D](https://github.com/heliflight3d/), another Betaflight fork for helicopters.
 
-If you want to contribute financially on an ongoing basis, you should consider becoming a patron for us on [Patreon](https://www.patreon.com/betaflight).
+Big thanks to everyone who has contributed along the journey!
 
-## Developers
 
-Contribution of bugfixes and new features is encouraged. Please be aware that we have a thorough review process for pull requests, and be prepared to explain what you want to achieve with your pull request.
-Before starting to write code, please read our [development guidelines](https://betaflight.com/docs/development) and [coding style definition](https://betaflight.com/docs/development/CodingStyle).
+## Contact
 
-GitHub actions are used to run automatic builds
-
-## Translators
-
-We want to make Betaflight accessible for pilots who are not fluent in English, and for this reason we are currently maintaining translations into 21 languages for Betaflight Configurator: Català, Dansk, Deutsch, Español, Euskera, Français, Galego, Hrvatski, Bahasa Indonesia, Italiano, 日本語, 한국어, Latviešu, Português, Português Brasileiro, polski, Русский язык, Svenska, 简体中文, 繁體中文.
-We have got a team of volunteer translators who do this work, but additional translators are always welcome to share the workload, and we are keen to add additional languages. If you would like to help us with translations, you have got the following options:
-- if you help by suggesting some updates or improvements to translations in a language you are familiar with, head to [crowdin](https://crowdin.com/project/betaflight-configurator) and add your suggested translations there;
-- if you would like to start working on the translation for a new language, or take on responsibility for proof-reading the translation for a language you are very familiar with, please head to the Betaflight Discord chat (registration [here](https://discord.gg/n4E6ak4u3c)), and join the ['translation'](https://discord.com/channels/868013470023548938/1057773726915100702) channel - the people in there can help you to get a new language added, or set you up as a proof reader.
-
-## Hardware Issues
-
-Betaflight does not manufacture or distribute their own hardware. While we are collaborating with and supported by a number of manufacturers, we do not do any kind of hardware support.
-If you encounter any hardware issues with your flight controller or another component, please contact the manufacturer or supplier of your hardware, or check RCGroups https://rcgroups.com/forums/showthread.php?t=2464844 to see if others with the same problem have found a solution.
-
-## Betaflight Releases
-
-https://github.com/betaflight/betaflight/releases
-
-## Open Source / Contributors
-
-Betaflight is software that is **open source** and is available free of charge without warranty to all users.
-
-Betaflight is forked from Cleanflight, so thanks goes to all those who have contributed to Cleanflight and its origins.
-
-Origins for this fork (Thanks!):
-* **Alexinparis** (for MultiWii),
-* **timecop** (for Baseflight),
-* **Dominic Clifton** (for Cleanflight),
-* **borisbstyle** (for Betaflight), and
-* **Sambas** (for the original STM32F4 port).
-
-The Betaflight Configurator is forked from Cleanflight Configurator and its origins.
-
-Origins for Betaflight Configurator:
-* **Dominic Clifton** (for Cleanflight configurator), and
-* **ctn** (for the original Configurator).
-
-Big thanks to current and past contributors:
-* Budden, Martin (martinbudden)
-* Bardwell, Joshua (joshuabardwell)
-* Blackman, Jason (blckmn)
-* ctzsnooze
-* Höglund, Anders (andershoglund)
-* Ledvina, Petr (ledvinap) - **IO code awesomeness!**
-* kc10kevin
-* Keeble, Gary (MadmanK)
-* Keller, Michael (mikeller) - **Configurator brilliance**
-* Kravcov, Albert (skaman82) - **Configurator brilliance**
-* MJ666
-* Nathan (nathantsoi)
-* ravnav
-* sambas - **bringing us the F4**
-* savaga
-* Stålheim, Anton (KiteAnton)
-
-And many many others who haven't been mentioned....
+Team Rotorflight can be contacted by email at rotorflightfc@gmail.com.
