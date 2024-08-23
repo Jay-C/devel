@@ -875,10 +875,8 @@ _TIM_IRQ_HANDLER(TMR5_IRQHandler, 5);
 #endif
 
 #if USED_TIMERS & TIM_N(6)
-#  if !(defined(USE_PID_AUDIO))
 //not for APM32F4
 //_TIM_IRQ_HANDLER_UPDATE_ONLY(TMR6_DAC_IRQHandler, 6);
-#  endif
 #endif
 #if USED_TIMERS & TIM_N(7)
 // The USB VCP_DAL driver conflicts with TIM7, see TIMx_IRQHandler in usbd_cdc_interface.h
