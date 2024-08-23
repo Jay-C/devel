@@ -214,27 +214,6 @@ static const char* const invalidName = "INVALID";
 #define ERROR_INVALID_NAME "INVALID NAME: %s"
 #define ERROR_MESSAGE "%s CANNOT BE CHANGED. CURRENT VALUE: '%s'"
 
-// sync this with features_e
-#define _R(_flag, _name) [LOG2(_flag)] = _name
-static const char * const featureNames[] = {
-    _R(FEATURE_RX_PPM, "RX_PPM"),
-    _R(FEATURE_INFLIGHT_ACC_CAL, "INFLIGHT_ACC_CAL"),
-    _R(FEATURE_RX_SERIAL, "RX_SERIAL"),
-    _R(FEATURE_SOFTSERIAL, "SOFTSERIAL"),
-    _R(FEATURE_GPS, "GPS"),
-    _R(FEATURE_RANGEFINDER, "RANGEFINDER"),
-    _R(FEATURE_OPTICALFLOW, "OPTICALFLOW"),
-    _R(FEATURE_TELEMETRY, "TELEMETRY"),
-    _R(FEATURE_RX_PARALLEL_PWM, "RX_PARALLEL_PWM"),
-    _R(FEATURE_RSSI_ADC, "RSSI_ADC"),
-    _R(FEATURE_LED_STRIP, "LED_STRIP"),
-    _R(FEATURE_DASHBOARD, "DISPLAY"),
-    _R(FEATURE_OSD, "OSD"),
-    _R(FEATURE_RX_SPI, "RX_SPI"),
-    _R(FEATURE_ESC_SENSOR, "ESC_SENSOR"),
-};
-#undef _R
-
 // sync this with rxFailsafeChannelMode_e
 static const char rxFailsafeModeCharacters[] = "ahs";
 
