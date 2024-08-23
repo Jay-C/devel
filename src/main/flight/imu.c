@@ -90,8 +90,6 @@ static bool imuUpdated = false;
 #define GPS_COG_MIN_GROUNDSPEED 100        // 1.0m/s - min groundspeed for GPS Heading reinitialisation etc
 bool canUseGPSHeading = true;
 
-static float smallAngleCosZ = 0;
-
 static imuRuntimeConfig_t imuRuntimeConfig;
 
 float rMat[3][3];
@@ -113,16 +111,9 @@ attitudeEulerAngles_t attitude = EULER_INITIALIZE;
 
 PG_REGISTER_WITH_RESET_TEMPLATE(imuConfig_t, imuConfig, PG_IMU_CONFIG, 3);
 
-#ifdef USE_RACE_PRO
-#define DEFAULT_SMALL_ANGLE 180
-#else
-#define DEFAULT_SMALL_ANGLE 25
-#endif
-
 PG_RESET_TEMPLATE(imuConfig_t, imuConfig,
     .imu_dcm_kp = 2500,      // 1.0 * 10000
     .imu_dcm_ki = 0,         // 0.003 * 10000
-    .small_angle = DEFAULT_SMALL_ANGLE,
     .imu_process_denom = 2,
     .mag_declination = 0
 );
@@ -172,9 +163,6 @@ void imuConfigure(void)
     const float imuMagneticDeclinationRad = DEGREES_TO_RADIANS(imuConfig()->mag_declination / 10.0f);
     north_ef.x = cos_approx(imuMagneticDeclinationRad);
     north_ef.y = -sin_approx(imuMagneticDeclinationRad);
-
-    smallAngleCosZ = cos_approx(degreesToRadians(imuConfig()->small_angle));
-
 }
 
 void imuInit(void)
@@ -821,7 +809,7 @@ void imuQuaternionHeadfreeTransformVectorEarthToBody(t_fp_vector_def *v)
 bool isUpright(void)
 {
 #ifdef USE_ACC
-    return !sensors(SENSOR_ACC) || (attitudeIsEstablished && getCosTiltAngle() > smallAngleCosZ);
+    return !sensors(SENSOR_ACC) || (attitudeIsEstablished && getCosTiltAngle() > 0.7f);
 #else
     return true;
 #endif
