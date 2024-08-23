@@ -42,7 +42,6 @@ extern "C" {
     #include "flight/lowpass.h"
 
     #include "io/escservo.h"
-    #include "io/gimbal.h"
     #include "io/rc_controls.h"
 
     extern uint8_t servoCount;
@@ -157,9 +156,6 @@ protected:
     rxConfig_t rxConfig;
     escAndServoConfig_t escAndServoConfig;
     servoParam_t servoConf[MAX_SUPPORTED_SERVOS];
-    gimbalConfig_t gimbalConfig = {
-        .mode = GIMBAL_MODE_NORMAL
-    };
 
     motorMixer_t customMotorMixer[MAX_SUPPORTED_MOTORS];
     servoMixer_t customServoMixer[MAX_SUPPORTED_SERVOS];
@@ -191,7 +187,6 @@ protected:
     virtual void configureMixer(void) {
         mixerUseConfigs(
             servoConf,
-            &gimbalConfig,
             NULL,
             &escAndServoConfig,
             &mixerConfig,
