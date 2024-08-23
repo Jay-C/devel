@@ -27,40 +27,47 @@
 #endif
 
 #ifndef DEFAULT_RX_FEATURE
-
-#if defined(USE_SERIALRX)
-#define DEFAULT_RX_FEATURE FEATURE_RX_SERIAL
-#elif defined(USE_RX_MSP)
-#define DEFAULT_RX_FEATURE FEATURE_RX_MSP
-#elif defined(USE_RX_SPI)
-// need to test with FEATURE_RX_EXPRESSLRS
-#define DEFAULT_RX_FEATURE FEATURE_RX_SPI
+#define DEFAULT_RX_FEATURE 0
 #endif
 
-#endif // DEFAULT_RX_FEATURE
-
-// features must be listed in
-//  config/feature.c:featuresSupportedByBuild
-//  cli/cli.c:featureNames
 typedef enum {
-    FEATURE_RX_PPM = 1 << 0,
-    FEATURE_INFLIGHT_ACC_CAL = 1 << 2,
-    FEATURE_RX_SERIAL = 1 << 3,
-    FEATURE_SOFTSERIAL = 1 << 6,
-    FEATURE_GPS = 1 << 7,
-    FEATURE_RANGEFINDER = 1 << 9,
-    FEATURE_TELEMETRY = 1 << 10,
-    FEATURE_RX_PARALLEL_PWM = 1 << 13,
-    FEATURE_RX_MSP = 1 << 14,
-    FEATURE_RSSI_ADC = 1 << 15,
-    FEATURE_LED_STRIP = 1 << 16,
-    FEATURE_DASHBOARD = 1 << 17,
-    FEATURE_OSD = 1 << 18,
-    FEATURE_RX_SPI = 1 << 25,
-    //FEATURE_SOFTSPI = 1 << 26, (removed)
-    FEATURE_ESC_SENSOR = 1 << 27,
-    //FEATURE_DYNAMIC_FILTER = 1 << 29, (removed)
+    FEATURE_BIT_RX_PPM              = 0,
+    FEATURE_BIT_INFLIGHT_ACC_CAL    = 2,
+    FEATURE_BIT_RX_SERIAL           = 3,
+    FEATURE_BIT_SOFTSERIAL          = 6,
+    FEATURE_BIT_GPS                 = 7,
+    FEATURE_BIT_RANGEFINDER         = 9,
+    FEATURE_BIT_TELEMETRY           = 10,
+    FEATURE_BIT_RX_PARALLEL_PWM     = 13,
+    FEATURE_BIT_RX_MSP              = 14,
+    FEATURE_BIT_RSSI_ADC            = 15,
+    FEATURE_BIT_LED_STRIP           = 16,
+    FEATURE_BIT_DASHBOARD           = 17,
+    FEATURE_BIT_OSD                 = 18,
+    FEATURE_BIT_RX_SPI              = 25,
+    FEATURE_BIT_ESC_SENSOR          = 27,
+    FEATURE_BIT_COUNT               = 32
+} feature_bit_e;
+
+#define ENTRY(FEA)  FEATURE_ ## FEA = BIT(FEATURE_BIT_ ## FEA)
+typedef enum {
+    ENTRY(RX_PPM),
+    ENTRY(INFLIGHT_ACC_CAL),
+    ENTRY(RX_SERIAL),
+    ENTRY(SOFTSERIAL),
+    ENTRY(GPS),
+    ENTRY(RANGEFINDER),
+    ENTRY(TELEMETRY),
+    ENTRY(RX_PARALLEL_PWM),
+    ENTRY(RX_MSP),
+    ENTRY(RSSI_ADC),
+    ENTRY(LED_STRIP),
+    ENTRY(DASHBOARD),
+    ENTRY(OSD),
+    ENTRY(RX_SPI),
+    ENTRY(ESC_SENSOR),
 } features_e;
+#undef ENTRY
 
 typedef struct featureConfig_s {
     uint32_t enabledFeatures;
@@ -71,6 +78,9 @@ PG_DECLARE(featureConfig_t, featureConfig);
 // Mask of features that have code compiled in with current config.
 //  Other restrictions on available features may apply.
 extern uint32_t featuresSupportedByBuild;
+
+// Feature names for known features
+extern const char * const featureNames[FEATURE_BIT_COUNT];
 
 void featureInit(void);
 bool featureIsEnabled(const uint32_t mask);
