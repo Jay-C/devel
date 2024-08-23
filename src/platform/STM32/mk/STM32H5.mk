@@ -170,7 +170,6 @@ MCU_COMMON_SRC = \
             STM32/rcc_stm32.c \
             STM32/serial_uart_hal.c \
             STM32/timer_hal.c \
-            STM32/transponder_ir_io_hal.c \
             STM32/camera_control_stm32.c \
             STM32/system_stm32h5xx.c \
             drivers/adc.c \
