@@ -115,6 +115,7 @@ COMMON_SRC = \
             cli/cli.c \
             cli/settings.c \
             config/config.c \
+            debug/dprintf.c \
             drivers/dshot.c \
             drivers/dshot_dpwm.c \
             drivers/dshot_command.c \
