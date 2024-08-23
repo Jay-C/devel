@@ -139,18 +139,6 @@ typedef struct pidProfile_s {
 
     uint8_t dterm_lpf1_dyn_expo;            // set the curve for dynamic dterm lowpass filter
 
-    uint8_t simplified_pids_mode;
-    uint8_t simplified_master_multiplier;
-    uint8_t simplified_roll_pitch_ratio;
-    uint8_t simplified_i_gain;
-    uint8_t simplified_d_gain;
-    uint8_t simplified_pi_gain;
-    uint8_t simplified_d_max_gain;
-    uint8_t simplified_feedforward_gain;
-    uint8_t simplified_dterm_filter;
-    uint8_t simplified_dterm_filter_multiplier;
-    uint8_t simplified_pitch_pi_gain;
-
     uint8_t anti_gravity_cutoff_hz;
     uint8_t anti_gravity_p_gain;
     uint8_t angle_earth_ref;                // Control amount of "co-ordination" from yaw into roll while pitched forward in angle mode
