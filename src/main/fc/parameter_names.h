@@ -63,12 +63,6 @@
 #define PARAM_NAME_D_MAX_GAIN "d_max_gain"
 #define PARAM_NAME_D_MAX_ADVANCE "d_max_advance"
 #define PARAM_NAME_DEBUG_MODE "debug_mode"
-#define PARAM_NAME_RPM_FILTER_HARMONICS "rpm_filter_harmonics"
-#define PARAM_NAME_RPM_FILTER_WEIGHTS "rpm_filter_weights"
-#define PARAM_NAME_RPM_FILTER_Q "rpm_filter_q"
-#define PARAM_NAME_RPM_FILTER_MIN_HZ "rpm_filter_min_hz"
-#define PARAM_NAME_RPM_FILTER_FADE_RANGE_HZ "rpm_filter_fade_range_hz"
-#define PARAM_NAME_RPM_FILTER_LPF_HZ "rpm_filter_lpf_hz"
 
 #define PARAM_NAME_ALTITUDE_SOURCE "altitude_source"
 #define PARAM_NAME_ALTITUDE_PREFER_BARO "altitude_prefer_baro"
