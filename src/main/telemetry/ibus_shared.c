@@ -253,9 +253,6 @@ static uint16_t getMode(void)
     if (FLIGHT_MODE(ANGLE_MODE | ALT_HOLD_MODE | POS_HOLD_MODE)) {
          flightMode = 0; //Stab
     }
-    if (FLIGHT_MODE(PASSTHRU_MODE)) {
-        flightMode = 3; //Auto
-    }
     if (FLIGHT_MODE(HEADFREE_MODE | MAG_MODE)) {
         flightMode = 4; //Guided! (there in no HEAD, MAG so use Guided)
     }
