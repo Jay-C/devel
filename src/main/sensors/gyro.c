@@ -44,10 +44,6 @@
 #include "config/config.h"
 #include "fc/runtime_config.h"
 
-#ifdef USE_DYN_NOTCH_FILTER
-#include "flight/dyn_notch_filter.h"
-#endif
-
 #include "io/beeper.h"
 #include "io/statusindicator.h"
 
@@ -415,12 +411,6 @@ FAST_CODE void gyroFiltering(timeUs_t currentTimeUs)
     } else {
         filterGyroDebug();
     }
-
-#ifdef USE_DYN_NOTCH_FILTER
-    if (isDynNotchActive()) {
-        dynNotchUpdate();
-    }
-#endif
 
     if (gyro.useDualGyroDebugging) {
         switch (gyro.gyroToUse) {
