@@ -54,8 +54,7 @@
 #define PID_PITCH_DEFAULT { 47, 84, 34, 125 }
 #define PID_YAW_DEFAULT   { 45, 80,  0, 120 }
 
-#define DTERM_LPF1_DYN_MIN_HZ_DEFAULT 75
-#define DTERM_LPF1_DYN_MAX_HZ_DEFAULT 150
+#define DTERM_LPF1_HZ_DEFAULT 75
 #define DTERM_LPF2_HZ_DEFAULT 150
 
 #define G_ACCELERATION 9.80665f // gravitational acceleration in m/s^2
@@ -125,12 +124,8 @@ typedef struct pidProfile_s {
     uint16_t dterm_lpf2_static_hz;          // Static Dterm lowpass 2 filter cutoff value in hz
     uint8_t iterm_rotation;                 // rotates iterm to translate world errors to local coordinate system
     uint8_t dterm_lpf2_type;                // Filter type for 2nd dterm lowpass
-    uint16_t dterm_lpf1_dyn_min_hz;         // Dterm lowpass filter 1 min hz when in dynamic mode
-    uint16_t dterm_lpf1_dyn_max_hz;         // Dterm lowpass filter 1 max hz when in dynamic mode
     uint8_t transient_throttle_limit;       // Maximum DC component of throttle change to mix into throttle to prevent airmode mirroring noise
     char profileName[MAX_PROFILE_NAME_LENGTH + 1]; // Descriptive name for profile
-
-    uint8_t dterm_lpf1_dyn_expo;            // set the curve for dynamic dterm lowpass filter
 
     uint8_t angle_earth_ref;                // Control amount of "co-ordination" from yaw into roll while pitched forward in angle mode
     uint16_t horizon_delay_ms;              // delay when Horizon Strength increases, 50 = 500ms time constant
@@ -210,13 +205,6 @@ typedef struct pidRuntime_s {
     bool zeroThrottleItermReset;
     bool useEzDisarm;
     float landingDisarmThreshold;
-
-#ifdef USE_DYN_LPF
-    uint8_t dynLpfFilter;
-    uint16_t dynLpfMin;
-    uint16_t dynLpfMax;
-    uint8_t dynLpfCurveExpo;
-#endif
 
 #ifdef USE_ACC
     pt3Filter_t attitudeFilter[RP_AXIS_COUNT];  // Only for ROLL and PITCH
