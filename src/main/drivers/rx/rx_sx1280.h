@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #define SX1280_REG_FIRMWARE_VERSION_MSB   0x0153 //The address of the register holding the firmware version MSB
 #define SX1280_REG_RX_GAIN_REGIME         0x0891

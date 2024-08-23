@@ -21,7 +21,7 @@
 #pragma once
 
 #include "common/axis.h"
-#include "common/time.h"
+#include "common/rtc.h"
 #include "common/vector.h"
 
 #include "drivers/accgyro/accgyro.h"

@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #define HOTTV4_RXTX 4
 

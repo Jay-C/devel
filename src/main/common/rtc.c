@@ -31,7 +31,7 @@
 
 #include "common/maths.h"
 #include "common/printf.h"
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "drivers/persistent.h"
 

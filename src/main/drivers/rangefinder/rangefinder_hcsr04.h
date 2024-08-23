@@ -21,7 +21,7 @@
 #pragma once
 
 #include "pg/pg.h"
-#include "common/time.h"
+#include "common/rtc.h"
 #include "drivers/rangefinder/rangefinder.h"
 #include "sensors/battery.h"
 

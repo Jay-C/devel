@@ -25,7 +25,7 @@
 
 #include "pg/rx.h"
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "cms/cms.h"
 

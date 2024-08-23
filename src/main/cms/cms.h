@@ -22,7 +22,7 @@
 
 #include "drivers/display.h"
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "cms/cms_types.h"
 
