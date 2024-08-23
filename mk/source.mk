@@ -219,7 +219,6 @@ COMMON_SRC = \
             cms/cms_menu_vtx_smartaudio.c \
             cms/cms_menu_vtx_tramp.c \
             cms/cms_menu_persistent_stats.c \
-            cms/cms_menu_rpm_limit.c \
             cms/cms_menu_quick.c \
             drivers/display_ug2864hsweg01.c \
             drivers/light_ws2811strip.c \
@@ -499,7 +498,6 @@ SIZE_OPTIMISED_SRC += \
             cms/cms_menu_vtx_smartaudio.c \
             cms/cms_menu_vtx_tramp.c \
             cms/cms_menu_persistent_stats.c \
-            cms/cms_menu_rpm_limit.c \
             cms/cms_menu_quick.c \
             io/vtx.c \
             io/vtx_rtc6705.c \
