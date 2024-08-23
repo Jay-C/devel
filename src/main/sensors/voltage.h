@@ -22,8 +22,7 @@
 
 #include "voltage_ids.h"
 
-#define SLOW_VOLTAGE_TASK_FREQ_HZ 50
-#define FAST_VOLTAGE_TASK_FREQ_HZ 200
+#define VOLTAGE_TASK_FREQ_HZ 100
 
 #define VOLTAGE_STABLE_TICK_MS        100
 #define VOLTAGE_STABLE_BITS_TOTAL     11    // number of samples to test
@@ -53,9 +52,6 @@ typedef struct voltageMeter_s {
     timeMs_t voltageStableLastUpdate;
     uint16_t voltageStableBits;              // rolling bitmask, bit 1 if battery difference is within threshold, shifted left
     uint16_t unfiltered;                     // voltage in 0.01V steps
-#if defined(USE_BATTERY_VOLTAGE_SAG_COMPENSATION)
-    uint16_t sagFiltered;                   // voltage in 0.01V steps
-#endif
     bool lowVoltageCutoff;
 } voltageMeter_t;
 
@@ -133,5 +129,3 @@ extern const uint8_t voltageMeterADCtoIDMap[MAX_VOLTAGE_SENSOR_ADC];
 extern const uint8_t supportedVoltageMeterCount;
 extern const uint8_t voltageMeterIds[];
 void voltageMeterRead(voltageMeterId_e id, voltageMeter_t *voltageMeter);
-
-bool isSagCompensationConfigured(void);
