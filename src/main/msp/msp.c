@@ -1946,11 +1946,7 @@ case MSP_NAME:
 #else
         sbufWriteU8(dst, 0);
 #endif
-#if defined(USE_THROTTLE_BOOST)
-        sbufWriteU8(dst, currentPidProfile->throttle_boost);
-#else
         sbufWriteU8(dst, 0);
-#endif
 #if defined(USE_ACRO_TRAINER)
         sbufWriteU8(dst, currentPidProfile->acro_trainer_angle_limit);
 #else
@@ -3143,11 +3139,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
 #else
             sbufReadU8(src);
 #endif
-#if defined(USE_THROTTLE_BOOST)
-            currentPidProfile->throttle_boost = sbufReadU8(src);
-#else
             sbufReadU8(src);
-#endif
 #if defined(USE_ACRO_TRAINER)
             currentPidProfile->acro_trainer_angle_limit = sbufReadU8(src);
 #else
