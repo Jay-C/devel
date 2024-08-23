@@ -1263,7 +1263,7 @@ case MSP_NAME:
     case MSP_ARMING_CONFIG:
         sbufWriteU8(dst, armingConfig()->auto_disarm_delay);
         sbufWriteU8(dst, 0);
-        sbufWriteU8(dst, imuConfig()->small_angle);
+        sbufWriteU8(dst, 0); // imuConfig()->small_angle
         sbufWriteU8(dst, armingConfig()->gyro_cal_on_first_arm);
         break;
 
@@ -2587,7 +2587,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         armingConfigMutable()->auto_disarm_delay = sbufReadU8(src);
         sbufReadU8(src); // reserved. disarm_kill_switch was removed in #5073
         if (sbufBytesRemaining(src)) {
-          imuConfigMutable()->small_angle = sbufReadU8(src);
+            sbufReadU8(src); // imuConfigMutable()->small_angle
         }
         if (sbufBytesRemaining(src)) {
             armingConfigMutable()->gyro_cal_on_first_arm = sbufReadU8(src);
