@@ -385,10 +385,6 @@ telemetry_ibus_unittest_SRC := \
 		$(USER_DIR)/telemetry/ibus_shared.c \
 		$(USER_DIR)/telemetry/ibus.c
 
-transponder_ir_unittest_SRC := \
-		$(USER_DIR)/drivers/transponder_ir_ilap.c \
-		$(USER_DIR)/drivers/transponder_ir_arcitimer.c
-
 ws2811_unittest_SRC := \
 		$(USER_DIR)/drivers/light_ws2811strip.c
 
