@@ -28,7 +28,7 @@
 
 #include "build/atomic.h"
 #include "build/debug.h"
-#include "build/debug_pin.h"
+#include "debug/debug_pin.h"
 
 #include "drivers/io.h"
 #include "drivers/io_impl.h"
