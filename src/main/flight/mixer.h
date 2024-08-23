@@ -94,8 +94,6 @@ typedef struct mixer_s {
 typedef struct mixerConfig_s {
     uint8_t mixerMode;
     bool yaw_motors_reversed;
-    uint8_t crashflip_motor_percent;
-    uint8_t crashflip_rate;
     uint8_t mixer_type;
 #ifdef USE_RPM_LIMIT
     bool rpm_limit;
@@ -148,5 +146,3 @@ bool isFixedWing(void);
 
 float getMotorOutputLow(void);
 float getMotorOutputHigh(void);
-
-bool crashFlipSuccessful(void);
