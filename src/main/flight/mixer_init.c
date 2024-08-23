@@ -53,13 +53,6 @@ void pgResetFn_mixerConfig(mixerConfig_t *mixerConfig)
 {
     mixerConfig->mixerMode = DEFAULT_MIXER;
     mixerConfig->mixer_type = MIXER_LEGACY;
-#ifdef USE_RPM_LIMIT
-    mixerConfig->rpm_limit = false;
-    mixerConfig->rpm_limit_p = 25;
-    mixerConfig->rpm_limit_i = 10;
-    mixerConfig->rpm_limit_d = 8;
-    mixerConfig->rpm_limit_value = 18000;
-#endif
 }
 
 PG_REGISTER_ARRAY(motorMixer_t, MAX_SUPPORTED_MOTORS, customMotorMixer, PG_MOTOR_MIXER, 0);
@@ -343,31 +336,10 @@ void mixerInitProfile(void)
     }
 #endif
 
-#ifdef USE_RPM_LIMIT
-    mixerRuntime.rpmLimiterRpmLimit = mixerConfig()->rpm_limit_value;
-    mixerRuntime.rpmLimiterPGain = mixerConfig()->rpm_limit_p * 15e-6f;
-    mixerRuntime.rpmLimiterIGain = mixerConfig()->rpm_limit_i * 1e-3f * pidGetDT();
-    mixerRuntime.rpmLimiterDGain = mixerConfig()->rpm_limit_d * 3e-7f * pidGetPidFrequency();
-    mixerRuntime.rpmLimiterI = 0.0;
-    pt1FilterInit(&mixerRuntime.rpmLimiterAverageRpmFilter, pt1FilterGain(6.0f, pidGetDT()));
-    pt1FilterInit(&mixerRuntime.rpmLimiterThrottleScaleOffsetFilter, pt1FilterGain(2.0f, pidGetDT()));
-    mixerResetRpmLimiter();
-#endif
-
     mixerRuntime.ezLandingThreshold = 2.0f * currentPidProfile->ez_landing_threshold / 100.0f;
     mixerRuntime.ezLandingLimit = currentPidProfile->ez_landing_limit / 100.0f;
     mixerRuntime.ezLandingSpeed = 2.0f * currentPidProfile->ez_landing_speed / 10.0f;
 }
-
-#ifdef USE_RPM_LIMIT
-void mixerResetRpmLimiter(void)
-{
-    mixerRuntime.rpmLimiterI = 0.0;
-    mixerRuntime.rpmLimiterThrottleScale = constrainf(mixerRuntime.rpmLimiterRpmLimit / motorEstimateMaxRpm(), 0.0f, 1.0f);
-    mixerRuntime.rpmLimiterInitialThrottleScale = mixerRuntime.rpmLimiterThrottleScale;
-}
-
-#endif // USE_RPM_LIMIT
 
 #ifndef USE_QUAD_MIXER_ONLY
 
