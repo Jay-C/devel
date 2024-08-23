@@ -51,7 +51,6 @@
 #include "flight/imu.h"
 #include "flight/mixer.h"
 #include "flight/pid.h"
-#include "flight/pid_init.h"
 #include "flight/servos.h"
 #include "flight/position.h"
 
@@ -226,20 +225,6 @@ static void validateAndFixConfig(void)
 #endif
         true) {
         featureDisableImmediate(FEATURE_GPS);
-    }
-
-    for (unsigned i = 0; i < PID_PROFILE_COUNT; i++) {
-        // Fix filter settings to handle cases where an older configurator was used that
-        // allowed higher cutoff limits from previous firmware versions.
-        adjustFilterLimit(&pidProfilesMutable(i)->dterm_lpf1_static_hz, LPF_MAX_HZ);
-        adjustFilterLimit(&pidProfilesMutable(i)->dterm_lpf2_static_hz, LPF_MAX_HZ);
-        adjustFilterLimit(&pidProfilesMutable(i)->dterm_notch_hz, LPF_MAX_HZ);
-        adjustFilterLimit(&pidProfilesMutable(i)->dterm_notch_cutoff, 0);
-
-        // Prevent invalid notch cutoff
-        if (pidProfilesMutable(i)->dterm_notch_cutoff >= pidProfilesMutable(i)->dterm_notch_hz) {
-            pidProfilesMutable(i)->dterm_notch_hz = 0;
-        }
     }
 
     if (motorConfig()->dev.motorPwmProtocol == PWM_TYPE_BRUSHED) {
