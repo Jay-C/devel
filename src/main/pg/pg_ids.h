@@ -23,7 +23,7 @@
 // FC configuration (defined by cleanflight v1)
 #define PG_FAILSAFE_CONFIG 1 // struct OK
 #define PG_BOARD_ALIGNMENT 2 // struct OK
-#define PG_GIMBAL_CONFIG 3 // struct OK
+//#define PG_GIMBAL_CONFIG 3 // struct OK
 #define PG_MOTOR_MIXER 4 // two structs mixerConfig_t servoMixerConfig_t
 #define PG_BLACKBOX_CONFIG 5 // struct OK
 #define PG_MOTOR_CONFIG 6 // struct OK
@@ -155,7 +155,7 @@
 #define PG_SCHEDULER_CONFIG         556
 #define PG_MSP_CONFIG               557
 //#define PG_SOFTSERIAL_PIN_CONFIG    558  // removed, merged into SERIAL_PIN_CONFIG
-#define PG_GIMBAL_TRACK_CONFIG      559
+//#define PG_GIMBAL_TRACK_CONFIG      559
 #define PG_OPTICALFLOW_CONFIG       560
 #define PG_BETAFLIGHT_END           560
 
