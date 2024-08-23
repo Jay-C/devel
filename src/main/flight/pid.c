@@ -155,9 +155,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .dterm_lpf2_type = FILTER_PT1,
         .dterm_lpf1_dyn_min_hz = DTERM_LPF1_DYN_MIN_HZ_DEFAULT,
         .dterm_lpf1_dyn_max_hz = DTERM_LPF1_DYN_MAX_HZ_DEFAULT,
-        .d_max = D_MAX_DEFAULT,
-        .d_max_gain = 37,
-        .d_max_advance = 20,
         .auto_profile_cell_count = AUTO_PROFILE_CELL_COUNT_STAY,
         .transient_throttle_limit = 0,
         .profileName = { 0 },
@@ -926,31 +923,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
             // loop execution to be delayed.
             const float delta = - (gyroRateDterm[axis] - previousGyroRateDterm[axis]) * pidRuntime.pidFrequency;
             float preTpaD = pidRuntime.pidCoefficient[axis].Kd * delta;
-
-#ifdef USE_D_MAX
-            float dMaxMultiplier = 1.0f;
-            if (pidRuntime.dMaxPercent[axis] > 1.0f) {
-                float dMaxGyroFactor = pt2FilterApply(&pidRuntime.dMaxRange[axis], delta);
-                dMaxGyroFactor = fabsf(dMaxGyroFactor) * pidRuntime.dMaxGyroGain;
-                const float dMaxSetpointFactor = fabsf(pidSetpointDelta) * pidRuntime.dMaxSetpointGain;
-                const float dMaxBoost = fmaxf(dMaxGyroFactor, dMaxSetpointFactor);
-                // dMaxBoost starts at zero, and by 1.0 we get Dmax, but it can exceed 1.
-                dMaxMultiplier += (pidRuntime.dMaxPercent[axis] - 1.0f) * dMaxBoost;
-                dMaxMultiplier = pt2FilterApply(&pidRuntime.dMaxLowpass[axis], dMaxMultiplier);
-                // limit the gain to the fraction that DMax is greater than Min
-                dMaxMultiplier = MIN(dMaxMultiplier, pidRuntime.dMaxPercent[axis]);
-                if (axis == FD_ROLL) {
-                    DEBUG_SET(DEBUG_D_MAX, 0, lrintf(dMaxGyroFactor * 100));
-                    DEBUG_SET(DEBUG_D_MAX, 1, lrintf(dMaxSetpointFactor * 100));
-                    DEBUG_SET(DEBUG_D_MAX, 2, lrintf(pidRuntime.pidCoefficient[axis].Kd * dMaxMultiplier * 10 / DTERM_SCALE)); // actual D
-                } else if (axis == FD_PITCH) {
-                    DEBUG_SET(DEBUG_D_MAX, 3, lrintf(pidRuntime.pidCoefficient[axis].Kd * dMaxMultiplier * 10 / DTERM_SCALE));
-                }
-            }
-
-            // Apply the gain that increases D towards Dmax
-            preTpaD *= dMaxMultiplier;
-#endif
 
             pidData[axis].D = preTpaD * getTpaFactor(pidProfile, axis, TERM_D);
 
