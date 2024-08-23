@@ -56,7 +56,7 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
     { .boxId = BOXHEADADJ, .boxName = "HEADADJ", .permanentId = 7 },
 //    { .boxId = BOXGPSHOME, .boxName = "GPS HOME", .permanentId = 10 },
     { .boxId = BOXPOSHOLD, .boxName = "POS HOLD", .permanentId = 11 },
-    { .boxId = BOXPASSTHRU, .boxName = "PASSTHRU", .permanentId = 12 },
+//    { .boxId = BOXPASSTHRU, .boxName = "PASSTHRU", .permanentId = 12 }, (removed)
     { .boxId = BOXBEEPERON, .boxName = "BEEPER", .permanentId = 13 },
 //    { .boxId = BOXLEDMAX, .boxName = "LEDMAX", .permanentId = 14 }, (removed)
     { .boxId = BOXLEDLOW, .boxName = "LEDLOW", .permanentId = 15 },
@@ -230,10 +230,6 @@ void initActiveBoxIds(void)
 #endif
 
     BME(BOXFAILSAFE);
-
-    if (mixerConfig()->mixerMode == MIXER_FLYING_WING || mixerConfig()->mixerMode == MIXER_AIRPLANE || mixerConfig()->mixerMode == MIXER_CUSTOM_AIRPLANE) {
-        BME(BOXPASSTHRU);
-    }
 
     BME(BOXBEEPERON);
     BME(BOXBEEPERMUTE);
