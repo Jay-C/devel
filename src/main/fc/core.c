@@ -71,7 +71,6 @@
 #include "flight/mixer.h"
 #include "flight/pid.h"
 #include "flight/position.h"
-#include "flight/rpm_filter.h"
 #include "flight/servos.h"
 
 #include "io/beeper.h"
