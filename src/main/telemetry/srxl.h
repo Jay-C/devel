@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 void srxlCollectTelemetryNow(void);
 void initSrxlTelemetry(void);

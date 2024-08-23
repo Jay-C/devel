@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "drivers/bus.h"
 #include "drivers/exti.h"
