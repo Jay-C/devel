@@ -33,7 +33,7 @@
 #ifdef USE_RX_EXPRESSLRS
 
 #include "build/debug.h"
-#include "build/debug_pin.h"
+#include "debug/debug_pin.h"
 
 #include "drivers/timer.h"
 #include "drivers/nvic.h"
