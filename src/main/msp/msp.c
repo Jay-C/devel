@@ -2008,11 +2008,7 @@ case MSP_NAME:
 #else
         sbufWriteU8(dst, 0);
 #endif
-#if defined(USE_THRUST_LINEARIZATION)
-        sbufWriteU8(dst, currentPidProfile->thrustLinearization);
-#else
         sbufWriteU8(dst, 0);
-#endif
         sbufWriteU8(dst, currentPidProfile->tpa_mode);
         sbufWriteU8(dst, currentPidProfile->tpa_rate);
         sbufWriteU16(dst, currentPidProfile->tpa_breakpoint);   // was currentControlRateProfile->tpa_breakpoint
@@ -3220,11 +3216,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
 #else
             sbufReadU8(src);
 #endif
-#if defined(USE_THRUST_LINEARIZATION)
-            currentPidProfile->thrustLinearization = sbufReadU8(src);
-#else
             sbufReadU8(src);
-#endif
         }
         if (sbufBytesRemaining(src) >= 4) {
             // Added in API 1.45
