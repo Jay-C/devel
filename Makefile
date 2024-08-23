@@ -47,6 +47,10 @@ SERIAL_DEVICE   ?= $(firstword $(wildcard /dev/ttyACM*) $(firstword $(wildcard /
 # Flash size (KB).  Some low-end chips actually have more flash than advertised, use this to override.
 FLASH_SIZE ?=
 
+# Number of jobs to run in parallel
+PARALLEL_JOBS 	?= 4
+
+
 ###############################################################################
 # Things that need to be maintained as the source changes
 #
@@ -81,8 +85,7 @@ endif
 
 # some targets use parallel build by default
 # MAKEFLAGS is valid only inside target, do not use this at parse phase
-DEFAULT_PARALLEL_JOBS 	:=    # all jobs in parallel (for backward compatibility)
-MAKE_PARALLEL 		     = $(if $(filter -j%, $(MAKEFLAGS)),$(EMPTY),-j$(DEFAULT_PARALLEL_JOBS))
+MAKE_PARALLEL 		     = $(if $(filter -j%, $(MAKEFLAGS)),$(EMPTY),-j$(PARALLEL_JOBS))
 
 # pre-build sanity checks
 include $(MAKE_SCRIPT_DIR)/checks.mk
@@ -90,6 +93,10 @@ include $(MAKE_SCRIPT_DIR)/checks.mk
 # basic target list
 PLATFORMS        := $(sort $(notdir $(patsubst /%,%, $(wildcard $(PLATFORM_DIR)/*))))
 BASE_TARGETS     := $(sort $(notdir $(patsubst %/,%,$(dir $(wildcard $(PLATFORM_DIR)/*/target/*/target.mk)))))
+
+# CI targets
+CI_EXCLUDED_TARGETS := $(sort $(notdir $(patsubst %/,%,$(dir $(wildcard $(PLATFORM_DIR)/*/target/*/.exclude)))))
+CI_TARGETS          := $(filter-out $(CI_EXCLUDED_TARGETS), $(BASE_TARGETS))
 
 # configure some directories that are relative to wherever ROOT_DIR is located
 TOOLS_DIR  ?= $(ROOT)/tools
@@ -126,9 +133,6 @@ include $(MAKE_SCRIPT_DIR)/config.mk
 
 # default xtal value
 HSE_VALUE       ?= 8000000
-
-CI_EXCLUDED_TARGETS := $(sort $(notdir $(patsubst %/,%,$(dir $(wildcard $(PLATFORM_DIR)/*/target/*/.exclude)))))
-CI_TARGETS          := $(filter-out $(CI_EXCLUDED_TARGETS), $(BASE_TARGETS)) $(filter STM32F4DISCOVERY CRAZYBEEF4SX1280 CRAZYBEEF4FR IFLIGHT_BLITZ_F722 NUCLEOF446 SPRACINGH7EXTREME SPRACINGH7RF, $(BASE_CONFIGS))
 
 TARGET_PLATFORM     := $(notdir $(patsubst %/,%,$(subst target/$(TARGET)/,, $(dir $(wildcard $(PLATFORM_DIR)/*/target/$(TARGET)/target.mk)))))
 TARGET_PLATFORM_DIR := $(PLATFORM_DIR)/$(TARGET_PLATFORM)
@@ -505,8 +509,12 @@ $(TARGET_OBJ_DIR)/%.o: %.S
 	$(V1) $(CROSS_CC) -c -o $@ $(ASFLAGS) $<
 
 
-## all               : Build all currently built targets
-all: $(CI_TARGETS)
+## all               : Build all CI targets
+all: ci
+
+ci: $(CI_TARGETS)
+
+base: $(BASE_TARGETS)
 
 $(BASE_TARGETS):
 	$(V0) @echo "Building target $@" && \
