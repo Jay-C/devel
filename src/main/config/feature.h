@@ -1,19 +1,20 @@
 /*
- * This file is part of Cleanflight and Betaflight.
+ * This file is part of Rotorflight.
  *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * Rotorflight is free software. You can redistribute this software
+ * and/or modify this software under the terms of the GNU General
+ * Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * Rotorflight is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
  * See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this software.
+ * You should have received a copy of the GNU General Public
+ * License along with this software.
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,33 +23,12 @@
 
 #include "pg/feature.h"
 
-// features must be listed in
-//  config/feature.c:featuresSupportedByBuild
-//  cli/cli.c:featureNames
-typedef enum {
-    FEATURE_RX_PPM = 1 << 0,
-    FEATURE_INFLIGHT_ACC_CAL = 1 << 2,
-    FEATURE_RX_SERIAL = 1 << 3,
-    FEATURE_SOFTSERIAL = 1 << 6,
-    FEATURE_GPS = 1 << 7,
-    FEATURE_OPTICALFLOW = 1 << 8,
-    FEATURE_RANGEFINDER = 1 << 9,
-    FEATURE_TELEMETRY = 1 << 10,
-    FEATURE_RX_PARALLEL_PWM = 1 << 13,
-    FEATURE_RX_MSP = 1 << 14,
-    FEATURE_RSSI_ADC = 1 << 15,
-    FEATURE_LED_STRIP = 1 << 16,
-    FEATURE_DASHBOARD = 1 << 17,
-    FEATURE_OSD = 1 << 18,
-    FEATURE_RX_SPI = 1 << 25,
-    //FEATURE_SOFTSPI = 1 << 26, (removed)
-    FEATURE_ESC_SENSOR = 1 << 27,
-    //FEATURE_DYNAMIC_FILTER = 1 << 29, (removed)
-} features_e;
-
 // Mask of features that have code compiled in with current config.
 //  Other restrictions on available features may apply.
-extern uint32_t featuresSupportedByBuild;
+extern const uint32_t featuresSupportedByBuild;
+
+// Feature names for known features
+extern const char * const featureNames[FEATURE_BIT_COUNT];
 
 void featureInit(void);
 bool featureIsEnabled(const uint32_t mask);
