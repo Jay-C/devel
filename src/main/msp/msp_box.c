@@ -54,8 +54,6 @@ static const box_t boxes[CHECKBOX_ITEM_COUNT] = {
     { .boxId = BOXMAG, .boxName = "MAG", .permanentId = 5 },
     { .boxId = BOXHEADFREE, .boxName = "HEADFREE", .permanentId = 6 },
     { .boxId = BOXHEADADJ, .boxName = "HEADADJ", .permanentId = 7 },
-    { .boxId = BOXCAMSTAB, .boxName = "CAMSTAB", .permanentId = 8 },
-//    { .boxId = BOXCAMTRIG, .boxName = "CAMTRIG", .permanentId = 9 },
 //    { .boxId = BOXGPSHOME, .boxName = "GPS HOME", .permanentId = 10 },
     { .boxId = BOXPOSHOLD, .boxName = "POS HOLD", .permanentId = 11 },
     { .boxId = BOXPASSTHRU, .boxName = "PASSTHRU", .permanentId = 12 },
@@ -271,10 +269,6 @@ void initActiveBoxIds(void)
     bool configuredMotorProtocolDshot;
     checkMotorProtocolEnabled(&motorConfig()->dev, &configuredMotorProtocolDshot);
 #endif
-
-    if (featureIsEnabled(FEATURE_SERVO_TILT)) {
-        BME(BOXCAMSTAB);
-    }
 
     BME(BOXOSD);
 
