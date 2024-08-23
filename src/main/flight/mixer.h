@@ -137,7 +137,6 @@ void writeMotors(void);
 
 bool mixerIsTricopter(void);
 
-void mixerSetThrottleAngleCorrection(int correctionValue);
 float mixerGetThrottle(void);
 float mixerGetRcThrottle(void);
 mixerMode_e getMixerMode(void);

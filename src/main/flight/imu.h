@@ -73,7 +73,7 @@ typedef struct imuRuntimeConfig_s {
     float imuDcmKp;
 } imuRuntimeConfig_t;
 
-void imuConfigure(uint16_t throttle_correction_angle, uint8_t throttle_correction_value);
+void imuConfigure(void);
 
 float getSinPitchAngle(void);
 float getCosTiltAngle(void);
