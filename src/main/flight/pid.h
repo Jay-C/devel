@@ -25,7 +25,7 @@
 #include "common/axis.h"
 #include "common/filter.h"
 #include "common/pwl.h"
-#include "common/time.h"
+#include "common/rtc.h"
 
 #include "pg/pg.h"
 

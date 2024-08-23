@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 #include "common/unit.h"
 
 #include "drivers/display.h"

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "common/time.h"
+#include "common/rtc.h"
 
 typedef struct escSensorConfig_s {
     uint8_t halfDuplex;             // Set to false to listen on the TX pin for telemetry data
