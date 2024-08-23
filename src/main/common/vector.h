@@ -27,8 +27,6 @@
 
 #include <stdbool.h>
 
-#include "common/maths.h"
-
 typedef union vector2_u {
     float v[2];
     struct {
@@ -46,6 +44,21 @@ typedef union vector3_u {
 typedef struct matrix33_s {
     float m[3][3];
 } matrix33_t;
+
+typedef struct fp_angles {
+    float roll;
+    float pitch;
+    float yaw;
+} fp_angles_def;
+
+typedef union {
+    float raw[3];
+    fp_angles_def angles;
+} fp_angles_t;
+
+typedef struct fp_rotationMatrix_s {
+    float m[3][3];
+} fp_rotationMatrix_t;
 
 bool vector2Equal(const vector2_t *a, const vector2_t *b);
 vector2_t *vector2Zero(vector2_t *v);
