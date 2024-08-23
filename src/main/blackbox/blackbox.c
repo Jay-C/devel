@@ -1703,8 +1703,6 @@ static bool blackboxWriteSysinfo(void)
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_SIMPLIFIED_GYRO_FILTER_MULTIPLIER, "%d",  gyroConfig()->simplified_gyro_filter_multiplier);
 #endif
 
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_MOTOR_OUTPUT_LIMIT, "%d",        currentPidProfile->motor_output_limit);
-
 #ifdef USE_GPS
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_GPS_PROVIDER, "%d",               gpsConfig()->provider)
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_GPS_SET_HOME_POINT_ONCE, "%d",    gpsConfig()->gps_set_home_point_once)
