@@ -40,7 +40,7 @@
 
 #include "build/atomic.h"
 #include "build/debug.h"
-#include "build/debug_pin.h"
+#include "debug/debug_pin.h"
 
 #include "common/maths.h"
 #include "common/filter.h"
