@@ -201,7 +201,6 @@ typedef struct pidProfile_s {
     uint8_t dterm_lpf2_type;                // Filter type for 2nd dterm lowpass
     uint16_t dterm_lpf1_dyn_min_hz;         // Dterm lowpass filter 1 min hz when in dynamic mode
     uint16_t dterm_lpf1_dyn_max_hz;         // Dterm lowpass filter 1 max hz when in dynamic mode
-    uint8_t thrustLinearization;            // Compensation factor for pid linearization
     uint8_t d_max[XYZ_AXIS_COUNT];          // Maximum D value on each axis
     uint8_t d_max_gain;                     // Gain factor for amount of gyro / setpoint activity required to boost D
     uint8_t d_max_advance;                  // Percentage multiplier for setpoint input to boost algorithm
@@ -410,11 +409,6 @@ typedef struct pidRuntime_s {
     uint8_t dynLpfCurveExpo;
 #endif
 
-#ifdef USE_THRUST_LINEARIZATION
-    float thrustLinearization;
-    float throttleCompensateAmount;
-#endif
-
 #ifdef USE_AIRMODE_LPF
     float airmodeThrottleOffsetLimit;
 #endif
@@ -474,11 +468,6 @@ void pidUpdateAntiGravityThrottleFilter(float throttle);
 bool pidOsdAntiGravityActive(void);
 void pidSetAntiGravityState(bool newState);
 bool pidAntiGravityEnabled(void);
-
-#ifdef USE_THRUST_LINEARIZATION
-float pidApplyThrustLinearization(float motorValue);
-float pidCompensateThrustLinearization(float throttle);
-#endif
 
 #ifdef USE_AIRMODE_LPF
 void pidUpdateAirmodeLpf(float currentOffset);
