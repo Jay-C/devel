@@ -27,8 +27,6 @@
 
 #include "light_led.h"
 
-PG_REGISTER_WITH_RESET_FN(statusLedConfig_t, statusLedConfig, PG_STATUS_LED_CONFIG, 0);
-
 static IO_t leds[STATUS_LED_NUMBER];
 static uint8_t ledInversion = 0;
 
