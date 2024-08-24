@@ -45,6 +45,7 @@ PG_SRC = \
             pg/servo.c \
             pg/stats.c \
             pg/system.c \
+            pg/telemetry.c \
             pg/time.c \
             pg/timerio.c \
             pg/timerup.c \
