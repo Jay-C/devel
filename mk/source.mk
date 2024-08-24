@@ -44,6 +44,7 @@ PG_SRC = \
             pg/sdcard.c \
             pg/sdio.c \
             pg/serial_uart.c \
+            pg/servo.c \
             pg/stats.c \
             pg/system.c \
             pg/time.c \
