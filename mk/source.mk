@@ -15,6 +15,7 @@ PG_SRC = \
             pg/bus_i2c.c \
             pg/bus_quadspi.c \
             pg/bus_spi.c \
+            pg/camera_control.c \
             pg/compass.c \
             pg/current.c \
             pg/dashboard.c \
