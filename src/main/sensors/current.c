@@ -33,9 +33,6 @@
 
 #include "drivers/adc.h"
 
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
-
 #include "sensors/adcinternal.h"
 #include "sensors/battery.h"
 #include "sensors/esc_sensor.h"
@@ -83,21 +80,6 @@ void currentMeterReset(currentMeter_t *meter)
 //
 
 static pt1Filter_t adciBatFilter;
-
-#ifndef DEFAULT_CURRENT_METER_SCALE
-#define DEFAULT_CURRENT_METER_SCALE 400 // for Allegro ACS758LCB-100U (40mV/A)
-#endif
-
-#ifndef DEFAULT_CURRENT_METER_OFFSET
-#define DEFAULT_CURRENT_METER_OFFSET 0
-#endif
-
-PG_REGISTER_WITH_RESET_TEMPLATE(currentSensorADCConfig_t, currentSensorADCConfig, PG_CURRENT_SENSOR_ADC_CONFIG, 0);
-
-PG_RESET_TEMPLATE(currentSensorADCConfig_t, currentSensorADCConfig,
-    .scale = DEFAULT_CURRENT_METER_SCALE,
-    .offset = DEFAULT_CURRENT_METER_OFFSET,
-);
 
 static int32_t currentMeterADCToCentiamps(const uint16_t src)
 {
