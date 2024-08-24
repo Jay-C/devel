@@ -21,7 +21,7 @@
 #pragma once
 
 #include "common/rtc.h"
-#include "pg/pg.h"
+#include "pg/acceleration.h"
 #include "drivers/accgyro/accgyro.h"
 #include "sensors/sensors.h"
 
@@ -62,35 +62,12 @@ typedef struct acc_s {
 
 extern acc_t acc;
 
-typedef struct rollAndPitchTrims_s {
-    int16_t roll;
-    int16_t pitch;
-} rollAndPitchTrims_t_def;
-
-typedef union rollAndPitchTrims_u {
-    int16_t raw[2];
-    rollAndPitchTrims_t_def values;
-} rollAndPitchTrims_t;
-
-#if defined(USE_ACC)
-typedef struct accelerometerConfig_s {
-    uint16_t acc_lpf_hz;                    // cutoff frequency for the low pass filter used on the acc z-axis for althold in Hz
-    uint8_t acc_hardware;                   // Which acc hardware to use on boards with more than one device
-    bool acc_high_fsr;
-    flightDynamicsTrims_t accZero;
-    rollAndPitchTrims_t accelerometerTrims;
-} accelerometerConfig_t;
-
-PG_DECLARE(accelerometerConfig_t, accelerometerConfig);
-#endif
-
 bool accInit(uint16_t accSampleRateHz);
 bool accIsCalibrationComplete(void);
 bool accHasBeenCalibrated(void);
 void accStartCalibration(void);
 void resetRollAndPitchTrims(rollAndPitchTrims_t *rollAndPitchTrims);
 void accUpdate(timeUs_t currentTimeUs);
-union flightDynamicsTrims_u;
-void setAccelerationTrims(union flightDynamicsTrims_u *accelerationTrimsToUse);
+void setAccelerationTrims(flightDynamicsTrims_t *accelerationTrimsToUse);
 void accInitFilters(void);
-void applyAccelerometerTrimsDelta(union rollAndPitchTrims_u *rollAndPitchTrimsDelta);
+void applyAccelerometerTrimsDelta(rollAndPitchTrims_t *rollAndPitchTrimsDelta);
