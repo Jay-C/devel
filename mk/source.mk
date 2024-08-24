@@ -11,6 +11,7 @@ PG_SRC = \
             pg/bus_spi.c \
             pg/dashboard.c \
             pg/displayport_profiles.c \
+            pg/failsafe.c \
             pg/feature.c \
             pg/flash.c \
             pg/gps.c \
