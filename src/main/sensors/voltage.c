@@ -39,9 +39,6 @@
 #include "flight/mixer.h"
 #include "flight/pid.h"
 
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
-
 #include "sensors/adcinternal.h"
 #include "sensors/battery.h"
 #include "sensors/esc_sensor.h"
@@ -99,17 +96,6 @@ void voltageMeterReset(voltageMeter_t *meter)
 // ADC
 //
 
-#ifndef DEFAULT_VOLTAGE_METER_SCALE
-#define DEFAULT_VOLTAGE_METER_SCALE 110
-#endif
-
-#ifndef DEFAULT_VOLTAGE_METER_DIVIDER
-#define DEFAULT_VOLTAGE_METER_DIVIDER 10
-#endif
-
-#ifndef DEFAULT_VOLTAGE_METER_MULTIPLIER
-#define DEFAULT_VOLTAGE_METER_MULTIPLIER 1
-#endif
 
 typedef struct voltageMeterADCState_s {
     uint16_t voltageDisplayFiltered;         // battery voltage in 0.01V steps (filtered)
@@ -123,20 +109,6 @@ voltageMeterADCState_t *getVoltageMeterADC(uint8_t index)
 {
     return &voltageMeterADCStates[index];
 }
-
-PG_REGISTER_ARRAY_WITH_RESET_FN(voltageSensorADCConfig_t, MAX_VOLTAGE_SENSOR_ADC, voltageSensorADCConfig, PG_VOLTAGE_SENSOR_ADC_CONFIG, 0);
-
-void pgResetFn_voltageSensorADCConfig(voltageSensorADCConfig_t *instance)
-{
-    for (int i = 0; i < MAX_VOLTAGE_SENSOR_ADC; i++) {
-        RESET_CONFIG(voltageSensorADCConfig_t, &instance[i],
-            .vbatscale = DEFAULT_VOLTAGE_METER_SCALE,
-            .vbatresdivval = DEFAULT_VOLTAGE_METER_DIVIDER,
-            .vbatresdivmultiplier = DEFAULT_VOLTAGE_METER_MULTIPLIER,
-        );
-    }
-}
-
 
 static const uint8_t voltageMeterAdcChannelMap[] = {
     ADC_BATTERY,
