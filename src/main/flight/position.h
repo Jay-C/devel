@@ -22,16 +22,9 @@
 
 #include "common/rtc.h"
 
+#include "pg/position.h"
+
 #define TASK_ALTITUDE_RATE_HZ 100
-
-typedef struct positionConfig_s {
-    uint8_t altitude_source;
-    uint8_t altitude_prefer_baro;
-    uint16_t altitude_lpf;                // lowpass cutoff (value / 100) Hz for altitude smoothing
-    uint16_t altitude_d_lpf;              // lowpass for (value / 100) Hz for altitude derivative smoothing
-} positionConfig_t;
-
-PG_DECLARE(positionConfig_t, positionConfig);
 
 float getAltitudeCm(void);
 float getAltitudeDerivative(void);
