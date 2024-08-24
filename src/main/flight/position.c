@@ -44,9 +44,6 @@
 #include "sensors/sensors.h"
 #include "sensors/barometer.h"
 
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
-
 static float displayAltitudeCm = 0.0f;
 static bool altitudeAvailable = false;
 
@@ -78,15 +75,6 @@ typedef enum {
     BARO_ONLY,
     GPS_ONLY
 } altitudeSource_e;
-
-PG_REGISTER_WITH_RESET_TEMPLATE(positionConfig_t, positionConfig, PG_POSITION, 6);
-
-PG_RESET_TEMPLATE(positionConfig_t, positionConfig,
-    .altitude_source = DEFAULT,
-    .altitude_prefer_baro = 100, // percentage 'trust' of baro data
-    .altitude_lpf = 300,
-    .altitude_d_lpf = 100,
-);
 
 #if defined(USE_BARO) || defined(USE_GPS)
 void calculateEstimatedAltitude(void)
