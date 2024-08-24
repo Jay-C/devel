@@ -64,6 +64,7 @@ PG_SRC = \
             pg/timerup.c \
             pg/usb.c \
             pg/vcd.c \
+            pg/voltage.c \
             pg/vtx_io.c \
             pg/vtx_table.c
 
