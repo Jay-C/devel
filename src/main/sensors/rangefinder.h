@@ -24,24 +24,7 @@
 
 #include "drivers/rangefinder/rangefinder.h"
 
-#include "pg/pg.h"
-
-typedef enum {
-    RANGEFINDER_NONE        = 0,
-    RANGEFINDER_HCSR04      = 1,
-    RANGEFINDER_TFMINI      = 2,
-    RANGEFINDER_TF02        = 3,
-    RANGEFINDER_MTF01       = 4,
-    RANGEFINDER_MTF02       = 5,
-    RANGEFINDER_MTF01P      = 6,
-    RANGEFINDER_MTF02P      = 7,
-} rangefinderType_e;
-
-typedef struct rangefinderConfig_s {
-    uint8_t rangefinder_hardware;
-} rangefinderConfig_t;
-
-PG_DECLARE(rangefinderConfig_t, rangefinderConfig);
+#include "pg/rangefinder.h"
 
 typedef struct rangefinder_s {
     rangefinderDev_t dev;
