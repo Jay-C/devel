@@ -4,6 +4,7 @@ PG_SRC = \
             pg/adjustments.c \
             pg/arming.c \
             pg/barometer.c \
+            pg/battery.c \
             pg/beeper.c \
             pg/beeper_dev.c \
             pg/blackbox.c \
