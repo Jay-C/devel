@@ -21,6 +21,7 @@ PG_SRC = \
             pg/dashboard.c \
             pg/displayport_profiles.c \
             pg/esc_sensor.c \
+            pg/esc_serial.c \
             pg/failsafe.c \
             pg/feature.c \
             pg/flash.c \
