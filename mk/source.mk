@@ -42,6 +42,7 @@ PG_SRC = \
             pg/pin_pull_up_down.c \
             pg/position.c \
             pg/pos_hold.c \
+            pg/rangefinder.c \
             pg/rates.c \
             pg/rcdevice.c \
             pg/rc_controls.c \
