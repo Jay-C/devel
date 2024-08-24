@@ -53,9 +53,7 @@
 
 #include "io/gps.h"
 
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
-
+#include "pg/pid.h"
 #include "pg/autopilot.h"
 
 #include "sensors/acceleration.h"
@@ -64,28 +62,16 @@
 
 #include "pid.h"
 
-
-FAST_DATA_ZERO_INIT uint32_t targetPidLooptime;
-
-FAST_DATA_ZERO_INIT pidAxisData_t pidData[XYZ_AXIS_COUNT];
-
-PG_REGISTER_WITH_RESET_TEMPLATE(pidConfig_t, pidConfig, PG_PID_CONFIG, 4);
-
-#ifndef DEFAULT_PID_PROCESS_DENOM
-#define DEFAULT_PID_PROCESS_DENOM       1
-#endif
-
-PG_RESET_TEMPLATE(pidConfig_t, pidConfig,
-    .pid_process_denom = DEFAULT_PID_PROCESS_DENOM,
-);
-
 #ifdef USE_ACC
 #define IS_AXIS_IN_ANGLE_MODE(i) (pidRuntime.axisInAngleMode[(i)])
 #else
 #define IS_AXIS_IN_ANGLE_MODE(i) false
 #endif // USE_ACC
 
-PG_REGISTER_ARRAY_WITH_RESET_FN(pidProfile_t, PID_PROFILE_COUNT, pidProfiles, PG_PID_PROFILE, 11);
+FAST_DATA_ZERO_INIT uint32_t targetPidLooptime;
+
+FAST_DATA_ZERO_INIT pidAxisData_t pidData[XYZ_AXIS_COUNT];
+
 
 void resetPidProfile(pidProfile_t *pidProfile)
 {
