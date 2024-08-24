@@ -5,6 +5,7 @@ PG_SRC = \
             pg/alt_hold.c \
             pg/arming.c \
             pg/autopilot.c \
+            pg/barometer.c \
             pg/beeper.c \
             pg/beeper_dev.c \
             pg/blackbox.c \
