@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "pg/voltage.h"
+
 #include "voltage_ids.h"
 
 #define VOLTAGE_TASK_FREQ_HZ 100
@@ -77,10 +79,6 @@ typedef enum {
 #define VBAT_MULTIPLIER_MIN 1
 #define VBAT_MULTIPLIER_MAX 255
 
-#ifndef MAX_VOLTAGE_SENSOR_ADC
-#define MAX_VOLTAGE_SENSOR_ADC 1 // VBAT - some boards have external, 12V, 9V and 5V meters.
-#endif
-
 #define VOLTAGE_METER_ID_ESC_COUNT 12
 
 typedef enum {
@@ -90,13 +88,6 @@ typedef enum {
     VOLTAGE_SENSOR_ADC_5V = 3
 } voltageSensorADC_e; // see also voltageMeterADCtoIDMap
 
-typedef struct voltageSensorADCConfig_s {
-    uint8_t vbatscale;                      // adjust this to match battery voltage to reported value
-    uint8_t vbatresdivval;                  // resistor divider R2 (default NAZE 10(K))
-    uint8_t vbatresdivmultiplier;           // multiplier for scale (e.g. 2.5:1 ratio with multiplier of 4 can use '100' instead of '25' in ratio) to get better precision
-} voltageSensorADCConfig_t;
-
-PG_DECLARE_ARRAY(voltageSensorADCConfig_t, MAX_VOLTAGE_SENSOR_ADC, voltageSensorADCConfig);
 
 //
 // Main API
