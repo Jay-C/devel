@@ -32,8 +32,6 @@
 #include "common/rtc.h"
 
 #include "config/feature.h"
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
 #include "pg/motor.h"
 
 #include "common/maths.h"
@@ -72,12 +70,6 @@ Byte 8: Rpm low byte
 Byte 9: 8-bit CRC
 
 */
-
-PG_REGISTER_WITH_RESET_TEMPLATE(escSensorConfig_t, escSensorConfig, PG_ESC_SENSOR_CONFIG, 0);
-
-PG_RESET_TEMPLATE(escSensorConfig_t, escSensorConfig,
-        .halfDuplex = 0
-);
 
 /*
 DEBUG INFORMATION
