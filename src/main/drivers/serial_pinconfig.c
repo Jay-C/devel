@@ -84,8 +84,6 @@ static const serialDefaultPin_t serialDefaultPin[] = {
 #endif
 };
 
-PG_REGISTER_WITH_RESET_FN(serialPinConfig_t, serialPinConfig, PG_SERIAL_PIN_CONFIG, 0);
-
 void pgResetFn_serialPinConfig(serialPinConfig_t *serialPinConfig)
 {
     for (const serialDefaultPin_t *defpin = serialDefaultPin; defpin < ARRAYEND(serialDefaultPin); defpin++) {
