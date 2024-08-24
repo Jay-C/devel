@@ -20,7 +20,8 @@
 
 #pragma once
 
-#include "pg/pg.h"
+#include "pg/barometer.h"
+
 #include "drivers/barometer/barometer.h"
 
 typedef enum {
@@ -37,19 +38,6 @@ typedef enum {
     BARO_LPS22DF = 10,
     BARO_VIRTUAL = 11,
 } baroSensor_e;
-
-typedef struct barometerConfig_s {
-    uint8_t baro_busType;
-    uint8_t baro_spi_device;
-    ioTag_t baro_spi_csn;                   // Also used as XCLR (positive logic) for BMP085
-    uint8_t baro_i2c_device;
-    uint8_t baro_i2c_address;
-    uint8_t baro_hardware;                  // Barometer hardware to use
-    ioTag_t baro_eoc_tag;
-    ioTag_t baro_xclr_tag;
-} barometerConfig_t;
-
-PG_DECLARE(barometerConfig_t, barometerConfig);
 
 #define TASK_BARO_RATE_HZ 40                // Will be overwritten by the baro device driver
 
