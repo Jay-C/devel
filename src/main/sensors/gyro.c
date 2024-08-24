@@ -34,8 +34,7 @@
 
 #include "config/feature.h"
 
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
+#include "pg/gyro.h"
 #include "pg/gyrodev.h"
 
 #include "drivers/bus_spi.h"
@@ -81,8 +80,6 @@ STATIC_UNIT_TESTED gyroDev_t * const gyroDevPtr = &gyro.gyroSensor1.gyroDev;
 
 #define GYRO_OVERFLOW_TRIGGER_THRESHOLD 31980  // 97.5% full scale (1950dps for 2000dps gyro)
 #define GYRO_OVERFLOW_RESET_THRESHOLD 30340    // 92.5% full scale (1850dps for 2000dps gyro)
-
-PG_REGISTER_WITH_RESET_FN(gyroConfig_t, gyroConfig, PG_GYRO_CONFIG, 9);
 
 #ifndef DEFAULT_GYRO_TO_USE
 #define DEFAULT_GYRO_TO_USE GYRO_CONFIG_USE_GYRO_1
