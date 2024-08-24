@@ -26,7 +26,7 @@
 // TODO(hertz@): uncomment and use UARTDevice_e::MAX_UARTDEV
 // #include "drivers/serial_uart.h"
 
-#include "pg/pg.h"
+#include "pg/serial_port.h"
 
 typedef enum {
     MODE_RX = 1 << 0,
@@ -93,28 +93,8 @@ typedef struct serialPort_s {
     uint8_t identifier;
 } serialPort_t;
 
-#define SERIAL_PORT_MAX_INDEX 11
 #define SERIAL_UART_COUNT 10
 #define SERIAL_LPUART_COUNT 1
-
-typedef struct serialPinConfig_s {
-    ioTag_t ioTagTx[SERIAL_PORT_MAX_INDEX];
-    ioTag_t ioTagRx[SERIAL_PORT_MAX_INDEX];
-    ioTag_t ioTagInverter[SERIAL_PORT_MAX_INDEX];
-} serialPinConfig_t;
-
-PG_DECLARE(serialPinConfig_t, serialPinConfig);
-
-#if defined(USE_SOFTSERIAL)
-#define SOFTSERIAL_COUNT 2
-
-typedef struct softSerialPinConfig_s {
-    ioTag_t ioTagTx[SOFTSERIAL_COUNT];
-    ioTag_t ioTagRx[SOFTSERIAL_COUNT];
-} softSerialPinConfig_t;
-
-PG_DECLARE(softSerialPinConfig_t, softSerialPinConfig);
-#endif
 
 struct serialPortVTable {
     void (*serialWrite)(serialPort_t *instance, uint8_t ch);
