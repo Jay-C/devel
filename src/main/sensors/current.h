@@ -22,6 +22,7 @@
 
 #include "common/rtc.h"
 #include "current_ids.h"
+#include "pg/current.h"
 
 typedef enum {
     CURRENT_METER_NONE = 0,
@@ -71,13 +72,6 @@ typedef struct currentMeterADCState_s {
     int32_t amperageLatest;     // current read by current sensor in centiampere (1/100th A) (unfiltered)
 } currentMeterADCState_t;
 
-typedef struct currentSensorADCConfig_s {
-    int16_t scale;              // scale the current sensor output voltage to milliamps. Value in mV/10A
-    int16_t offset;             // offset of the current sensor in mA
-} currentSensorADCConfig_t;
-
-PG_DECLARE(currentSensorADCConfig_t, currentSensorADCConfig);
-
 //
 // Virtual
 //
@@ -86,13 +80,6 @@ typedef struct currentMeterVirtualState_s {
     currentMeterMAhDrawnState_t mahDrawnState;
     int32_t amperage;           // current read by current sensor in centiamperes (1/100th A)
 } currentSensorVirtualState_t;
-
-typedef struct currentSensorVirtualConfig_s {
-    int16_t scale;              // scale the throttle to centiamperes, using a hardcoded thrust linearization function (see Battery.md)
-    uint16_t offset;            // offset of the current sensor in centiamperes (1/100th A)
-} currentSensorVirtualConfig_t;
-
-PG_DECLARE(currentSensorVirtualConfig_t, currentSensorVirtualConfig);
 
 //
 // ESC
