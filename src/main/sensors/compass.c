@@ -57,9 +57,6 @@
 
 #include "io/beeper.h"
 
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
-
 #include "scheduler/scheduler.h"
 
 #include "sensors/boardalignment.h"
@@ -89,8 +86,6 @@ static compassBiasEstimator_t compassBiasEstimator;
 
 magDev_t magDev;
 mag_t mag;
-
-PG_REGISTER_WITH_RESET_FN(compassConfig_t, compassConfig, PG_COMPASS_CONFIG, 4);
 
 // If the i2c bus is busy, try again in 500us
 #define COMPASS_BUS_BUSY_INTERVAL_US 500
