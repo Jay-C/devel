@@ -25,7 +25,7 @@
 #include "common/maths.h"
 #include "common/vector.h"
 
-#include "pg/pg.h"
+#include "pg/imu.h"
 
 // Exported symbols
 extern bool canUseGPSHeading;
@@ -57,15 +57,6 @@ typedef union {
 extern attitudeEulerAngles_t attitude;
 extern matrix33_t rMat;
 extern quaternion_t imuAttitudeQuaternion; //attitude quaternion to use in blackbox
-
-typedef struct imuConfig_s {
-    uint16_t imu_dcm_kp;          // DCM filter proportional gain ( x 10000)
-    uint16_t imu_dcm_ki;          // DCM filter integral gain ( x 10000)
-    uint8_t imu_process_denom;
-    uint16_t mag_declination;     // Magnetic declination in degrees * 10
-} imuConfig_t;
-
-PG_DECLARE(imuConfig_t, imuConfig);
 
 typedef struct imuRuntimeConfig_s {
     float imuDcmKi;
