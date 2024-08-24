@@ -13,6 +13,7 @@ PG_SRC = \
             pg/bus_i2c.c \
             pg/bus_quadspi.c \
             pg/bus_spi.c \
+            pg/compass.c \
             pg/dashboard.c \
             pg/displayport_profiles.c \
             pg/failsafe.c \
