@@ -28,33 +28,12 @@
 #include "common/utils.h"
 #include "common/sensor_alignment.h"
 
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
-
 #include "drivers/sensor.h"
 
 #include "boardalignment.h"
 
 static bool standardBoardAlignment = true;     // board orientation correction
 static matrix33_t boardRotation;
-
-PG_REGISTER_WITH_RESET_TEMPLATE(boardAlignment_t, boardAlignment, PG_BOARD_ALIGNMENT, 1);
-
-#ifndef DEFAULT_ALIGN_BOARD_ROLL
-#define DEFAULT_ALIGN_BOARD_ROLL 0
-#endif
-#ifndef DEFAULT_ALIGN_BOARD_PITCH
-#define DEFAULT_ALIGN_BOARD_PITCH 0
-#endif
-#ifndef DEFAULT_ALIGN_BOARD_YAW
-#define DEFAULT_ALIGN_BOARD_YAW 0
-#endif
-
-PG_RESET_TEMPLATE(boardAlignment_t, boardAlignment,
-        .rollDegrees = DEFAULT_ALIGN_BOARD_ROLL,
-        .pitchDegrees = DEFAULT_ALIGN_BOARD_PITCH,
-        .yawDegrees = DEFAULT_ALIGN_BOARD_YAW,
-);
 
 static bool isBoardAlignmentStandard(const boardAlignment_t *boardAlignment)
 {
