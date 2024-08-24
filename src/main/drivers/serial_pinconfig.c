@@ -228,8 +228,6 @@ static const serialDefaultPin_t serialDefaultPin[] = {
 #endif
 };
 
-PG_REGISTER_WITH_RESET_FN(serialPinConfig_t, serialPinConfig, PG_SERIAL_PIN_CONFIG, 0);
-
 void pgResetFn_serialPinConfig(serialPinConfig_t *serialPinConfig)
 {
     for (size_t index = 0 ; index < ARRAYLEN(serialDefaultPin) ; index++) {
@@ -252,8 +250,6 @@ static const softSerialDefaultPin_t softSerialDefaultPin[SOFTSERIAL_COUNT] = {
     { SERIAL_PORT_SOFTSERIAL2, IO_TAG(SOFTSERIAL2_RX_PIN), IO_TAG(SOFTSERIAL2_TX_PIN) },
 #endif
 };
-
-PG_REGISTER_WITH_RESET_FN(softSerialPinConfig_t, softSerialPinConfig, PG_SOFTSERIAL_PIN_CONFIG, 0);
 
 void pgResetFn_softSerialPinConfig(softSerialPinConfig_t *softSerialPinConfig)
 {
