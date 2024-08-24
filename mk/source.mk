@@ -1,4 +1,5 @@
 PG_SRC = \
+            pg/acceleration.c \
             pg/adc.c \
             pg/adjustments.c \
             pg/alt_hold.c \
