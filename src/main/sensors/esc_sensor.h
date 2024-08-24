@@ -22,18 +22,12 @@
 
 #include "common/rtc.h"
 
-typedef struct escSensorConfig_s {
-    uint8_t halfDuplex;             // Set to false to listen on the TX pin for telemetry data
-    uint16_t offset;                // offset consumed by the flight controller / VTX / cam / ... in milliampere
-
-} escSensorConfig_t;
-
-PG_DECLARE(escSensorConfig_t, escSensorConfig);
+#include "pg/esc_sensor.h"
 
 typedef struct {
     uint8_t dataAge;
     int8_t temperature;  // C degrees
-    uint16_t voltage;     // 0.01V 
+    uint16_t voltage;     // 0.01V
     int32_t current;     // 0.01A
     int32_t consumption; // mAh
     int16_t rpm;         // 0.01erpm
