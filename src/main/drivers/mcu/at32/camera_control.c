@@ -34,7 +34,6 @@
 #include "drivers/nvic.h"
 #include "drivers/pwm_output.h"
 #include "drivers/time.h"
-#include "pg/pg_ids.h"
 
 #define CAMERA_CONTROL_PWM_RESOLUTION   128
 #define CAMERA_CONTROL_SOFT_PWM_RESOLUTION 448
@@ -56,8 +55,6 @@
 #ifdef USE_OSD
 #include "osd/osd.h"
 #endif
-
-PG_REGISTER_WITH_RESET_FN(cameraControlConfig_t, cameraControlConfig, PG_CAMERA_CONTROL_CONFIG, 0);
 
 void pgResetFn_cameraControlConfig(cameraControlConfig_t *cameraControlConfig)
 {
