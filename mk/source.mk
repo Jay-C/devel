@@ -19,6 +19,7 @@ PG_SRC = \
             pg/gps.c \
             pg/gps_rescue.c \
             pg/gyrodev.c \
+            pg/imu.c \
             pg/max7456.c \
             pg/mco.c \
             pg/modes.c \
