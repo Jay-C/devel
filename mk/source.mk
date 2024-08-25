@@ -71,6 +71,7 @@ PG_SRC = \
             pg/usb.c \
             pg/vcd.c \
             pg/voltage.c \
+            pg/vtx.c \
             pg/vtx_io.c \
             pg/vtx_table.c
 
