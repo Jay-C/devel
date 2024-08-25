@@ -51,6 +51,7 @@ PG_SRC = \
             pg/rcdevice.c \
             pg/rc_controls.c \
             pg/rx.c \
+            pg/rx_flysky.c \
             pg/rx_pwm.c \
             pg/rx_spi.c \
             pg/rx_spi_cc2500.c \
