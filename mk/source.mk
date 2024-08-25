@@ -58,6 +58,7 @@ PG_SRC = \
             pg/scheduler.c \
             pg/sdcard.c \
             pg/sdio.c \
+            pg/serial.c \
             pg/serial_port.c \
             pg/serial_uart.c \
             pg/servo.c \
