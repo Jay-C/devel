@@ -22,7 +22,6 @@
 
 #include "common/rtc.h"
 
-#include "pg/pg.h"
 #include "pg/rx.h"
 
 #include "drivers/io_types.h"
@@ -71,10 +70,6 @@ typedef enum {
 
 #define MAX_SUPPORTED_RC_PPM_CHANNEL_COUNT          12
 #define MAX_SUPPORTED_RC_PARALLEL_PWM_CHANNEL_COUNT  8
-#define MAX_SUPPORTED_RC_CHANNEL_COUNT              18
-
-#define NON_AUX_CHANNEL_COUNT 4
-#define MAX_AUX_CHANNEL_COUNT (MAX_SUPPORTED_RC_CHANNEL_COUNT - NON_AUX_CHANNEL_COUNT)
 
 #if MAX_SUPPORTED_RC_PARALLEL_PWM_CHANNEL_COUNT > MAX_SUPPORTED_RC_PPM_CHANNEL_COUNT
 #define MAX_SUPPORTED_RX_PARALLEL_PWM_OR_PPM_CHANNEL_COUNT MAX_SUPPORTED_RC_PARALLEL_PWM_CHANNEL_COUNT
@@ -106,20 +101,6 @@ typedef enum {
 } rxFailsafeChannelType_e;
 
 #define RX_FAILSAFE_TYPE_COUNT 2
-
-typedef struct rxFailsafeChannelConfig_s {
-    uint8_t mode; // See rxFailsafeChannelMode_e
-    uint8_t step;
-} rxFailsafeChannelConfig_t;
-
-PG_DECLARE_ARRAY(rxFailsafeChannelConfig_t, MAX_SUPPORTED_RC_CHANNEL_COUNT, rxFailsafeChannelConfigs);
-
-typedef struct rxChannelRangeConfig_s {
-    uint16_t min;
-    uint16_t max;
-} rxChannelRangeConfig_t;
-
-PG_DECLARE_ARRAY(rxChannelRangeConfig_t, NON_AUX_CHANNEL_COUNT, rxChannelRangeConfigs);
 
 struct rxRuntimeState_s;
 typedef float (*rcReadRawDataFnPtr)(const struct rxRuntimeState_s *rxRuntimeState, uint8_t chan); // used by receiver driver to return channel data
