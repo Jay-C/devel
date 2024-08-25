@@ -24,6 +24,12 @@
 
 #include "pg/pg.h"
 
+#define MAX_SUPPORTED_RC_CHANNEL_COUNT      18
+
+#define NON_AUX_CHANNEL_COUNT               4
+#define MAX_AUX_CHANNEL_COUNT               (MAX_SUPPORTED_RC_CHANNEL_COUNT - NON_AUX_CHANNEL_COUNT)
+
+
 #define GET_FRAME_ERR_LPF_FREQUENCY(period) (10.0f / period)  // period in deciseconds (0.1s)
 #define FRAME_ERR_RESAMPLE_US 100000
 
@@ -58,3 +64,17 @@ typedef struct rxConfig_s {
 } rxConfig_t;
 
 PG_DECLARE(rxConfig_t, rxConfig);
+
+typedef struct {
+    uint8_t mode; // See rxFailsafeChannelMode_e
+    uint8_t step;
+} rxFailsafeChannelConfig_t;
+
+PG_DECLARE_ARRAY(rxFailsafeChannelConfig_t, MAX_SUPPORTED_RC_CHANNEL_COUNT, rxFailsafeChannelConfigs);
+
+typedef struct {
+    uint16_t min;
+    uint16_t max;
+} rxChannelRangeConfig_t;
+
+PG_DECLARE_ARRAY(rxChannelRangeConfig_t, NON_AUX_CHANNEL_COUNT, rxChannelRangeConfigs);
