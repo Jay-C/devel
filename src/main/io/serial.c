@@ -55,9 +55,6 @@
 
 #include "msp/msp_serial.h"
 
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
-
 #ifdef USE_TELEMETRY
 #include "telemetry/telemetry.h"
 #endif
@@ -192,8 +189,6 @@ const serialPortConfig_t* serialFindPortConfiguration(serialPortIdentifier_e ide
 {
     return findInPortConfigs_identifier(serialConfig()->portConfigs, ARRAYLEN(serialConfig()->portConfigs), identifier);
 }
-
-PG_REGISTER_WITH_RESET_FN(serialConfig_t, serialConfig, PG_SERIAL_CONFIG, 1);
 
 void pgResetFn_serialConfig(serialConfig_t *serialConfig)
 {
