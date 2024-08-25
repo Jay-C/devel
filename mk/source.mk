@@ -53,6 +53,7 @@ PG_SRC = \
             pg/rx.c \
             pg/rx_flysky.c \
             pg/rx_pwm.c \
+            pg/rx_spektrum.c \
             pg/rx_spi.c \
             pg/rx_spi_cc2500.c \
             pg/rx_spi_expresslrs.c \
