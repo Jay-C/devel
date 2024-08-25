@@ -29,6 +29,7 @@ PG_SRC = \
             pg/gyrodev.c \
             pg/imu.c \
             pg/leds.c \
+            pg/ledstrip.c \
             pg/max7456.c \
             pg/mco.c \
             pg/modes.c \
