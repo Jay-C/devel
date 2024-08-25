@@ -38,8 +38,7 @@
 
 #include "config/config.h"
 
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
+#include "pg/rx_flysky.h"
 #include "pg/rx_spi.h"
 
 #include "rx/a7105_flysky_defs.h"
@@ -58,9 +57,6 @@
 #if FLYSKY_2A_CHANNEL_COUNT > MAX_FLYSKY_2A_CHANNEL_COUNT
 #error "FlySky AFHDS 2A protocol support 14 channel max"
 #endif
-
-PG_REGISTER_WITH_RESET_TEMPLATE(flySkyConfig_t, flySkyConfig, PG_FLYSKY_CONFIG, 1);
-PG_RESET_TEMPLATE(flySkyConfig_t, flySkyConfig, .txId = 0, .rfChannelMap = {0});
 
 static const uint8_t flySkyRegs[] = {
     0xff, 0x42, 0x00, 0x14, 0x00, 0xff, 0xff, 0x00,
