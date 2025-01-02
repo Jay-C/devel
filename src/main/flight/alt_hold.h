@@ -17,4 +17,15 @@
 
 #pragma once
 
-#include "flight/alt_hold_multirotor.h"
+#include "pg/alt_hold.h"
+
+#ifdef USE_ALTITUDE_HOLD
+#include "common/rtc.h"
+
+#define ALTHOLD_TASK_RATE_HZ 100         // hz
+
+void altHoldInit(void);
+void updateAltHold(timeUs_t currentTimeUs);
+bool isAltHoldActive(void);
+
+#endif
