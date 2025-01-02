@@ -117,7 +117,6 @@ typedef enum {
 #ifdef USE_SDCARD
     TABLE_SDCARD_MODE,
 #endif
-    TABLE_TPA_MODE,
 #ifdef USE_LED_STRIP
     TABLE_LED_PROFILE,
     TABLE_LEDSTRIP_COLOR,
@@ -138,9 +137,6 @@ typedef enum {
 #endif
 #ifdef USE_RX_EXPRESSLRS
     TABLE_FREQ_DOMAIN,
-#endif
-#ifdef USE_ADVANCED_TPA
-    TABLE_TPA_CURVE_TYPE,
 #endif
     LOOKUP_TABLE_COUNT
 } lookupTableIndex_e;

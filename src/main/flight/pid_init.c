@@ -230,49 +230,6 @@ void pidInitFilters(const pidProfile_t *pidProfile)
     pt2FilterInit(&pidRuntime.antiGravityLpf, pt2FilterGain(pidProfile->anti_gravity_cutoff_hz, pidRuntime.dT));
 }
 
-#ifdef USE_ADVANCED_TPA
-float tpaCurveHyperbolicFunction(float x, void *args)
-{
-    const pidProfile_t *pidProfile = (const pidProfile_t*)args;
-
-    const float thrStall = pidProfile->tpa_curve_stall_throttle / 100.0f;
-    const float pidThr0 = pidProfile->tpa_curve_pid_thr0 / 100.0f;
-
-    if (x <= thrStall) {
-        return pidThr0;
-    }
-
-    const float expoDivider = pidProfile->tpa_curve_expo / 10.0f - 1.0f;
-    const float expo = (fabsf(expoDivider) > 1e-3f) ?  1.0f / expoDivider : 1e3f; // avoiding division by zero for const float base = ...
-
-    const float pidThr100 = pidProfile->tpa_curve_pid_thr100 / 100.0f;
-    const float xShifted = scaleRangef(x, thrStall, 1.0f, 0.0f, 1.0f);
-    const float base = (1 + (powf(pidThr0 / pidThr100, 1.0f / expo) - 1) * xShifted);
-    const float divisor = powf(base, expo);
-
-    return pidThr0 / divisor;
-}
-
-void tpaCurveHyperbolicInit(const pidProfile_t *pidProfile)
-{
-    pwlInitialize(&pidRuntime.tpaCurvePwl, pidRuntime.tpaCurvePwl_yValues, TPA_CURVE_PWL_SIZE, 0.0f, 1.0f);
-    pwlFill(&pidRuntime.tpaCurvePwl, tpaCurveHyperbolicFunction, (void*)pidProfile);
-}
-
-void tpaCurveInit(const pidProfile_t *pidProfile)
-{
-        pidRuntime.tpaCurveType = pidProfile->tpa_curve_type;
-        switch (pidRuntime.tpaCurveType) {
-        case TPA_CURVE_HYPERBOLIC:
-            tpaCurveHyperbolicInit(pidProfile);
-            return;
-        case TPA_CURVE_CLASSIC:
-        default:
-            return;
-        }
-}
-#endif // USE_ADVANCED_TPA
-
 void pidInit(const pidProfile_t *pidProfile)
 {
     pidSetTargetLooptime(gyro.targetLooptime); // Initialize pid looptime
@@ -280,9 +237,6 @@ void pidInit(const pidProfile_t *pidProfile)
     pidInitConfig(pidProfile);
 #ifdef USE_RPM_FILTER
     rpmFilterInit(rpmFilterConfig(), gyro.targetLooptime);
-#endif
-#ifdef USE_ADVANCED_TPA
-    tpaCurveInit(pidProfile);
 #endif
 }
 
@@ -397,15 +351,6 @@ void pidInitConfig(const pidProfile_t *pidProfile)
         pidRuntime.feedforwardYawHoldGain *= 150.0f / (float)(pidProfile->feedforward_yaw_hold_time + 50);
     }
 #endif
-
-    pidRuntime.tpaBreakpoint = constrainf((pidProfile->tpa_breakpoint - PWM_RANGE_MIN) / 1000.0f, 0.0f, 0.99f);
-    // default of 1350 returns 0.35. range limited to 0 to 0.99
-    pidRuntime.tpaMultiplier = (pidProfile->tpa_rate / 100.0f) / (1.0f - pidRuntime.tpaBreakpoint);
-    // it is assumed that tpaLowBreakpoint is always less than or equal to tpaBreakpoint
-    pidRuntime.tpaLowBreakpoint = constrainf((pidProfile->tpa_low_breakpoint - PWM_RANGE_MIN) / 1000.0f, 0.01f, 1.0f);
-    pidRuntime.tpaLowBreakpoint = MIN(pidRuntime.tpaLowBreakpoint, pidRuntime.tpaBreakpoint);
-    pidRuntime.tpaLowMultiplier = pidProfile->tpa_low_rate / (100.0f * pidRuntime.tpaLowBreakpoint);
-    pidRuntime.tpaLowAlways = pidProfile->tpa_low_always;
 
     pidRuntime.useEzDisarm = pidProfile->landing_disarm_threshold > 0;
     pidRuntime.landingDisarmThreshold = pidProfile->landing_disarm_threshold * 10.0f;
