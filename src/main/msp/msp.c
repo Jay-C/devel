@@ -1533,7 +1533,6 @@ case MSP_NAME:
         break;
 
 #ifdef USE_GPS_RESCUE
-#ifndef USE_WING
     case MSP_GPS_RESCUE:
         sbufWriteU16(dst, gpsRescueConfig()->maxRescueAngle);
         sbufWriteU16(dst, gpsRescueConfig()->returnAltitudeM);
@@ -1566,7 +1565,6 @@ case MSP_NAME:
         sbufWriteU16(dst, gpsRescueConfig()->velD);
         sbufWriteU16(dst, gpsRescueConfig()->yawP);
         break;
-#endif // !USE_WING
 #endif
 #endif
 
@@ -1804,7 +1802,7 @@ case MSP_NAME:
     case MSP_RC_DEADBAND:
         sbufWriteU8(dst, rcControlsConfig()->deadband);
         sbufWriteU8(dst, rcControlsConfig()->yaw_deadband);
-#if defined(USE_POSITION_HOLD) && !defined(USE_WING)
+#if defined(USE_POSITION_HOLD)
         sbufWriteU8(dst, posHoldConfig()->pos_hold_deadband);
 #else
         sbufWriteU8(dst, 0);
@@ -2881,7 +2879,6 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
 
 #ifdef USE_GPS
 #ifdef USE_GPS_RESCUE
-#ifndef USE_WING
     case MSP_SET_GPS_RESCUE:
         gpsRescueConfigMutable()->maxRescueAngle = sbufReadU16(src);
         gpsRescueConfigMutable()->returnAltitudeM = sbufReadU16(src);
@@ -2919,7 +2916,6 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         gpsRescueConfigMutable()->velD = sbufReadU16(src);
         gpsRescueConfigMutable()->yawP = sbufReadU16(src);
         break;
-#endif // !USE_WING
 #endif
 #endif
 
@@ -2975,7 +2971,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
     case MSP_SET_RC_DEADBAND:
         rcControlsConfigMutable()->deadband = sbufReadU8(src);
         rcControlsConfigMutable()->yaw_deadband = sbufReadU8(src);
-#if defined(USE_POSITION_HOLD) && !defined(USE_WING)
+#if defined(USE_POSITION_HOLD)
         posHoldConfigMutable()->pos_hold_deadband = sbufReadU8(src);
 #else
         sbufReadU8(src);
