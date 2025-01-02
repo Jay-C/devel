@@ -125,7 +125,11 @@ FC_VER_MAJOR := $(shell grep " FC_VERSION_MAJOR" src/main/build/version.h | awk 
 FC_VER_MINOR := $(shell grep " FC_VERSION_MINOR" src/main/build/version.h | awk '{print $$3}' )
 FC_VER_PATCH := $(shell grep " FC_VERSION_PATCH" src/main/build/version.h | awk '{print $$3}' )
 
-FC_VER       := $(FC_VER_MAJOR).$(FC_VER_MINOR).$(FC_VER_PATCH)
+ifneq ($(FC_VER_SUFFIX),)
+FC_VER := $(FC_VER_MAJOR).$(FC_VER_MINOR).$(FC_VER_PATCH)-$(FC_VER_SUFFIX)
+else
+FC_VER := $(FC_VER_MAJOR).$(FC_VER_MINOR).$(FC_VER_PATCH)
+endif
 
 # import config handling
 include $(MAKE_SCRIPT_DIR)/config.mk
@@ -196,6 +200,10 @@ TARGET_FLAGS := -D$(TARGET) -D$(TARGET_PLATFORM) -D$(TARGET_MCU_FAMILY) $(TARGET
 
 ifneq ($(CONFIG),)
 TARGET_FLAGS := $(TARGET_FLAGS) -DUSE_CONFIG
+endif
+
+ifneq ($(FC_VER_SUFFIX),)
+TARGET_FLAGS += -DFC_VERSION_SUFFIX="$(FC_VER_SUFFIX)"
 endif
 
 SPEED_OPTIMISED_SRC :=
