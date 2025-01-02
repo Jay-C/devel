@@ -421,7 +421,6 @@ pid_unittest_DEFINES := \
 		USE_RC_SMOOTHING_FILTER= \
 		USE_ABSOLUTE_CONTROL= \
 		USE_FEEDFORWARD= \
-		USE_ADVANCED_TPA= \
 
 rcdevice_unittest_DEFINES := \
 		USE_RCDEVICE=
