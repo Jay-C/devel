@@ -17,8 +17,6 @@
 
 #pragma once
 
-#ifndef USE_WING
-
 #include "pg/alt_hold.h"
 
 #ifdef USE_ALTITUDE_HOLD
@@ -31,5 +29,3 @@ void updateAltHold(timeUs_t currentTimeUs);
 bool isAltHoldActive(void);
 
 #endif
-
-#endif // !USE_WING
