@@ -17,8 +17,6 @@
 
 #pragma once
 
-#ifndef USE_WING
-
 #include "io/gps.h"
 
 extern float autopilotAngle[RP_AXIS_COUNT]; // NOTE: ANGLES ARE IN CENTIDEGREES
@@ -34,5 +32,3 @@ void altitudeControl(float targetAltitudeCm, float taskIntervalS, float targetAl
 bool isBelowLandingAltitude(void);
 float getAutopilotThrottle(void);
 bool isAutopilotInControl(void);
-
-#endif // !USE_WING

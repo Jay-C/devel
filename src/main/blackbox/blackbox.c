@@ -209,11 +209,6 @@ static const blackboxDeltaFieldDefinition_t blackboxMainFields[] = {
     {"axisF",       0, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(PID)},
     {"axisF",       1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(PID)},
     {"axisF",       2, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(PID)},
-#ifdef USE_WING
-    {"axisS",       0, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(NONZERO_WING_S_0)},
-    {"axisS",       1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(NONZERO_WING_S_1)},
-    {"axisS",       2, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(NONZERO_WING_S_2)},
-#endif
     /* rcCommands are encoded together as a group in P-frames: */
     {"rcCommand",   0, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(TAG8_4S16), CONDITION(RC_COMMANDS)},
     {"rcCommand",   1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(TAG8_4S16), CONDITION(RC_COMMANDS)},
@@ -520,13 +515,6 @@ static bool testBlackboxConditionUncached(FlightLogFieldCondition condition)
     case CONDITION(NONZERO_PID_D_2):
         return (currentPidProfile->pid[condition - FLIGHT_LOG_FIELD_CONDITION_NONZERO_PID_D_0].D != 0) && isFieldEnabled(FIELD_SELECT(PID));
 
-#ifdef USE_WING
-    case CONDITION(NONZERO_WING_S_0):
-    case CONDITION(NONZERO_WING_S_1):
-    case CONDITION(NONZERO_WING_S_2):
-        return (currentPidProfile->pid[condition - CONDITION(NONZERO_WING_S_0)].S != 0) && isFieldEnabled(FIELD_SELECT(PID));
-#endif
-
     case CONDITION(RC_COMMANDS):
         return isFieldEnabled(FIELD_SELECT(RC_COMMANDS));
 
@@ -670,14 +658,6 @@ static void writeIntraframe(void)
         }
 
         blackboxWriteSignedVBArray(blackboxCurrent->axisPID_F, XYZ_AXIS_COUNT);
-
-#ifdef USE_WING
-        for (int x = 0; x < XYZ_AXIS_COUNT; x++) {
-            if (testBlackboxCondition(CONDITION(NONZERO_WING_S_0) + x)) {
-                blackboxWriteSignedVB(blackboxCurrent->axisPID_S[x]);
-            }
-        }
-#endif
     }
 
     if (testBlackboxCondition(CONDITION(RC_COMMANDS))) {
@@ -855,14 +835,6 @@ static void writeInterframe(void)
 
         arraySubInt32(deltas, blackboxCurrent->axisPID_F, blackboxLast->axisPID_F, XYZ_AXIS_COUNT);
         blackboxWriteSignedVBArray(deltas, XYZ_AXIS_COUNT);
-
-#ifdef USE_WING
-        for (int x = 0; x < XYZ_AXIS_COUNT; x++) {
-            if (testBlackboxCondition(CONDITION(NONZERO_WING_S_0) + x)) {
-                blackboxWriteSignedVB(blackboxCurrent->axisPID_S[x] - blackboxLast->axisPID_S[x]);
-            }
-        }
-#endif
     }
 
     /*
@@ -1242,9 +1214,6 @@ static void loadMainState(timeUs_t currentTimeUs)
         blackboxCurrent->axisPID_I[i] = lrintf(pidData[i].I);
         blackboxCurrent->axisPID_D[i] = lrintf(pidData[i].D);
         blackboxCurrent->axisPID_F[i] = lrintf(pidData[i].F);
-#ifdef USE_WING
-        blackboxCurrent->axisPID_S[i] = lrintf(pidData[i].S);
-#endif
         blackboxCurrent->gyroADC[i] = lrintf(gyro.gyroADCf[i] * blackboxHighResolutionScale);
         blackboxCurrent->gyroUnfilt[i] = lrintf(gyro.gyroADC[i] * blackboxHighResolutionScale);
 
@@ -1528,18 +1497,6 @@ static bool blackboxWriteSysinfo(void)
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_EZ_LANDING_SPEED, "%d",       currentPidProfile->ez_landing_speed);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_LANDING_DISARM_THRESHOLD, "%d", currentPidProfile->landing_disarm_threshold);
 
-#ifdef USE_WING
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_SPA_ROLL_CENTER, "%d",        currentPidProfile->spa_center[FD_ROLL]);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_SPA_ROLL_WIDTH, "%d",         currentPidProfile->spa_width[FD_ROLL]);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_SPA_ROLL_MODE, "%d",          currentPidProfile->spa_mode[FD_ROLL]);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_SPA_PITCH_CENTER, "%d",       currentPidProfile->spa_center[FD_PITCH]);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_SPA_PITCH_WIDTH, "%d",        currentPidProfile->spa_width[FD_PITCH]);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_SPA_PITCH_MODE, "%d",         currentPidProfile->spa_mode[FD_PITCH]);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_SPA_YAW_CENTER, "%d",         currentPidProfile->spa_center[FD_YAW]);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_SPA_YAW_WIDTH, "%d",          currentPidProfile->spa_width[FD_YAW]);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_SPA_YAW_MODE, "%d",           currentPidProfile->spa_mode[FD_YAW]);
-#endif // USE_WING
-
 #ifdef USE_ADVANCED_TPA
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_TPA_CURVE_TYPE, "%d",           currentPidProfile->tpa_curve_type);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_TPA_CURVE_STALL_THROTTLE, "%d", currentPidProfile->tpa_curve_stall_throttle);
@@ -1636,12 +1593,6 @@ static bool blackboxWriteSysinfo(void)
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_PIDSUM_LIMIT, "%d",           currentPidProfile->pidSumLimit);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_PIDSUM_LIMIT_YAW, "%d",       currentPidProfile->pidSumLimitYaw);
 
-#ifdef USE_WING
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_S_ROLL,  "%d", currentPidProfile->pid[PID_ROLL].S);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_S_PITCH, "%d", currentPidProfile->pid[PID_PITCH].S);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_S_YAW,   "%d", currentPidProfile->pid[PID_YAW].S);
-#endif // USE_WING
-
         // End of Betaflight controller parameters
 
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_DEADBAND, "%d",               rcControlsConfig()->deadband);
@@ -1694,23 +1645,6 @@ static bool blackboxWriteSysinfo(void)
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ALTITUDE_PREFER_BARO, "%d", positionConfig()->altitude_prefer_baro);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ALTITUDE_LPF, "%d",         positionConfig()->altitude_lpf);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ALTITUDE_D_LPF, "%d",       positionConfig()->altitude_d_lpf);
-
-#ifndef USE_WING
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_LANDING_ALTITUDE, "%d",     apConfig()->landing_altitude_m);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_HOVER_THROTTLE, "%d",       apConfig()->hover_throttle);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_THROTTLE_MIN, "%d",         apConfig()->throttle_min);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_THROTTLE_MAX, "%d",         apConfig()->throttle_max);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ALTITUDE_P, "%d",           apConfig()->altitude_P);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ALTITUDE_I, "%d",           apConfig()->altitude_I);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ALTITUDE_D, "%d",           apConfig()->altitude_D);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ALTITUDE_F, "%d",           apConfig()->altitude_F);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_POSITION_P, "%d",           apConfig()->position_P);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_POSITION_I, "%d",           apConfig()->position_I);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_POSITION_D, "%d",           apConfig()->position_D);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_POSITION_A, "%d",           apConfig()->position_A);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_POSITION_CUTOFF, "%d",      apConfig()->position_cutoff);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_AP_MAX_ANGLE, "%d",         apConfig()->max_angle);
-#endif // !USE_WING
 
 #ifdef USE_MAG
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_MAG_HARDWARE, "%d",           compassConfig()->mag_hardware);
@@ -1787,7 +1721,6 @@ static bool blackboxWriteSysinfo(void)
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_GPS_USE_3D_SPEED, "%d",           gpsConfig()->gps_use_3d_speed)
 
 #ifdef USE_GPS_RESCUE
-#ifndef USE_WING
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_GPS_RESCUE_MIN_START_DIST, "%d",  gpsRescueConfig()->minStartDistM)
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_GPS_RESCUE_ALT_MODE, "%d",        gpsRescueConfig()->altitudeMode)
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_GPS_RESCUE_INITIAL_CLIMB, "%d",   gpsRescueConfig()->initialClimbM)
@@ -1815,37 +1748,18 @@ static bool blackboxWriteSysinfo(void)
 #ifdef USE_MAG
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_GPS_RESCUE_USE_MAG, "%d",         gpsRescueConfig()->useMag)
 #endif // USE_MAG
-#endif // !USE_WING
 #endif // USE_GPS_RESCUE
 #endif // USE_GPS
 
 #ifdef USE_ALTITUDE_HOLD
-#ifndef USE_WING
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ALT_HOLD_THROTTLE_RESPONSE, "%d", altHoldConfig()->alt_hold_adjust_rate);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ALT_HOLD_DEADBAND,    "%d", altHoldConfig()->alt_hold_deadband);
-#endif // !USE_WING
 #endif // USE_ALTITUDE_HOLD
 
 #ifdef USE_POSITION_HOLD
-#ifndef USE_WING
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_POS_HOLD_WITHOUT_MAG, "%d", posHoldConfig()->pos_hold_without_mag);
         BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_POS_HOLD_DEADBAND,    "%d", posHoldConfig()->pos_hold_deadband);
-#endif // !USE_WING
 #endif
-
-#ifdef USE_WING
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_TPA_SPEED_TYPE, "%d", currentPidProfile->tpa_speed_type);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_TPA_SPEED_BASIC_DELAY, "%d", currentPidProfile->tpa_speed_basic_delay);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_TPA_SPEED_BASIC_GRAVITY, "%d", currentPidProfile->tpa_speed_basic_gravity);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_TPA_SPEED_ADV_PROP_PITCH, "%d", currentPidProfile->tpa_speed_adv_prop_pitch);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_TPA_SPEED_ADV_MASS, "%d", currentPidProfile->tpa_speed_adv_mass);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_TPA_SPEED_ADV_DRAG_K, "%d", currentPidProfile->tpa_speed_adv_drag_k);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_TPA_SPEED_ADV_THRUST, "%d", currentPidProfile->tpa_speed_adv_thrust);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_TPA_SPEED_MAX_VOLTAGE, "%d", currentPidProfile->tpa_speed_max_voltage);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_TPA_SPEED_PITCH_OFFSET, "%d", currentPidProfile->tpa_speed_pitch_offset);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_YAW_TYPE, "%d", currentPidProfile->yaw_type);
-        BLACKBOX_PRINT_HEADER_LINE(PARAM_NAME_ANGLE_PITCH_OFFSET, "%d", currentPidProfile->angle_pitch_offset);
-#endif // USE_WING
 
         default:
             return true;

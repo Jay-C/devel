@@ -21,7 +21,6 @@
 
 #include "platform.h"
 
-#ifndef USE_WING
 #ifdef USE_GPS_RESCUE
 
 #include "build/debug.h"
@@ -888,5 +887,3 @@ bool gpsRescueDisableMag(void)
 }
 #endif
 #endif
-
-#endif // !USE_WING

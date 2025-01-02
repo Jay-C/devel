@@ -18,4 +18,3 @@
 #pragma once
 
 #include "flight/gps_rescue_multirotor.h"
-#include "flight/gps_rescue_wing.h"

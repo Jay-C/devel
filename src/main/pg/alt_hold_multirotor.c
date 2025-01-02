@@ -21,8 +21,6 @@
 
 #include "platform.h"
 
-#ifndef USE_WING
-
 #ifdef USE_ALTITUDE_HOLD
 
 #include "flight/alt_hold.h"
@@ -39,5 +37,3 @@ PG_RESET_TEMPLATE(altHoldConfig_t, altHoldConfig,
     .alt_hold_deadband = 20, // throttle deadband in percent of stick travel
 );
 #endif
-
-#endif // USE_WING
