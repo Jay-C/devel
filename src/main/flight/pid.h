@@ -119,13 +119,6 @@ typedef enum {
     ITERM_RELAX_TYPE_COUNT,
 } itermRelaxType_e;
 
-typedef enum feedforwardAveraging_e {
-    FEEDFORWARD_AVERAGING_OFF,
-    FEEDFORWARD_AVERAGING_2_POINT,
-    FEEDFORWARD_AVERAGING_3_POINT,
-    FEEDFORWARD_AVERAGING_4_POINT,
-} feedforwardAveraging_t;
-
 typedef enum {
     YAW_TYPE_RUDDER,
     YAW_TYPE_DIFF_THRUST,
@@ -180,15 +173,6 @@ typedef struct pidProfile_s {
     uint8_t dyn_idle_d_gain;                // D gain for corrections around rapid changes in rpm
     uint8_t dyn_idle_max_increase;          // limit on maximum possible increase in motor idle drive during active control
 
-    uint8_t feedforward_transition;         // Feedforward attenuation around centre sticks
-    uint8_t feedforward_averaging;          // Number of packets to average when averaging is on
-    uint8_t feedforward_smooth_factor;      // Amount of lowpass type smoothing for feedforward steps
-    uint8_t feedforward_jitter_factor;      // Number of RC steps below which to attenuate feedforward
-    uint8_t feedforward_boost;              // amount of setpoint acceleration to add to feedforward, 10 means 100% added
-    uint8_t feedforward_max_rate_limit;     // Maximum setpoint rate percentage for feedforward
-    uint8_t feedforward_yaw_hold_gain;          // Amount of sustained high-pass yaw setpoint to add to feedforward, zero disables
-    uint8_t feedforward_yaw_hold_time ;     // Time constant of the sustained yaw hold element in ms to add to feed forward, higher values decay slower
-
     uint8_t dterm_lpf1_dyn_expo;            // set the curve for dynamic dterm lowpass filter
 
     uint8_t simplified_pids_mode;
@@ -205,7 +189,6 @@ typedef struct pidProfile_s {
 
     uint8_t anti_gravity_cutoff_hz;
     uint8_t anti_gravity_p_gain;
-    uint8_t angle_feedforward_smoothing_ms; // Smoothing factor for angle feedforward as time constant in milliseconds
     uint8_t angle_earth_ref;                // Control amount of "co-ordination" from yaw into roll while pitched forward in angle mode
     uint16_t horizon_delay_ms;              // delay when Horizon Strength increases, 50 = 500ms time constant
 
@@ -281,7 +264,6 @@ typedef struct pidRuntime_s {
     float antiGravityPGain;
     pidCoefficient_t pidCoefficient[XYZ_AXIS_COUNT];
     float angleGain;
-    float angleFeedforwardGain;
     float horizonGain;
     float horizonLimitSticks;
     float horizonLimitSticksInv;
@@ -326,21 +308,6 @@ typedef struct pidRuntime_s {
     uint16_t dynLpfMin;
     uint16_t dynLpfMax;
     uint8_t dynLpfCurveExpo;
-#endif
-
-#ifdef USE_FEEDFORWARD
-    feedforwardAveraging_t feedforwardAveraging;
-    float feedforwardSmoothFactor;
-    uint8_t feedforwardJitterFactor;
-    float feedforwardJitterFactorInv;
-    float feedforwardBoostFactor;
-    float feedforwardTransition;
-    float feedforwardTransitionInv;
-    uint8_t feedforwardMaxRateLimit;
-    float feedforwardYawHoldGain;
-    float feedforwardYawHoldTime;
-    bool feedforwardInterpolate; // Whether to interpolate an FF value for duplicate/identical data values
-    pt3Filter_t angleFeedforwardPt3[XYZ_AXIS_COUNT];
 #endif
 
 #ifdef USE_ACC
