@@ -17,8 +17,6 @@
 
 #pragma once
 
-#ifndef USE_WING
-
 #include <stdbool.h>
 
 #include "common/axis.h"
@@ -57,5 +55,3 @@ bool gpsRescueIsAvailable(void);
 bool gpsRescueIsDisabled(void);
 bool gpsRescueDisableMag(void);
 float gpsRescueGetImuYawCogGain(void);
-
-#endif // !USE_WING

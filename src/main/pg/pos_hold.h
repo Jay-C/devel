@@ -22,4 +22,3 @@
 #pragma once
 
 #include "pg/pos_hold_multirotor.h"
-#include "pg/pos_hold_wing.h"

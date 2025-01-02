@@ -25,8 +25,6 @@
 
 #include "platform.h"
 
-#ifndef USE_WING
-
 #ifdef USE_CMS_GPS_RESCUE_MENU
 
 #include "cli/settings.h"
@@ -244,5 +242,3 @@ CMS_Menu cmsx_menuGpsRescue = {
 };
 
 #endif
-
-#endif // !USE_WING
