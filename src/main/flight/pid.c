@@ -126,7 +126,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .itermWindup = 80,         // sets iTerm limit to this percentage below pidSumLimit
         .pidAtMinThrottle = PID_STABILISATION_ON,
         .angle_limit = 60,
-        .feedforward_transition = 0,
         .yawRateAccelLimit = 0,
         .rateAccelLimit = 0,
         .anti_gravity_gain = 80,
@@ -162,11 +161,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .dyn_idle_i_gain = 50,
         .dyn_idle_d_gain = 50,
         .dyn_idle_max_increase = 150,
-        .feedforward_averaging = FEEDFORWARD_AVERAGING_OFF,
-        .feedforward_max_rate_limit = 90,
-        .feedforward_smooth_factor = 25,
-        .feedforward_jitter_factor = 7,
-        .feedforward_boost = 15,
         .dterm_lpf1_dyn_expo = 5,
         .simplified_pids_mode = PID_SIMPLIFIED_TUNING_RPY,
         .simplified_master_multiplier = SIMPLIFIED_TUNING_DEFAULT,
@@ -181,15 +175,12 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .simplified_dterm_filter_multiplier = SIMPLIFIED_TUNING_DEFAULT,
         .anti_gravity_cutoff_hz = 5,
         .anti_gravity_p_gain = 100,
-        .angle_feedforward_smoothing_ms = 80,
         .angle_earth_ref = 100,
         .horizon_delay_ms = 500, // 500ms time constant on any increase in horizon strength
         .ez_landing_threshold = 25,
         .ez_landing_limit = 15,
         .ez_landing_speed = 50,
         .landing_disarm_threshold = 0, // relatively safe values are around 100
-        .feedforward_yaw_hold_gain = 15,  // zero disables; 15-20 is OK for 5in
-        .feedforward_yaw_hold_time = 100,  // a value of 100 is a time constant of about 100ms, and is OK for a 5in; smaller values decay faster, eg for smaller props
         .yaw_type = YAW_TYPE_RUDDER,
         .angle_pitch_offset = 0,
     );
@@ -294,16 +285,8 @@ STATIC_UNIT_TESTED FAST_CODE_NOINLINE float pidLevel(int axis, const pidProfile_
     // Applies only to axes that are in Angle mode
     // We now use Acro Rates, transformed into the range +/- 1, to provide setpoints
     float angleLimit = pidProfile->angle_limit;
-    float angleFeedforward = 0.0f;
     // if user changes rates profile, update the max setpoint for angle mode
     const float maxSetpointRateInv = 1.0f / getMaxRcRate(axis);
-
-#ifdef USE_FEEDFORWARD
-    angleFeedforward = angleLimit * getFeedforward(axis) * pidRuntime.angleFeedforwardGain * maxSetpointRateInv;
-    //  angle feedforward must be heavily filtered, at the PID loop rate, with limited user control over time constant
-    // it MUST be very delayed to avoid early overshoot and being too aggressive
-    angleFeedforward = pt3FilterApply(&pidRuntime.angleFeedforwardPt3[axis], angleFeedforward);
-#endif
 
     float angleTarget = angleLimit * currentPidSetpoint * maxSetpointRateInv;
     // use acro rates for the angle target in both horizon and angle modes, converted to -1 to +1 range using maxRate
@@ -313,7 +296,6 @@ STATIC_UNIT_TESTED FAST_CODE_NOINLINE float pidLevel(int axis, const pidProfile_
 #endif
 #if defined(USE_POSITION_HOLD)
     if (FLIGHT_MODE(POS_HOLD_MODE)) {
-        angleFeedforward = 0.0f; // otherwise the lag of the PT3 carries recent stick inputs into the hold
         if (isAutopilotInControl()) {
             // sticks are not deflected
             angleTarget = autopilotAngle[axis]; // autopilotAngle in degrees
@@ -328,7 +310,7 @@ STATIC_UNIT_TESTED FAST_CODE_NOINLINE float pidLevel(int axis, const pidProfile_
 
     const float currentAngle = (attitude.raw[axis] - angleTrim->raw[axis]) / 10.0f; // stepped at 500hz with some 4ms flat spots
     const float errorAngle = angleTarget - currentAngle;
-    float angleRate = errorAngle * pidRuntime.angleGain + angleFeedforward;
+    float angleRate = errorAngle * pidRuntime.angleGain;
 
     // minimise cross-axis wobble due to faster yaw responses than roll or pitch, and make co-ordinated yaw turns
     // by compensating for the effect of yaw on roll while pitched, and on pitch while rolled
@@ -354,7 +336,6 @@ STATIC_UNIT_TESTED FAST_CODE_NOINLINE float pidLevel(int axis, const pidProfile_
     if (axis == FD_ROLL) {
         DEBUG_SET(DEBUG_ANGLE_MODE, 0, lrintf(angleTarget * 10.0f)); // target angle
         DEBUG_SET(DEBUG_ANGLE_MODE, 1, lrintf(errorAngle * pidRuntime.angleGain * 10.0f)); // un-smoothed error correction in degrees
-        DEBUG_SET(DEBUG_ANGLE_MODE, 2, lrintf(angleFeedforward * 10.0f)); // feedforward amount in degrees
         DEBUG_SET(DEBUG_ANGLE_MODE, 3, lrintf(currentAngle * 10.0f)); // angle returned
 
         DEBUG_SET(DEBUG_ANGLE_TARGET, 0, lrintf(angleTarget * 10.0f));
@@ -780,24 +761,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
 
         float pidSetpointDelta = 0;
 
-#if defined(USE_FEEDFORWARD) && defined(USE_ACC)
-        if (FLIGHT_MODE(ANGLE_MODE) && pidRuntime.axisInAngleMode[axis]) {
-            // this axis is fully under self-levelling control
-            // it will already have stick based feedforward applied in the input to their angle setpoint
-            // a simple setpoint Delta can be used to for PID feedforward element for motor lag on these axes
-            // however RC steps come in, via angle setpoint
-            // and setpoint RC smoothing must have a cutoff half normal to remove those steps completely
-            // the RC stepping does not come in via the feedforward, which is very well smoothed already
-            // if uncommented, and the forcing to zero is removed, the two following lines will restore PID feedforward to angle mode axes
-            // but for now let's see how we go without it (which was the case before 4.5 anyway)
-//            pidSetpointDelta = currentPidSetpoint - pidRuntime.previousPidSetpoint[axis];
-//            pidSetpointDelta *= pidRuntime.pidFrequency * pidRuntime.angleFeedforwardGain;
-            pidSetpointDelta = 0.0f;
-        } else {
-            // the axis is operating as a normal acro axis, so use normal feedforard from rc.c
-            pidSetpointDelta = getFeedforward(axis);
-        }
-#endif
         pidRuntime.previousPidSetpoint[axis] = currentPidSetpoint; // this is the value sent to blackbox, and used for D-max setpoint
 
         if (pidRuntime.pidCoefficient[axis].Kd > 0) {
