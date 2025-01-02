@@ -21,8 +21,6 @@
 
 #pragma once
 
-#ifndef USE_WING
-
 #include <stdint.h>
 
 #include "pg/pg.h"
@@ -34,4 +32,3 @@ typedef struct posHoldConfig_s {
 
 PG_DECLARE(posHoldConfig_t, posHoldConfig);
 
-#endif // !USE_WING
