@@ -76,8 +76,6 @@
 #define PARAM_NAME_EZ_LANDING_LIMIT "ez_landing_limit"
 #define PARAM_NAME_EZ_LANDING_SPEED "ez_landing_speed"
 #define PARAM_NAME_LANDING_DISARM_THRESHOLD "landing_disarm_threshold"
-#define PARAM_NAME_THROTTLE_LIMIT_TYPE "throttle_limit_type"
-#define PARAM_NAME_THROTTLE_LIMIT_PERCENT "throttle_limit_percent"
 #define PARAM_NAME_GYRO_CAL_ON_FIRST_ARM "gyro_cal_on_first_arm"
 #define PARAM_NAME_PREARM_ALLOW_REARM "prearm_allow_rearm"
 #define PARAM_NAME_DEADBAND "deadband"
