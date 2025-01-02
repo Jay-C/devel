@@ -116,6 +116,11 @@ SECTIONS
     PROVIDE_HIDDEN (__pg_resetdata_end = .);
   } >FLASH1
 
+  .flash_config :
+  {
+    KEEP (*(.flash_config))
+  } >FLASH_CONFIG
+
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);
 
