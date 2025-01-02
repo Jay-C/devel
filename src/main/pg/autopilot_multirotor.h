@@ -21,8 +21,6 @@
 
 #pragma once
 
-#ifndef USE_WING
-
 #include <stdint.h>
 
 #include "pg/pg.h"
@@ -46,4 +44,3 @@ typedef struct apConfig_s {
 
 PG_DECLARE(apConfig_t, apConfig);
 
-#endif // !USE_WING

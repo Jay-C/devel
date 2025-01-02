@@ -22,8 +22,6 @@
 
 #include "platform.h"
 
-#ifndef USE_WING
-
 #include "build/debug.h"
 #include "common/axis.h"
 #include "common/filter.h"
@@ -398,5 +396,3 @@ bool isAutopilotInControl(void)
 {
     return !ap.sticksActive;
 }
-
-#endif // !USE_WING
