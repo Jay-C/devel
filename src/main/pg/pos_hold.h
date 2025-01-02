@@ -21,4 +21,14 @@
 
 #pragma once
 
-#include "pg/pos_hold_multirotor.h"
+#include <stdint.h>
+
+#include "pg/pg.h"
+
+typedef struct posHoldConfig_s {
+    bool pos_hold_without_mag;
+    uint8_t pos_hold_deadband;
+} posHoldConfig_t;
+
+PG_DECLARE(posHoldConfig_t, posHoldConfig);
+
