@@ -68,23 +68,7 @@
 #define DTERM_LPF1_DYN_MAX_HZ_DEFAULT 150
 #define DTERM_LPF2_HZ_DEFAULT 150
 
-#define TPA_MAX 100
-
-#define TPA_LOW_RATE_MIN 0
-
-#ifdef USE_ADVANCED_TPA
-#define TPA_CURVE_PID_MAX 1000
-#define TPA_CURVE_EXPO_MIN -100
-#define TPA_CURVE_EXPO_MAX 100
-#define TPA_CURVE_PWL_SIZE 17
-#endif // USE_ADVANCED_TPA
-
 #define G_ACCELERATION 9.80665f // gravitational acceleration in m/s^2
-
-typedef enum {
-    TPA_MODE_PD,
-    TPA_MODE_D,
-} tpaMode_e;
 
 typedef enum {
     TERM_P,
@@ -141,16 +125,6 @@ typedef enum feedforwardAveraging_e {
     FEEDFORWARD_AVERAGING_3_POINT,
     FEEDFORWARD_AVERAGING_4_POINT,
 } feedforwardAveraging_t;
-
-typedef enum tpaCurveType_e {
-    TPA_CURVE_CLASSIC,
-    TPA_CURVE_HYPERBOLIC,
-} tpaCurveType_t;
-
-typedef enum tpaSpeedType_e {
-    TPA_SPEED_BASIC,
-    TPA_SPEED_ADVANCED,
-} tpaSpeedType_t;
 
 typedef enum {
     YAW_TYPE_RUDDER,
@@ -232,36 +206,15 @@ typedef struct pidProfile_s {
 
     uint8_t anti_gravity_cutoff_hz;
     uint8_t anti_gravity_p_gain;
-    uint8_t tpa_mode;                       // Controls which PID terms TPA effects
-    uint8_t tpa_rate;                       // Percent reduction in P or D at full throttle
-    uint16_t tpa_breakpoint;                // Breakpoint where TPA is activated
-
     uint8_t angle_feedforward_smoothing_ms; // Smoothing factor for angle feedforward as time constant in milliseconds
     uint8_t angle_earth_ref;                // Control amount of "co-ordination" from yaw into roll while pitched forward in angle mode
     uint16_t horizon_delay_ms;              // delay when Horizon Strength increases, 50 = 500ms time constant
-    int8_t tpa_low_rate;                    // Percent reduction in P or D at zero throttle
-    uint16_t tpa_low_breakpoint;            // Breakpoint where lower TPA is deactivated
-    uint8_t tpa_low_always;                 // off, on - if OFF then low TPA is only active until tpa_low_breakpoint is reached the first time
 
     uint8_t ez_landing_threshold;           // Threshold stick position below which motor output is limited
     uint8_t ez_landing_limit;               // Maximum motor output when all sticks centred and throttle zero
     uint8_t ez_landing_speed;               // Speed below which motor output is limited
     uint8_t landing_disarm_threshold;            // Accelerometer vector delta (jerk) threshold with disarms if exceeded
 
-    uint8_t tpa_curve_type;                 // Classic type - for multirotor, hyperbolic - usually for wings
-    uint8_t tpa_curve_stall_throttle;       // For wings: speed at which PIDs should be maxed out (stall speed)
-    uint16_t tpa_curve_pid_thr0;            // For wings: PIDs multiplier at stall speed
-    uint16_t tpa_curve_pid_thr100;          // For wings: PIDs multiplier at full speed
-    int8_t tpa_curve_expo;                  // For wings: how fast PIDs do transition as speed grows
-    uint8_t tpa_speed_type;             // For wings: relative air speed estimation model type
-    uint16_t tpa_speed_basic_delay;     // For wings when tpa_speed_type = BASIC: delay of air speed estimation from throttle in milliseconds (time of reaching 50% of terminal speed in horizontal flight at full throttle)
-    uint16_t tpa_speed_basic_gravity;   // For wings when tpa_speed_type = BASIC: gravity effect on air speed estimation in percents
-    uint16_t tpa_speed_adv_prop_pitch;  // For wings when tpa_speed_type = ADVANCED: prop pitch in inches * 100
-    uint16_t tpa_speed_adv_mass;        // For wings when tpa_speed_type = ADVANCED: craft mass in grams
-    uint16_t tpa_speed_adv_drag_k;      // For wings when tpa_speed_type = ADVANCED: craft drag coefficient
-    uint16_t tpa_speed_adv_thrust;      // For wings when tpa_speed_type = ADVANCED: stationary thrust in grams
-    uint16_t tpa_speed_max_voltage;     // For wings: theoretical max voltage; used for throttle scailing with voltage for air speed estimation
-    int16_t tpa_speed_pitch_offset;     // For wings: pitch offset in degrees*10 for craft speed estimation
     uint8_t yaw_type;                   // For wings: type of yaw (rudder or differential thrust)
     int16_t angle_pitch_offset;         // For wings: pitch offset for angle modes; in decidegrees; positive values tilting the wing down
 } pidProfile_t;
@@ -341,12 +294,6 @@ typedef struct pidRuntime_s {
     float itermLimitYaw;
     bool itermRotation;
     bool zeroThrottleItermReset;
-    float tpaFactor;
-    float tpaBreakpoint;
-    float tpaMultiplier;
-    float tpaLowBreakpoint;
-    float tpaLowMultiplier;
-    bool tpaLowAlways;
     bool useEzDisarm;
     float landingDisarmThreshold;
 
@@ -416,11 +363,6 @@ typedef struct pidRuntime_s {
     bool axisInAngleMode[3];
 #endif
 
-#ifdef USE_ADVANCED_TPA
-    pwl_t tpaCurvePwl;
-    float tpaCurvePwl_yValues[TPA_CURVE_PWL_SIZE];
-    tpaCurveType_t tpaCurveType;
-#endif // USE_ADVANCED_TPA
 } pidRuntime_t;
 
 extern pidRuntime_t pidRuntime;
@@ -440,7 +382,6 @@ void pidStabilisationState(pidStabilisationState_e pidControllerState);
 void pidSetItermAccelerator(float newItermAccelerator);
 void pidAcroTrainerInit(void);
 void pidSetAcroTrainerState(bool newState);
-void pidUpdateTpaFactor(float throttle);
 void pidUpdateAntiGravityThrottleFilter(float throttle);
 bool pidOsdAntiGravityActive(void);
 void pidSetAntiGravityState(bool newState);
