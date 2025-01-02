@@ -204,8 +204,6 @@ void pidInitFilters(const pidProfile_t *pidProfile)
 
 #ifdef USE_ACC
     const float k = pt3FilterGain(ATTITUDE_CUTOFF_HZ, pidRuntime.dT);
-    const float angleCutoffHz = 1000.0f / (2.0f * M_PIf * pidProfile->angle_feedforward_smoothing_ms); // default of 80ms -> 2.0Hz, 160ms -> 1.0Hz, approximately
-    const float k2 = pt3FilterGain(angleCutoffHz, pidRuntime.dT);
     pidRuntime.horizonDelayMs = pidProfile->horizon_delay_ms;
     if (pidRuntime.horizonDelayMs) {
         const float horizonSmoothingHz = 1e3f / (2.0f * M_PIf * pidProfile->horizon_delay_ms); // default of 500ms means 0.318Hz
@@ -215,7 +213,6 @@ void pidInitFilters(const pidProfile_t *pidProfile)
 
     for (int axis = 0; axis < 2; axis++) {  // ROLL and PITCH only
         pt3FilterInit(&pidRuntime.attitudeFilter[axis], k);
-        pt3FilterInit(&pidRuntime.angleFeedforwardPt3[axis], k2);
     }
     pidRuntime.angleYawSetpoint = 0.0f;
 #endif
@@ -243,7 +240,6 @@ void pidInitConfig(const pidProfile_t *pidProfile)
     }
     pidRuntime.pidCoefficient[FD_YAW].Ki *= 2.5f;
     pidRuntime.angleGain = pidProfile->pid[PID_LEVEL].P / 10.0f;
-    pidRuntime.angleFeedforwardGain = pidProfile->pid[PID_LEVEL].F / 100.0f;
 #ifdef USE_ACC
     pidRuntime.angleEarthRef = pidProfile->angle_earth_ref / 100.0f;
 #endif
@@ -321,24 +317,6 @@ void pidInitConfig(const pidProfile_t *pidProfile)
     pidRuntime.dynLpfMin = pidProfile->dterm_lpf1_dyn_min_hz;
     pidRuntime.dynLpfMax = pidProfile->dterm_lpf1_dyn_max_hz;
     pidRuntime.dynLpfCurveExpo = pidProfile->dterm_lpf1_dyn_expo;
-#endif
-
-#ifdef USE_FEEDFORWARD
-    pidRuntime.feedforwardTransition = pidProfile->feedforward_transition / 100.0f;
-    pidRuntime.feedforwardTransitionInv = (pidProfile->feedforward_transition == 0) ? 0.0f : 100.0f / pidProfile->feedforward_transition;
-    pidRuntime.feedforwardAveraging = pidProfile->feedforward_averaging;
-    pidRuntime.feedforwardSmoothFactor = 1.0f - (0.01f * pidProfile->feedforward_smooth_factor);
-    pidRuntime.feedforwardJitterFactor = pidProfile->feedforward_jitter_factor;
-    pidRuntime.feedforwardJitterFactorInv = 1.0f / (1.0f + pidProfile->feedforward_jitter_factor);
-    pidRuntime.feedforwardBoostFactor = 0.001f * pidProfile->feedforward_boost;
-    pidRuntime.feedforwardMaxRateLimit = pidProfile->feedforward_max_rate_limit;
-    pidRuntime.feedforwardInterpolate = !(rxRuntimeState.serialrxProvider == SERIALRX_CRSF);
-    pidRuntime.feedforwardYawHoldTime = 0.001f * pidProfile->feedforward_yaw_hold_time; // input time constant in milliseconds, converted to seconds
-    pidRuntime.feedforwardYawHoldGain = pidProfile->feedforward_yaw_hold_gain;
-    // normalise/maintain boost when time constant is small, 1.5x at 50ms, 2x at 25ms, almost 3x at 10ms
-    if (pidProfile->feedforward_yaw_hold_time < 100) {
-        pidRuntime.feedforwardYawHoldGain *= 150.0f / (float)(pidProfile->feedforward_yaw_hold_time + 50);
-    }
 #endif
 
     pidRuntime.useEzDisarm = pidProfile->landing_disarm_threshold > 0;
