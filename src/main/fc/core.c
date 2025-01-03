@@ -600,27 +600,6 @@ bool processRx(timeUs_t currentTimeUs)
         failsafeStartMonitoring();
     }
 
-    const bool throttleActive = calculateThrottleStatus() != THROTTLE_LOW;
-    const uint8_t throttlePercent = calculateThrottlePercentAbs();
-
-    if (ARMING_FLAG(ARMED)) {
-        if (throttlePercent >= 10) { // was rxConfig()->airModeActivateThreshold
-            throttleRaised = true; // Latch true until disarm
-        }
-    } else {
-        throttleRaised = false;
-    }
-
-    // Note: If on arming, iTerm and PIDs will be off until throttle exceeds the threshold (OFF while disarmed)
-    // If not, iTerm will be off at low throttle, with pidStabilisationState determining whether PIDs will be active
-    if (ARMING_FLAG(ARMED) && (throttleActive || isFixedWing())) {
-        pidSetItermReset(false);
-        pidStabilisationState(PID_STABILISATION_ON);
-    } else {
-        pidSetItermReset(true);
-        pidStabilisationState(currentPidProfile->pidAtMinThrottle ? PID_STABILISATION_ON : PID_STABILISATION_OFF);
-    }
-
     return true;
 }
 
