@@ -1013,8 +1013,6 @@ const clivalue_t valueTable[] = {
     { PARAM_NAME_HORIZON_IGNORE_STICKS,  VAR_UINT8  | PROFILE_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_OFF_ON }, PG_PID_PROFILE, offsetof(pidProfile_t, horizon_ignore_sticks) },
     { PARAM_NAME_HORIZON_DELAY_MS,       VAR_UINT16 | PROFILE_VALUE, .config.minmaxUnsigned = { 10,  5000 }, PG_PID_PROFILE, offsetof(pidProfile_t, horizon_delay_ms) },
 
-    { PARAM_NAME_LANDING_DISARM_THRESHOLD,       VAR_UINT8  | PROFILE_VALUE, .config.minmaxUnsigned = { 0, 250 }, PG_PID_PROFILE, offsetof(pidProfile_t, landing_disarm_threshold) },
-
 // PG_TELEMETRY_CONFIG
 #ifdef USE_TELEMETRY
     { "tlm_inverted",               VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_OFF_ON }, PG_TELEMETRY_CONFIG, offsetof(telemetryConfig_t, telemetry_inverted) },
