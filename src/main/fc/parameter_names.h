@@ -37,7 +37,6 @@
 #define PARAM_NAME_MOTOR_PWM_RATE "motor_pwm_rate"
 #define PARAM_NAME_MOTOR_POLES "motor_poles"
 #define PARAM_NAME_RATES_TYPE "rates_type"
-#define PARAM_NAME_MIXER_TYPE "mixer_type"
 #define PARAM_NAME_GYRO_CAL_ON_FIRST_ARM "gyro_cal_on_first_arm"
 #define PARAM_NAME_PREARM_ALLOW_REARM "prearm_allow_rearm"
 #define PARAM_NAME_DEADBAND "deadband"
