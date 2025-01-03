@@ -40,7 +40,6 @@
 #include "fc/core.h"
 #include "fc/runtime_config.h"
 #include "flight/pid.h"
-#include "flight/pid_init.h"
 
 #include "sensors/battery.h"
 
