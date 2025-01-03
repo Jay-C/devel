@@ -129,7 +129,6 @@ void resetPidProfile(pidProfile_t *pidProfile)
         .profileName = { 0 },
         .angle_earth_ref = 100,
         .horizon_delay_ms = 500, // 500ms time constant on any increase in horizon strength
-        .landing_disarm_threshold = 0, // relatively safe values are around 100
         .yaw_type = YAW_TYPE_RUDDER,
         .angle_pitch_offset = 0,
     );
@@ -305,33 +304,6 @@ STATIC_UNIT_TESTED void rotateItermAndAxisError(void)
     }
 }
 
-static FAST_CODE_NOINLINE void disarmOnImpact(void)
-{
-    // if, being armed, and after takeoff...
-    if (wasThrottleRaised()
-        // and, either sticks are centred and throttle zeroed,
-        && ((getMaxRcDeflectionAbs() < 0.05f && mixerGetRcThrottle() < 0.05f)
-#ifdef USE_ALTITUDE_HOLD
-            // or, in altitude hold mode, where throttle can be non-zero
-            || FLIGHT_MODE(ALT_HOLD_MODE)
-#endif
-        )) {
-        // increase sensitivity by 50% when low and in altitude hold or failsafe landing
-        // for more reliable disarm with gentle controlled landings
-        float lowAltitudeSensitivity = 1.0f;
-#ifdef USE_ALTITUDE_HOLD
-        lowAltitudeSensitivity = (FLIGHT_MODE(ALT_HOLD_MODE) && isBelowLandingAltitude()) ? 1.5f : 1.0f;
-#endif
-        // and disarm if jerk exceeds threshold...
-        if ((acc.jerkMagnitude * lowAltitudeSensitivity) > pidRuntime.landingDisarmThreshold) {
-            // then disarm
-            setArmingDisabled(ARMING_DISABLED_ARM_SWITCH); // NB: need a better message
-            disarm(DISARM_REASON_LANDING);
-            // note: threshold should be high enough to avoid unwanted disarms in the air on throttle chops, eg around 10
-        }
-    }
-}
-
 // Betaflight pid controller, which will be maintained in the future with additional features specialised for current (mini) multirotor usage.
 // Based on 2DOF reference design (matlab)
 void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTimeUs)
@@ -397,10 +369,6 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
     }
 
     rotateItermAndAxisError();
-
-    if (pidRuntime.useEzDisarm) {
-        disarmOnImpact();
-    }
 
     // ----------PID controller----------
     for (int axis = FD_ROLL; axis <= FD_YAW; ++axis) {
