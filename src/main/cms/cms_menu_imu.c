@@ -243,8 +243,6 @@ static CMS_Menu cmsx_menuPid = {
     .entries = cmsx_menuPidEntries
 };
 
-static uint8_t cmsx_landing_disarm_threshold;
-
 //
 // Rate & Expo
 //
@@ -333,8 +331,6 @@ static const void *cmsx_profileOtherOnEnter(displayPort_t *pDisp)
     cmsx_horizonLimitSticks = pidProfile->pid[PID_LEVEL].D;
     cmsx_horizonLimitDegrees = pidProfile->horizon_limit_degrees;
 
-    cmsx_landing_disarm_threshold = pidProfile->landing_disarm_threshold;
-
     return NULL;
 }
 
@@ -355,9 +351,8 @@ static const void *cmsx_profileOtherOnExit(displayPort_t *pDisp, const OSD_Entry
     pidProfile->pid[PID_LEVEL].D = cmsx_horizonLimitSticks;
     pidProfile->horizon_limit_degrees = cmsx_horizonLimitDegrees;
 
-    pidProfile->landing_disarm_threshold = cmsx_landing_disarm_threshold;
-
     initEscEndpoints();
+
     return NULL;
 }
 
@@ -372,8 +367,6 @@ static const OSD_Entry cmsx_menuProfileOtherEntries[] = {
     { "HORZN STR",       OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_horizonStrength,            0,    100,   1  }    },
     { "HORZN LIM_STK",   OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_horizonLimitSticks,        10,    200,   1  }    },
     { "HORZN LIM_DEG",   OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_horizonLimitDegrees,       10,    250,   1  }    },
-
-    { "EZDISARM THR",  OME_UINT8,  NULL, &(OSD_UINT8_t) { &cmsx_landing_disarm_threshold, 0, 150, 1} },
 
     { "BACK", OME_Back, NULL, NULL },
     { NULL, OME_END, NULL, NULL}

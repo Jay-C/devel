@@ -130,8 +130,6 @@ typedef struct pidProfile_s {
     uint8_t angle_earth_ref;                // Control amount of "co-ordination" from yaw into roll while pitched forward in angle mode
     uint16_t horizon_delay_ms;              // delay when Horizon Strength increases, 50 = 500ms time constant
 
-    uint8_t landing_disarm_threshold;            // Accelerometer vector delta (jerk) threshold with disarms if exceeded
-
     uint8_t yaw_type;                   // For wings: type of yaw (rudder or differential thrust)
     int16_t angle_pitch_offset;         // For wings: pitch offset for angle modes; in decidegrees; positive values tilting the wing down
 } pidProfile_t;
@@ -203,7 +201,6 @@ typedef struct pidRuntime_s {
     float itermLimitYaw;
     bool itermRotation;
     bool zeroThrottleItermReset;
-    bool useEzDisarm;
     float landingDisarmThreshold;
 
 #ifdef USE_ACC
