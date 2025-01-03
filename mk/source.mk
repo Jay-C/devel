@@ -151,7 +151,6 @@ COMMON_SRC = \
             flight/imu.c \
             flight/mixer.c \
             flight/pid.c \
-            flight/pid_init.c \
             flight/position.c \
             flight/pos_hold.c \
             flight/servos.c \
@@ -448,7 +447,6 @@ SPEED_OPTIMISED_SRC += \
 SIZE_OPTIMISED_SRC += \
             sensors/gyro_init.c \
             sensors/acceleration_init.c \
-            flight/pid_init.c \
             cli/cli.c \
             cli/settings.c \
             drivers/light_ws2811strip.c \
