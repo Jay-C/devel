@@ -40,7 +40,6 @@
 #include "fc/rc_controls.h"
 
 #include "flight/mixer.h"
-#include "flight/mixer_init.h"
 
 #include "io/beeper.h"
 
