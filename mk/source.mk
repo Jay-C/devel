@@ -26,6 +26,7 @@ PG_SRC = \
             pg/motor.c \
             pg/msp.c \
             pg/pg.c \
+            pg/pid.c \
             pg/pilot.c \
             pg/piniobox.c \
             pg/pinio.c \
