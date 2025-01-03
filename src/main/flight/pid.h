@@ -27,7 +27,7 @@
 #include "common/pwl.h"
 #include "common/rtc.h"
 
-#include "pg/pg.h"
+#include "pg/pid.h"
 
 #define MAX_PID_PROCESS_DENOM       16
 
@@ -44,40 +44,9 @@ typedef enum {
 } term_e;
 
 typedef enum {
-    PID_ROLL,
-    PID_PITCH,
-    PID_YAW,
-    PID_LEVEL,
-    PID_MAG,
-    PID_ITEM_COUNT
-} pidIndex_e;
-
-typedef struct pidf_s {
-    uint8_t P;
-    uint8_t I;
-    uint8_t D;
-    uint16_t F;
-} pidf_t;
-
-typedef enum {
     YAW_TYPE_RUDDER,
     YAW_TYPE_DIFF_THRUST,
 } yawType_e;
-
-#define MAX_PROFILE_NAME_LENGTH 8u
-
-typedef struct pidProfile_s {
-    char profileName[MAX_PROFILE_NAME_LENGTH + 1];
-    pidf_t  pid[PID_ITEM_COUNT];
-} pidProfile_t;
-
-PG_DECLARE_ARRAY(pidProfile_t, PID_PROFILE_COUNT, pidProfiles);
-
-typedef struct pidConfig_s {
-    uint8_t pid_process_denom;
-} pidConfig_t;
-
-PG_DECLARE(pidConfig_t, pidConfig);
 
 void pidController(const pidProfile_t *pidProfile, timeUs_t currentTimeUs);
 
