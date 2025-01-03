@@ -51,7 +51,6 @@
 
 #include "flight/mixer.h"
 #include "flight/pid.h"
-#include "flight/pid_init.h"
 
 #include "pg/pg.h"
 
@@ -305,31 +304,13 @@ static CMS_Menu cmsx_menuRateProfile = {
     .entries = cmsx_menuRateProfileEntries
 };
 
-static uint8_t  cmsx_angleP;
-static uint8_t  cmsx_angleFF;
-static uint8_t  cmsx_angleLimit;
-static uint8_t  cmsx_angleEarthRef;
-
-static uint8_t  cmsx_horizonStrength;
-static uint8_t  cmsx_horizonLimitSticks;
-static uint8_t  cmsx_horizonLimitDegrees;
-
 static const void *cmsx_profileOtherOnEnter(displayPort_t *pDisp)
 {
     UNUSED(pDisp);
 
     setProfileIndexString(pidProfileIndexString, pidProfileIndex, currentPidProfile->profileName);
 
-    const pidProfile_t *pidProfile = pidProfiles(pidProfileIndex);
-
-    cmsx_angleP =             pidProfile->pid[PID_LEVEL].P;
-    cmsx_angleFF =            pidProfile->pid[PID_LEVEL].F;
-    cmsx_angleLimit =         pidProfile->angle_limit;
-    cmsx_angleEarthRef =      pidProfile->angle_earth_ref;
-
-    cmsx_horizonStrength =    pidProfile->pid[PID_LEVEL].I;
-    cmsx_horizonLimitSticks = pidProfile->pid[PID_LEVEL].D;
-    cmsx_horizonLimitDegrees = pidProfile->horizon_limit_degrees;
+    //const pidProfile_t *pidProfile = pidProfiles(pidProfileIndex);
 
     return NULL;
 }
@@ -339,17 +320,8 @@ static const void *cmsx_profileOtherOnExit(displayPort_t *pDisp, const OSD_Entry
     UNUSED(pDisp);
     UNUSED(self);
 
-    pidProfile_t *pidProfile = pidProfilesMutable(pidProfileIndex);
-    pidInitConfig(currentPidProfile);
-
-    pidProfile->pid[PID_LEVEL].P = cmsx_angleP;
-    pidProfile->pid[PID_LEVEL].F = cmsx_angleFF;
-    pidProfile->angle_limit = cmsx_angleLimit;
-    pidProfile->angle_earth_ref = cmsx_angleEarthRef;
-
-    pidProfile->pid[PID_LEVEL].I = cmsx_horizonStrength;
-    pidProfile->pid[PID_LEVEL].D = cmsx_horizonLimitSticks;
-    pidProfile->horizon_limit_degrees = cmsx_horizonLimitDegrees;
+    //pidProfile_t *pidProfile = pidProfilesMutable(pidProfileIndex);
+    //pidInitConfig(currentPidProfile);
 
     initEscEndpoints();
 
@@ -358,15 +330,6 @@ static const void *cmsx_profileOtherOnExit(displayPort_t *pDisp, const OSD_Entry
 
 static const OSD_Entry cmsx_menuProfileOtherEntries[] = {
     { "-- OTHER PP --", OME_Label, NULL, pidProfileIndexString },
-
-    { "ANGLE P",         OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_angleP,                     0,    200,   1  }    },
-    { "ANGLE FF",        OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_angleFF,                    0,    200,   1  }    },
-    { "ANGLE LIMIT",     OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_angleLimit,                10,     90,   1  }    },
-    { "ANGLE E_REF",     OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_angleEarthRef,              0,    100,   1  }    },
-
-    { "HORZN STR",       OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_horizonStrength,            0,    100,   1  }    },
-    { "HORZN LIM_STK",   OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_horizonLimitSticks,        10,    200,   1  }    },
-    { "HORZN LIM_DEG",   OME_UINT8,  NULL, &(OSD_UINT8_t)  { &cmsx_horizonLimitDegrees,       10,    250,   1  }    },
 
     { "BACK", OME_Back, NULL, NULL },
     { NULL, OME_END, NULL, NULL}
@@ -491,21 +454,11 @@ static CMS_Menu cmsx_menuDynFilt = {
 
 #endif
 
-static uint16_t cmsx_dterm_lpf1_static_hz;
-static uint16_t cmsx_dterm_lpf2_static_hz;
-static uint16_t cmsx_dterm_notch_hz;
-static uint16_t cmsx_dterm_notch_cutoff;
-
 static const void *cmsx_FilterPerProfileRead(displayPort_t *pDisp)
 {
     UNUSED(pDisp);
 
-    const pidProfile_t *pidProfile = pidProfiles(pidProfileIndex);
-
-    cmsx_dterm_lpf1_static_hz   = pidProfile->dterm_lpf1_static_hz;
-    cmsx_dterm_lpf2_static_hz   = pidProfile->dterm_lpf2_static_hz;
-    cmsx_dterm_notch_hz         = pidProfile->dterm_notch_hz;
-    cmsx_dterm_notch_cutoff     = pidProfile->dterm_notch_cutoff;
+    //const pidProfile_t *pidProfile = pidProfiles(pidProfileIndex);
 
     return NULL;
 }
@@ -515,12 +468,7 @@ static const void *cmsx_FilterPerProfileWriteback(displayPort_t *pDisp, const OS
     UNUSED(pDisp);
     UNUSED(self);
 
-    pidProfile_t *pidProfile = currentPidProfile;
-
-    pidProfile->dterm_lpf1_static_hz  = cmsx_dterm_lpf1_static_hz;
-    pidProfile->dterm_lpf2_static_hz  = cmsx_dterm_lpf2_static_hz;
-    pidProfile->dterm_notch_hz        = cmsx_dterm_notch_hz;
-    pidProfile->dterm_notch_cutoff    = cmsx_dterm_notch_cutoff;
+    //pidProfile_t *pidProfile = currentPidProfile;
 
     return NULL;
 }
@@ -528,11 +476,6 @@ static const void *cmsx_FilterPerProfileWriteback(displayPort_t *pDisp, const OS
 static const OSD_Entry cmsx_menuFilterPerProfileEntries[] =
 {
     { "-- FILTER PP  --", OME_Label, NULL, NULL },
-
-    { "DTERM LPF1", OME_UINT16, NULL, &(OSD_UINT16_t){ &cmsx_dterm_lpf1_static_hz, 0, LPF_MAX_HZ, 1 } },
-    { "DTERM LPF2", OME_UINT16, NULL, &(OSD_UINT16_t){ &cmsx_dterm_lpf2_static_hz, 0, LPF_MAX_HZ, 1 } },
-    { "DTERM NF",   OME_UINT16, NULL, &(OSD_UINT16_t){ &cmsx_dterm_notch_hz,       0, LPF_MAX_HZ, 1 } },
-    { "DTERM NFCO", OME_UINT16, NULL, &(OSD_UINT16_t){ &cmsx_dterm_notch_cutoff,   0, LPF_MAX_HZ, 1 } },
 
     { "BACK", OME_Back, NULL, NULL },
     { NULL, OME_END, NULL, NULL}
