@@ -214,18 +214,6 @@ static const char* const invalidName = "INVALID";
 #define ERROR_INVALID_NAME "INVALID NAME: %s"
 #define ERROR_MESSAGE "%s CANNOT BE CHANGED. CURRENT VALUE: '%s'"
 
-#ifndef USE_QUAD_MIXER_ONLY
-// sync this with mixerMode_e
-static const char * const mixerNames[] = {
-    "TRI", "QUADP", "QUADX", "BI",
-    "GIMBAL", "Y6", "HEX6",
-    "FLYING_WING", "Y4", "HEX6X", "OCTOX8", "OCTOFLATP", "OCTOFLATX",
-    "AIRPLANE", "HELI_120_CCPM", "HELI_90_DEG", "VTAIL4",
-    "HEX6H", "PPM_TO_SERVO", "DUALCOPTER", "SINGLECOPTER",
-    "ATAIL4", "CUSTOM", "CUSTOMAIRPLANE", "CUSTOMTRI", "QUADX1234", NULL
-};
-#endif
-
 // sync this with features_e
 #define _R(_flag, _name) [LOG2(_flag)] = _name
 static const char * const featureNames[] = {
@@ -1806,117 +1794,6 @@ static void cliAdjustmentRange(const char *cmdName, char *cmdline)
     }
 }
 
-#ifndef USE_QUAD_MIXER_ONLY
-static void printMotorMix(dumpFlags_t dumpMask, const motorMixer_t *customMotorMixer, const motorMixer_t *defaultCustomMotorMixer, const char *headingStr)
-{
-    const char *format = "mmix %d %s %s %s %s";
-    char buf0[FTOA_BUFFER_LENGTH];
-    char buf1[FTOA_BUFFER_LENGTH];
-    char buf2[FTOA_BUFFER_LENGTH];
-    char buf3[FTOA_BUFFER_LENGTH];
-    for (uint32_t i = 0; i < MAX_SUPPORTED_MOTORS; i++) {
-        if (customMotorMixer[i].throttle == 0.0f)
-            break;
-        const float thr = customMotorMixer[i].throttle;
-        const float roll = customMotorMixer[i].roll;
-        const float pitch = customMotorMixer[i].pitch;
-        const float yaw = customMotorMixer[i].yaw;
-        bool equalsDefault = false;
-        if (defaultCustomMotorMixer) {
-            const float thrDefault = defaultCustomMotorMixer[i].throttle;
-            const float rollDefault = defaultCustomMotorMixer[i].roll;
-            const float pitchDefault = defaultCustomMotorMixer[i].pitch;
-            const float yawDefault = defaultCustomMotorMixer[i].yaw;
-            const bool equalsDefault = thr == thrDefault && roll == rollDefault && pitch == pitchDefault && yaw == yawDefault;
-
-            headingStr = cliPrintSectionHeading(dumpMask, !equalsDefault, headingStr);
-            cliDefaultPrintLinef(dumpMask, equalsDefault, format,
-                i,
-                ftoa(thrDefault, buf0),
-                ftoa(rollDefault, buf1),
-                ftoa(pitchDefault, buf2),
-                ftoa(yawDefault, buf3));
-        }
-        cliDumpPrintLinef(dumpMask, equalsDefault, format,
-            i,
-            ftoa(thr, buf0),
-            ftoa(roll, buf1),
-            ftoa(pitch, buf2),
-            ftoa(yaw, buf3));
-    }
-}
-#endif // USE_QUAD_MIXER_ONLY
-
-static void cliMotorMix(const char *cmdName, char *cmdline)
-{
-#ifdef USE_QUAD_MIXER_ONLY
-    UNUSED(cmdName);
-    UNUSED(cmdline);
-#else
-    int check = 0;
-    uint8_t len;
-    const char *ptr;
-
-    if (isEmpty(cmdline)) {
-        printMotorMix(DUMP_MASTER, customMotorMixer(0), NULL, NULL);
-    } else if (strncasecmp(cmdline, "reset", 5) == 0) {
-        // erase custom mixer
-        for (uint32_t i = 0; i < MAX_SUPPORTED_MOTORS; i++) {
-            customMotorMixerMutable(i)->throttle = 0.0f;
-        }
-    } else if (strncasecmp(cmdline, "load", 4) == 0) {
-        ptr = nextArg(cmdline);
-        if (ptr) {
-            len = strlen(ptr);
-            for (uint32_t i = 0; ; i++) {
-                if (mixerNames[i] == NULL) {
-                    cliPrintErrorLinef(cmdName, ERROR_INVALID_NAME, cmdline);
-                    break;
-                }
-                if (strncasecmp(ptr, mixerNames[i], len) == 0) {
-                    mixerLoadMix(i, customMotorMixerMutable(0));
-                    cliPrintLinef("Loaded %s", mixerNames[i]);
-                    cliMotorMix(cmdName, "");
-                    break;
-                }
-            }
-        }
-    } else {
-        ptr = cmdline;
-        uint32_t i = atoi(ptr); // get motor number
-        if (i < MAX_SUPPORTED_MOTORS) {
-            ptr = nextArg(ptr);
-            if (ptr) {
-                customMotorMixerMutable(i)->throttle = fastA2F(ptr);
-                check++;
-            }
-            ptr = nextArg(ptr);
-            if (ptr) {
-                customMotorMixerMutable(i)->roll = fastA2F(ptr);
-                check++;
-            }
-            ptr = nextArg(ptr);
-            if (ptr) {
-                customMotorMixerMutable(i)->pitch = fastA2F(ptr);
-                check++;
-            }
-            ptr = nextArg(ptr);
-            if (ptr) {
-                customMotorMixerMutable(i)->yaw = fastA2F(ptr);
-                check++;
-            }
-            if (check != 4) {
-                cliShowInvalidArgumentCountError(cmdName);
-            } else {
-                printMotorMix(DUMP_MASTER, customMotorMixer(0), NULL, NULL);
-            }
-        } else {
-            cliShowArgumentRangeError(cmdName, "INDEX", 0, MAX_SUPPORTED_MOTORS - 1);
-        }
-    }
-#endif
-}
-
 static void printRxRange(dumpFlags_t dumpMask, const rxChannelRangeConfig_t *channelRangeConfigs, const rxChannelRangeConfig_t *defaultChannelRangeConfigs, const char *headingStr)
 {
     const char *format = "rxrange %u %u %u";
@@ -2179,30 +2056,6 @@ static void printServo(dumpFlags_t dumpMask, const servoParam_t *servoParams, co
             servoConf->rate
         );
     }
-    // print servo directions
-    for (uint32_t i = 0; i < MAX_SUPPORTED_SERVOS; i++) {
-        const char *format = "smix reverse %d %d r";
-        const servoParam_t *servoConf = &servoParams[i];
-        const servoParam_t *servoConfDefault = &defaultServoParams[i];
-        if (defaultServoParams) {
-            bool equalsDefault = servoConf->reversedSources == servoConfDefault->reversedSources;
-            for (uint32_t channel = 0; channel < INPUT_SOURCE_COUNT; channel++) {
-                equalsDefault = ~(servoConf->reversedSources ^ servoConfDefault->reversedSources) & (1 << channel);
-                if (servoConfDefault->reversedSources & (1 << channel)) {
-                    cliDefaultPrintLinef(dumpMask, equalsDefault, format, i , channel);
-                }
-                if (servoConf->reversedSources & (1 << channel)) {
-                    cliDumpPrintLinef(dumpMask, equalsDefault, format, i , channel);
-                }
-            }
-        } else {
-            for (uint32_t channel = 0; channel < INPUT_SOURCE_COUNT; channel++) {
-                if (servoConf->reversedSources & (1 << channel)) {
-                    cliDumpPrintLinef(dumpMask, true, format, i , channel);
-                }
-            }
-        }
-    }
 }
 
 static void cliServo(const char *cmdName, char *cmdline)
@@ -2282,161 +2135,6 @@ static void cliServo(const char *cmdName, char *cmdline)
             servo->rate
         );
 
-    }
-}
-#endif
-
-#ifdef USE_SERVOS
-static void printServoMix(dumpFlags_t dumpMask, const servoMixer_t *customServoMixers, const servoMixer_t *defaultCustomServoMixers, const char *headingStr)
-{
-    const char *format = "smix %d %d %d %d %d %d %d %d";
-    headingStr = cliPrintSectionHeading(dumpMask, false, headingStr);
-    for (uint32_t i = 0; i < MAX_SERVO_RULES; i++) {
-        const servoMixer_t customServoMixer = customServoMixers[i];
-        if (customServoMixer.rate == 0) {
-            break;
-        }
-
-        bool equalsDefault = false;
-        if (defaultCustomServoMixers) {
-            servoMixer_t customServoMixerDefault = defaultCustomServoMixers[i];
-            equalsDefault = !memcmp(&customServoMixer, &customServoMixerDefault, sizeof(customServoMixer));
-
-            headingStr = cliPrintSectionHeading(dumpMask, !equalsDefault, headingStr);
-            cliDefaultPrintLinef(dumpMask, equalsDefault, format,
-                i,
-                customServoMixerDefault.targetChannel,
-                customServoMixerDefault.inputSource,
-                customServoMixerDefault.rate,
-                customServoMixerDefault.speed,
-                customServoMixerDefault.min,
-                customServoMixerDefault.max,
-                customServoMixerDefault.box
-            );
-        }
-        cliDumpPrintLinef(dumpMask, equalsDefault, format,
-            i,
-            customServoMixer.targetChannel,
-            customServoMixer.inputSource,
-            customServoMixer.rate,
-            customServoMixer.speed,
-            customServoMixer.min,
-            customServoMixer.max,
-            customServoMixer.box
-        );
-    }
-}
-
-static void cliServoMix(const char *cmdName, char *cmdline)
-{
-    int args[8], check = 0;
-    int len = strlen(cmdline);
-
-    if (len == 0) {
-        printServoMix(DUMP_MASTER, customServoMixers(0), NULL, NULL);
-    } else if (strncasecmp(cmdline, "reset", 5) == 0) {
-        // erase custom mixer
-        memset(customServoMixers_array(), 0, sizeof(*customServoMixers_array()));
-        for (uint32_t i = 0; i < MAX_SUPPORTED_SERVOS; i++) {
-            servoParamsMutable(i)->reversedSources = 0;
-        }
-    } else if (strncasecmp(cmdline, "load", 4) == 0) {
-        const char *ptr = nextArg(cmdline);
-        if (ptr) {
-            len = strlen(ptr);
-            for (uint32_t i = 0; ; i++) {
-                if (mixerNames[i] == NULL) {
-                    cliPrintErrorLinef(cmdName, ERROR_INVALID_NAME, cmdline);
-                    break;
-                }
-                if (strncasecmp(ptr, mixerNames[i], len) == 0) {
-                    servoMixerLoadMix(i);
-                    cliPrintLinef("Loaded %s", mixerNames[i]);
-                    cliServoMix(cmdName, "");
-                    break;
-                }
-            }
-        }
-    } else if (strncasecmp(cmdline, "reverse", 7) == 0) {
-        enum {SERVO = 0, INPUT, REVERSE, ARGS_COUNT};
-        char *ptr = strchr(cmdline, ' ');
-
-        if (ptr == NULL) {
-            cliPrintf("s");
-            for (uint32_t inputSource = 0; inputSource < INPUT_SOURCE_COUNT; inputSource++)
-                cliPrintf("\ti%d", inputSource);
-            cliPrintLinefeed();
-
-            for (uint32_t servoIndex = 0; servoIndex < MAX_SUPPORTED_SERVOS; servoIndex++) {
-                cliPrintf("%d", servoIndex);
-                for (uint32_t inputSource = 0; inputSource < INPUT_SOURCE_COUNT; inputSource++) {
-                    cliPrintf("\t%s  ", (servoParams(servoIndex)->reversedSources & (1 << inputSource)) ? "r" : "n");
-                }
-                cliPrintLinefeed();
-            }
-            return;
-        }
-
-        char *saveptr;
-        ptr = strtok_r(ptr, " ", &saveptr);
-        while (ptr != NULL && check < ARGS_COUNT - 1) {
-            args[check++] = atoi(ptr);
-            ptr = strtok_r(NULL, " ", &saveptr);
-        }
-
-        if (ptr == NULL || check != ARGS_COUNT - 1) {
-            cliShowInvalidArgumentCountError(cmdName);
-            return;
-        }
-
-        if (args[SERVO] >= 0 && args[SERVO] < MAX_SUPPORTED_SERVOS
-                && args[INPUT] >= 0 && args[INPUT] < INPUT_SOURCE_COUNT
-                && (*ptr == 'r' || *ptr == 'n')) {
-            if (*ptr == 'r') {
-                servoParamsMutable(args[SERVO])->reversedSources |= 1 << args[INPUT];
-            } else {
-                servoParamsMutable(args[SERVO])->reversedSources &= ~(1 << args[INPUT]);
-            }
-        } else {
-            cliShowArgumentRangeError(cmdName, "servo", 0, MAX_SUPPORTED_SERVOS);
-            return;
-        }
-
-        cliServoMix(cmdName, "reverse");
-    } else {
-        enum {RULE = 0, TARGET, INPUT, RATE, SPEED, MIN, MAX, BOX, ARGS_COUNT};
-        char *saveptr;
-        char *ptr = strtok_r(cmdline, " ", &saveptr);
-        while (ptr != NULL && check < ARGS_COUNT) {
-            args[check++] = atoi(ptr);
-            ptr = strtok_r(NULL, " ", &saveptr);
-        }
-
-        if (ptr != NULL || check != ARGS_COUNT) {
-            cliShowInvalidArgumentCountError(cmdName);
-            return;
-        }
-
-        int32_t i = args[RULE];
-        if (i >= 0 && i < MAX_SERVO_RULES &&
-            args[TARGET] >= 0 && args[TARGET] < MAX_SUPPORTED_SERVOS &&
-            args[INPUT] >= 0 && args[INPUT] < INPUT_SOURCE_COUNT &&
-            args[RATE] >= -100 && args[RATE] <= 100 &&
-            args[SPEED] >= 0 && args[SPEED] <= MAX_SERVO_SPEED &&
-            args[MIN] >= 0 && args[MIN] <= 100 &&
-            args[MAX] >= 0 && args[MAX] <= 100 && args[MIN] < args[MAX] &&
-            args[BOX] >= 0 && args[BOX] <= MAX_SERVO_BOXES) {
-            customServoMixersMutable(i)->targetChannel = args[TARGET];
-            customServoMixersMutable(i)->inputSource = args[INPUT];
-            customServoMixersMutable(i)->rate = args[RATE];
-            customServoMixersMutable(i)->speed = args[SPEED];
-            customServoMixersMutable(i)->min = args[MIN];
-            customServoMixersMutable(i)->max = args[MAX];
-            customServoMixersMutable(i)->box = args[BOX];
-            cliServoMix(cmdName, "");
-        } else {
-            cliShowArgumentRangeError(cmdName, NULL, 0, 0);
-        }
     }
 }
 #endif
@@ -3995,42 +3693,6 @@ static void cliEscPassthrough(const char *cmdName, char *cmdline)
     if (!escEnablePassthrough(cliPort, &motorConfig()->dev, escIndex, mode)) {
         cliPrintErrorLinef(cmdName, "Error starting ESC connection");
     }
-}
-#endif
-
-#ifndef USE_QUAD_MIXER_ONLY
-static void cliMixer(const char *cmdName, char *cmdline)
-{
-    int len;
-
-    len = strlen(cmdline);
-
-    if (len == 0) {
-        cliPrintLinef("Mixer: %s", mixerNames[mixerConfig()->mixerMode - 1]);
-        return;
-    } else if (strncasecmp(cmdline, "list", len) == 0) {
-        cliPrint("Available:");
-        for (uint32_t i = 0; ; i++) {
-            if (mixerNames[i] == NULL)
-                break;
-            cliPrintf(" %s", mixerNames[i]);
-        }
-        cliPrintLinefeed();
-        return;
-    }
-
-    for (uint32_t i = 0; ; i++) {
-        if (mixerNames[i] == NULL) {
-            cliPrintErrorLinef(cmdName, ERROR_INVALID_NAME, cmdline);
-            return;
-        }
-        if (strncasecmp(cmdline, mixerNames[i], len) == 0) {
-            mixerConfigMutable()->mixerMode = i + 1;
-            break;
-        }
-    }
-
-    cliMixer(cmdName, "");
 }
 #endif
 
@@ -6272,31 +5934,6 @@ static void printConfig(const char *cmdName, char *cmdline, bool doDiff)
         printSerial(dumpMask, &serialConfig_Copy, serialConfig(), "serial");
 
         if (!(dumpMask & HARDWARE_ONLY)) {
-#ifndef USE_QUAD_MIXER_ONLY
-            const char *mixerHeadingStr = "mixer";
-            const bool equalsDefault = mixerConfig_Copy.mixerMode == mixerConfig()->mixerMode;
-            mixerHeadingStr = cliPrintSectionHeading(dumpMask, !equalsDefault, mixerHeadingStr);
-            const char *formatMixer = "mixer %s";
-            cliDefaultPrintLinef(dumpMask, equalsDefault, formatMixer, mixerNames[mixerConfig()->mixerMode - 1]);
-            cliDumpPrintLinef(dumpMask, equalsDefault, formatMixer, mixerNames[mixerConfig_Copy.mixerMode - 1]);
-
-            cliDumpPrintLinef(dumpMask, customMotorMixer(0)->throttle == 0.0f, "\r\nmmix reset\r\n");
-
-            printMotorMix(dumpMask, customMotorMixer_CopyArray, customMotorMixer(0), mixerHeadingStr);
-
-#ifdef USE_SERVOS
-            printServo(dumpMask, servoParams_CopyArray, servoParams(0), "servo");
-
-            const char *servoMixHeadingStr = "servo mixer";
-            if (!(dumpMask & DO_DIFF) || customServoMixers(0)->rate != 0) {
-                cliPrintHashLine(servoMixHeadingStr);
-                cliPrintLine("smix reset\r\n");
-                servoMixHeadingStr = NULL;
-            }
-            printServoMix(dumpMask, customServoMixers_CopyArray, customServoMixers(0), servoMixHeadingStr);
-#endif
-#endif
-
 #if defined(USE_BEEPER)
             printBeeper(dumpMask, beeperConfig_Copy.beeper_off_flags, beeperConfig()->beeper_off_flags, "beeper", BEEPER_ALLOWED_MODES, "beeper");
 
@@ -6547,10 +6184,6 @@ const clicmd_t cmdTable[] = {
 #endif
     CLI_COMMAND_DEF("map", "configure rc channel order", "[<map>]", cliMap),
     CLI_COMMAND_DEF("mcu_id", "id of the microcontroller", NULL, cliMcuId),
-#ifndef USE_QUAD_MIXER_ONLY
-    CLI_COMMAND_DEF("mixer", "configure mixer", "list\r\n\t<name>", cliMixer),
-#endif
-    CLI_COMMAND_DEF("mmix", "custom motor mixer", NULL, cliMotorMix),
 #ifdef USE_LED_STRIP_STATUS_MODE
     CLI_COMMAND_DEF("mode_color", "configure mode and special colors", NULL, cliModeColor),
 #endif
@@ -6590,12 +6223,6 @@ const clicmd_t cmdTable[] = {
     CLI_COMMAND_DEF("set", "change setting", "[<name>=<value>]", cliSet),
 #if defined(USE_SIGNATURE)
     CLI_COMMAND_DEF("signature", "get / set the board type signature", "[signature]", cliSignature),
-#endif
-#ifdef USE_SERVOS
-    CLI_COMMAND_DEF("smix", "servo mixer", "<rule> <servo> <source> <rate> <speed> <min> <max> <box>\r\n"
-        "\treset\r\n"
-        "\tload <mixer>\r\n"
-        "\treverse <servo> <source> r|n", cliServoMix),
 #endif
     CLI_COMMAND_DEF("status", "show status", NULL, cliStatus),
     CLI_COMMAND_DEF("tasks", "show task stats", NULL, cliTasks),

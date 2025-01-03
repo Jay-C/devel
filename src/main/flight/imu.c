@@ -373,8 +373,6 @@ static float imuCalcGroundspeedGain(float dt)
     const float speedRatio = (float)gpsSol.groundSpeed / GPS_COG_MIN_GROUNDSPEED;
     float speedBasedGain = speedRatio > 1.0f ? fminf(speedRatio, 10.0f) : sq(speedRatio);
 
-    const bool isWing = isFixedWing();  // different weighting for airplane aerodynamic
-
     // 2. suppress heading correction during and after yaw inputs, down to zero at 100% yaw
     const float yawStickDeflectionInv = 1.0f - getRcDeflectionAbs(FD_YAW);
     float stickDeflectionFactor = power5(yawStickDeflectionInv);
@@ -387,7 +385,8 @@ static float imuCalcGroundspeedGain(float dt)
     // 3. suppress heading correction unless roll is centered, from 1.0 to zero if Roll is more than 12 degrees from flat
     // this is to prevent adaptation to GPS while flying sideways, or with a significant sideways element
     const float absRollAngle = fabsf(attitude.values.roll * .1f);  // degrees
-    float rollMax = isWing ? 25.0f : 12.0f; // 25 degrees for wing, 12 degrees for quad
+    float rollMax = 12.0f;
+
     // note: these value are 'educated guesses' - for quads it must be very tight
     // for wings, which can't fly sideways, it can be wider
     const float rollSuppression = (absRollAngle < rollMax) ? (rollMax - absRollAngle) / rollMax : 0.0f;
@@ -397,11 +396,9 @@ static float imuCalcGroundspeedGain(float dt)
     // but not if a wing, because they typically are flat when flying.
     // need to test if anything special is needed for pitch with wings, for now do nothing.
     float pitchSuppression = 1.0f;
-    if (!isWing) {
-        const float pitchAngle = attitude.values.pitch * .1f; // degrees, negative is backwards
-        pitchSuppression = pitchAngle / 45.0f; // 1.0 at 45 degrees, 2.0 at 90 degrees
-        pitchSuppression = (pitchSuppression >= 0) ? pitchSuppression : 0.0f; // zero if flat or pitched backwards
-    }
+    const float pitchAngle = attitude.values.pitch * .1f; // degrees, negative is backwards
+    pitchSuppression = pitchAngle / 45.0f; // 1.0 at 45 degrees, 2.0 at 90 degrees
+    pitchSuppression = (pitchSuppression >= 0) ? pitchSuppression : 0.0f; // zero if flat or pitched backwards
 
     // NOTE : these suppressions make sense with normal pilot inputs and normal flight
     // Flying straight ahead for 1s at > 3m/s at pitch of say 22.5 degrees returns a final multiplier of 5

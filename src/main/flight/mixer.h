@@ -32,96 +32,19 @@
 #include "drivers/io_types.h"
 #include "drivers/pwm_output.h"
 
-#define QUAD_MOTOR_COUNT 4
-
-// Note: this is called MultiType/MULTITYPE_* in baseflight.
-typedef enum mixerMode
-{
-    MIXER_TRI = 1,
-    MIXER_QUADP = 2,
-    MIXER_QUADX = 3,
-    MIXER_BICOPTER = 4,
-    MIXER_GIMBAL = 5,
-    MIXER_Y6 = 6,
-    MIXER_HEX6 = 7,
-    MIXER_FLYING_WING = 8,
-    MIXER_Y4 = 9,
-    MIXER_HEX6X = 10,
-    MIXER_OCTOX8 = 11,
-    MIXER_OCTOFLATP = 12,
-    MIXER_OCTOFLATX = 13,
-    MIXER_AIRPLANE = 14,        // airplane / singlecopter / dualcopter (not yet properly supported)
-    MIXER_HELI_120_CCPM = 15,
-    MIXER_HELI_90_DEG = 16,
-    MIXER_VTAIL4 = 17,
-    MIXER_HEX6H = 18,
-    MIXER_PPM_TO_SERVO = 19,    // PPM -> servo relay
-    MIXER_DUALCOPTER = 20,
-    MIXER_SINGLECOPTER = 21,
-    MIXER_ATAIL4 = 22,
-    MIXER_CUSTOM = 23,
-    MIXER_CUSTOM_AIRPLANE = 24,
-    MIXER_CUSTOM_TRI = 25,
-    MIXER_QUADX_1234 = 26,
-    MIXER_OCTOX8P = 27
-} mixerMode_e;
-
-typedef enum mixerType
-{
-    MIXER_LEGACY = 0,
-    MIXER_LINEAR = 1,
-    MIXER_DYNAMIC = 2,
-} mixerType_e;
-
-// Custom mixer data per motor
-typedef struct motorMixer_s {
-    float throttle;
-    float roll;
-    float pitch;
-    float yaw;
-} motorMixer_t;
-
-PG_DECLARE_ARRAY(motorMixer_t, MAX_SUPPORTED_MOTORS, customMotorMixer);
-
-// Custom mixer configuration
-typedef struct mixer_s {
-    uint8_t motorCount;
-    uint8_t useServo;
-    const motorMixer_t *motor;
-} mixer_t;
-
-typedef struct mixerConfig_s {
-    uint8_t mixerMode;
-    uint8_t mixer_type;
-} mixerConfig_t;
-
-PG_DECLARE(mixerConfig_t, mixerConfig);
-
-extern const mixer_t mixers[];
 extern float motor[MAX_SUPPORTED_MOTORS];
 extern float motor_disarmed[MAX_SUPPORTED_MOTORS];
-struct rxConfig_s;
 
 bool hasServos(void);
 uint8_t getMotorCount(void);
-float getMotorMixRange(void);
 bool areMotorsRunning(void);
-bool areMotorsSaturated(void);
 
-void mixerLoadMix(int index, motorMixer_t *customMixers);
 void initEscEndpoints(void);
-void mixerInit(mixerMode_e mixerMode);
-void mixerInitProfile(void);
 void mixerResetDisarmedMotors(void);
-void mixTable(timeUs_t currentTimeUs);
 void stopMotors(void);
 void writeMotors(void);
 
 float mixerGetThrottle(void);
 float mixerGetRcThrottle(void);
-mixerMode_e getMixerMode(void);
-bool mixerModeIsFixedWing(mixerMode_e mixerMode);
-bool isFixedWing(void);
-
 float getMotorOutputLow(void);
 float getMotorOutputHigh(void);
