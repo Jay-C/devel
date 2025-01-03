@@ -150,7 +150,6 @@ COMMON_SRC = \
             flight/gps_rescue.c \
             flight/imu.c \
             flight/mixer.c \
-            flight/mixer_init.c \
             flight/pid.c \
             flight/pid_init.c \
             flight/position.c \
@@ -450,7 +449,6 @@ SIZE_OPTIMISED_SRC += \
             sensors/gyro_init.c \
             sensors/acceleration_init.c \
             flight/pid_init.c \
-            flight/mixer_init.c \
             cli/cli.c \
             cli/settings.c \
             drivers/light_ws2811strip.c \
