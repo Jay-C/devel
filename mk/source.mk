@@ -33,6 +33,7 @@ PG_SRC = \
             pg/modes.c \
             pg/motor.c \
             pg/msp.c \
+            pg/opticalflow.c \
             pg/pg.c \
             pg/pid.c \
             pg/pilot.c \

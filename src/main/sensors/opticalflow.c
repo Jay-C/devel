@@ -42,9 +42,6 @@
 
 #include "scheduler/scheduler.h"
 
-#include "pg/pg.h"
-#include "pg/pg_ids.h"
-
 #include "drivers/time.h"
 #include "drivers/rangefinder/rangefinder.h"
 #include "drivers/rangefinder/rangefinder_lidarmt.h"
@@ -62,15 +59,6 @@
 // static prototypes
 static void applySensorRotation(vector2_t * dst, vector2_t * src);
 static void applyLPF(vector2_t * flowRates);
-
-PG_REGISTER_WITH_RESET_TEMPLATE(opticalflowConfig_t, opticalflowConfig, PG_OPTICALFLOW_CONFIG, 0);
-
-PG_RESET_TEMPLATE(opticalflowConfig_t, opticalflowConfig,
-    .opticalflow_hardware = OPTICALFLOW_NONE,
-    .rotation = 0,
-    .flow_lpf = 0,
-    .flip_x = 0
-);
 
 static opticalflow_t opticalflow;
 float cosRotAngle = 1.0f;
