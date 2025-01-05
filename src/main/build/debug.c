@@ -1,107 +1,111 @@
 /*
- * This file is part of Cleanflight and Betaflight.
+ * This file is part of Rotorflight.
  *
- * Cleanflight and Betaflight are free software. You can redistribute
- * this software and/or modify this software under the terms of the
- * GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * Rotorflight is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Cleanflight and Betaflight are distributed in the hope that they
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * Rotorflight is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this software.
- *
- * If not, see <http://www.gnu.org/licenses/>.
+ * along with this software. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "platform.h"
 
 #include "debug.h"
 
-int16_t debug[DEBUG16_VALUE_COUNT];
-uint8_t debugMode;
+FAST_DATA_ZERO_INIT uint8_t debugMode;
+FAST_DATA_ZERO_INIT uint8_t debugAxis;
 
-// Please ensure that these names are aligned with the enum values defined in 'debug.h' - for OSD be sure the name is unique with 12 chars.
+FAST_DATA_ZERO_INIT int32_t debug[DEBUG_VALUE_COUNT];
+
+FAST_DATA_ZERO_INIT uint32_t __timing[DEBUG_VALUE_COUNT];
+
+#define ENTRY(_NAME)  [DEBUG_##_NAME] = #_NAME
+
 const char * const debugModeNames[DEBUG_COUNT] = {
-    [DEBUG_NONE] = "NONE",
-    [DEBUG_CYCLETIME] = "CYCLETIME",
-    [DEBUG_BATTERY] = "BATTERY",
-    [DEBUG_GYRO_FILTERED] = "GYRO_FILTERED",
-    [DEBUG_ACCELEROMETER] = "ACCELEROMETER",
-    [DEBUG_PIDLOOP] = "PIDLOOP",
-    [DEBUG_RC_INTERPOLATION] = "RC_INTERPOLATION",
-    [DEBUG_ANGLERATE] = "ANGLERATE",
-    [DEBUG_ESC_SENSOR] = "ESC_SENSOR",
-    [DEBUG_SCHEDULER] = "SCHEDULER",
-    [DEBUG_STACK] = "STACK",
-    [DEBUG_ESC_SENSOR_RPM] = "ESC_SENSOR_RPM",
-    [DEBUG_ESC_SENSOR_TMP] = "ESC_SENSOR_TMP",
-    [DEBUG_ALTITUDE] = "ALTITUDE",
-    [DEBUG_FFT] = "FFT",
-    [DEBUG_FFT_TIME] = "FFT_TIME",
-    [DEBUG_FFT_FREQ] = "FFT_FREQ",
-    [DEBUG_RX_FRSKY_SPI] = "RX_FRSKY_SPI",
-    [DEBUG_RX_SFHSS_SPI] = "RX_SFHSS_SPI",
-    [DEBUG_GYRO_RAW] = "GYRO_RAW",
-    [DEBUG_DUAL_GYRO_RAW] = "DUAL_GYRO_RAW",
-    [DEBUG_DUAL_GYRO_DIFF] = "DUAL_GYRO_DIFF",
-    [DEBUG_MAX7456_SIGNAL] = "MAX7456_SIGNAL",
-    [DEBUG_MAX7456_SPICLOCK] = "MAX7456_SPICLOCK",
-    [DEBUG_SBUS] = "SBUS",
-    [DEBUG_FPORT] = "FPORT",
-    [DEBUG_RANGEFINDER] = "RANGEFINDER",
-    [DEBUG_RANGEFINDER_QUALITY] = "RANGEFINDER_QUALITY",
-    [DEBUG_OPTICALFLOW] = "OPTICALFLOW",
-    [DEBUG_LIDAR_TF] = "LIDAR_TF",
-    [DEBUG_ADC_INTERNAL] = "ADC_INTERNAL",
-    [DEBUG_SDIO] = "SDIO",
-    [DEBUG_CURRENT_SENSOR] = "CURRENT_SENSOR",
-    [DEBUG_USB] = "USB",
-    [DEBUG_SMARTAUDIO] = "SMARTAUDIO",
-    [DEBUG_RTH] = "RTH",
-    [DEBUG_RX_SIGNAL_LOSS] = "RX_SIGNAL_LOSS",
-    [DEBUG_RX_SPEKTRUM_SPI] = "RX_SPEKTRUM_SPI",
-    [DEBUG_DSHOT_RPM_TELEMETRY] = "DSHOT_RPM_TELEMETRY",
-    [DEBUG_DUAL_GYRO_SCALED] = "DUAL_GYRO_SCALED",
-    [DEBUG_DSHOT_RPM_ERRORS] = "DSHOT_RPM_ERRORS",
-    [DEBUG_CRSF_LINK_STATISTICS_UPLINK] = "CRSF_LINK_STATISTICS_UPLINK",
-    [DEBUG_CRSF_LINK_STATISTICS_PWR] = "CRSF_LINK_STATISTICS_PWR",
-    [DEBUG_CRSF_LINK_STATISTICS_DOWN] = "CRSF_LINK_STATISTICS_DOWN",
-    [DEBUG_BARO] = "BARO",
-    [DEBUG_AUTOPILOT_ALTITUDE] = "AUTOPILOT_ALTITUDE",
-    [DEBUG_BLACKBOX_OUTPUT] = "BLACKBOX_OUTPUT",
-    [DEBUG_GYRO_SAMPLE] = "GYRO_SAMPLE",
-    [DEBUG_RX_TIMING] = "RX_TIMING",
-    [DEBUG_D_LPF] = "D_LPF",
-    [DEBUG_VTX_TRAMP] = "VTX_TRAMP",
-    [DEBUG_GHST] = "GHST",
-    [DEBUG_GHST_MSP] = "GHST_MSP",
-    [DEBUG_SCHEDULER_DETERMINISM] = "SCHEDULER_DETERMINISM",
-    [DEBUG_TIMING_ACCURACY] = "TIMING_ACCURACY",
-    [DEBUG_RX_EXPRESSLRS_SPI] = "RX_EXPRESSLRS_SPI",
-    [DEBUG_RX_EXPRESSLRS_PHASELOCK] = "RX_EXPRESSLRS_PHASELOCK",
-    [DEBUG_RX_STATE_TIME] = "RX_STATE_TIME",
-    [DEBUG_GPS_RESCUE_VELOCITY] = "GPS_RESCUE_VELOCITY",
-    [DEBUG_GPS_RESCUE_HEADING] = "GPS_RESCUE_HEADING",
-    [DEBUG_GPS_RESCUE_TRACKING] = "GPS_RESCUE_TRACKING",
-    [DEBUG_GPS_CONNECTION] = "GPS_CONNECTION",
-    [DEBUG_ATTITUDE] = "ATTITUDE",
-    [DEBUG_VTX_MSP] = "VTX_MSP",
-    [DEBUG_GPS_DOP] = "GPS_DOP",
-    [DEBUG_FAILSAFE] = "FAILSAFE",
-    [DEBUG_GYRO_CALIBRATION] = "GYRO_CALIBRATION",
-    [DEBUG_ANGLE_MODE] = "ANGLE_MODE",
-    [DEBUG_ANGLE_TARGET] = "ANGLE_TARGET",
-    [DEBUG_CURRENT_ANGLE] = "CURRENT_ANGLE",
-    [DEBUG_DSHOT_TELEMETRY_COUNTS] = "DSHOT_TELEMETRY_COUNTS",
-    [DEBUG_RC_STATS] = "RC_STATS",
-    [DEBUG_MAG_CALIB] = "MAG_CALIB",
-    [DEBUG_MAG_TASK_RATE] = "MAG_TASK_RATE",
-    [DEBUG_TASK] = "TASK",
-    [DEBUG_WING_SETPOINT] = "WING_SETPOINT",
-    [DEBUG_AUTOPILOT_POSITION] = "AUTOPILOT_POSITION",
+    ENTRY(NONE),
+    ENTRY(CYCLETIME),
+    ENTRY(BATTERY),
+    ENTRY(GYRO_FILTERED),
+    ENTRY(ACCELEROMETER),
+    ENTRY(PIDLOOP),
+    ENTRY(RC_INTERPOLATION),
+    ENTRY(ANGLERATE),
+    ENTRY(ESC_SENSOR),
+    ENTRY(SCHEDULER),
+    ENTRY(STACK),
+    ENTRY(ESC_SENSOR_RPM),
+    ENTRY(ESC_SENSOR_TMP),
+    ENTRY(ALTITUDE),
+    ENTRY(FFT),
+    ENTRY(FFT_TIME),
+    ENTRY(FFT_FREQ),
+    ENTRY(RX_FRSKY_SPI),
+    ENTRY(RX_SFHSS_SPI),
+    ENTRY(GYRO_RAW),
+    ENTRY(DUAL_GYRO_RAW),
+    ENTRY(DUAL_GYRO_DIFF),
+    ENTRY(MAX7456_SIGNAL),
+    ENTRY(MAX7456_SPICLOCK),
+    ENTRY(SBUS),
+    ENTRY(FPORT),
+    ENTRY(RANGEFINDER),
+    ENTRY(RANGEFINDER_QUALITY),
+    ENTRY(OPTICALFLOW),
+    ENTRY(LIDAR_TF),
+    ENTRY(ADC_INTERNAL),
+    ENTRY(SDIO),
+    ENTRY(CURRENT_SENSOR),
+    ENTRY(USB),
+    ENTRY(SMARTAUDIO),
+    ENTRY(RTH),
+    ENTRY(RX_SIGNAL_LOSS),
+    ENTRY(RX_SPEKTRUM_SPI),
+    ENTRY(DSHOT_RPM_TELEMETRY),
+    ENTRY(DUAL_GYRO_SCALED),
+    ENTRY(DSHOT_RPM_ERRORS),
+    ENTRY(CRSF_LINK_STATISTICS_UPLINK),
+    ENTRY(CRSF_LINK_STATISTICS_PWR),
+    ENTRY(CRSF_LINK_STATISTICS_DOWN),
+    ENTRY(BARO),
+    ENTRY(AUTOPILOT_ALTITUDE),
+    ENTRY(BLACKBOX_OUTPUT),
+    ENTRY(GYRO_SAMPLE),
+    ENTRY(RX_TIMING),
+    ENTRY(D_LPF),
+    ENTRY(VTX_TRAMP),
+    ENTRY(GHST),
+    ENTRY(GHST_MSP),
+    ENTRY(SCHEDULER_DETERMINISM),
+    ENTRY(TIMING_ACCURACY),
+    ENTRY(RX_EXPRESSLRS_SPI),
+    ENTRY(RX_EXPRESSLRS_PHASELOCK),
+    ENTRY(RX_STATE_TIME),
+    ENTRY(GPS_RESCUE_VELOCITY),
+    ENTRY(GPS_RESCUE_HEADING),
+    ENTRY(GPS_RESCUE_TRACKING),
+    ENTRY(GPS_CONNECTION),
+    ENTRY(ATTITUDE),
+    ENTRY(VTX_MSP),
+    ENTRY(GPS_DOP),
+    ENTRY(FAILSAFE),
+    ENTRY(GYRO_CALIBRATION),
+    ENTRY(ANGLE_MODE),
+    ENTRY(ANGLE_TARGET),
+    ENTRY(CURRENT_ANGLE),
+    ENTRY(DSHOT_TELEMETRY_COUNTS),
+    ENTRY(RC_STATS),
+    ENTRY(MAG_CALIB),
+    ENTRY(MAG_TASK_RATE),
+    ENTRY(TASK),
+    ENTRY(WING_SETPOINT),
+    ENTRY(AUTOPILOT_POSITION),
 };
+
+#undef ENTRY
