@@ -43,6 +43,7 @@
 #define PARAM_NAME_YAW_DEADBAND "yaw_deadband"
 #define PARAM_NAME_PID_PROCESS_DENOM "pid_process_denom"
 #define PARAM_NAME_DEBUG_MODE "debug_mode"
+#define PARAM_NAME_DEBUG_AXIS "debug_axis"
 
 #define PARAM_NAME_ALTITUDE_SOURCE "altitude_source"
 #define PARAM_NAME_ALTITUDE_PREFER_BARO "altitude_prefer_baro"
