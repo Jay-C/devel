@@ -26,7 +26,7 @@
 
 #define MAX_SUPPORTED_RC_CHANNEL_COUNT      18
 
-#define NON_AUX_CHANNEL_COUNT               4
+#define NON_AUX_CHANNEL_COUNT               5
 #define MAX_AUX_CHANNEL_COUNT               (MAX_SUPPORTED_RC_CHANNEL_COUNT - NON_AUX_CHANNEL_COUNT)
 
 
