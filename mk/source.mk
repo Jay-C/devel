@@ -82,6 +82,7 @@ COMMON_SRC = \
             build/build_config.c \
             build/debug.c \
             build/debug_pin.c \
+            build/hardfaults.c \
             build/version.c \
             $(PG_SRC) \
             common/bitarray.c \
@@ -144,7 +145,6 @@ COMMON_SRC = \
             drivers/timer_common.c \
             fc/board_info.c \
             fc/dispatch.c \
-            fc/hardfaults.c \
             fc/tasks.c \
             fc/runtime_config.c \
             fc/stats.c \
